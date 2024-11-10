@@ -29,7 +29,13 @@
       <artifactId>javafx-web</artifactId>
       <version>17.0.6</version>
     </dependency>
-      <dependency>
+
+
+
+
+
+
+    <dependency>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-swing</artifactId>
         <version>17.0.6</version>
