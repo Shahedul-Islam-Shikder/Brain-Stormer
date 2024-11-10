@@ -3,29 +3,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: #121212;">
+<StackPane xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: #121212;" fx:controller="brain.brainstormer.controller.LoginController">
   <VBox alignment="CENTER" spacing="20" style="-fx-padding: 50;">
     <Label text="Brain-Stormer" style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;"/>
 
     <VBox alignment="CENTER_LEFT" spacing="15" style="-fx-max-width: 300px;">
       <VBox spacing="5" alignment="CENTER_LEFT">
         <Label text="Username" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
-        <TextField promptText="example@gmail.com"
+        <TextField fx:id="usernameField" promptText="example@gmail.com"
                    style="-fx-pref-width: 300px; -fx-max-width: 300px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;"/>
       </VBox>
 
       <VBox spacing="5" alignment="CENTER_LEFT">
         <Label text="Password" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
-        <PasswordField promptText="Your secure password"
+        <PasswordField fx:id="passwordField" promptText="Your secure password"
                        style="-fx-pref-width: 300px; -fx-max-width: 300px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;"/>
       </VBox>
     </VBox>
 
-    <Button text="Login" style="-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;"/>
+    <Button fx:id="loginButton" text="Login" style="-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;"/>
 
     <HBox spacing="5" alignment="CENTER">
       <Label text="No account...?" style="-fx-font-size: 12px; -fx-text-fill: #B0B0B0;"/>
-      <Hyperlink text="Register" style="-fx-font-size: 12px; -fx-text-fill: #4A90E2;"/>
+      <Hyperlink fx:id="registerButton" text="Register" style="-fx-font-size: 12px; -fx-text-fill: #4A90E2;"/>
     </HBox>
   </VBox>
 </StackPane>

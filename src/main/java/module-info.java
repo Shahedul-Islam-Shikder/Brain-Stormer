@@ -10,7 +10,14 @@ module brain.brainstormer {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires org.mongodb.driver.sync.client;
+    requires org.mongodb.driver.core;
+    requires org.mongodb.bson;
+    requires jBCrypt;
 
     opens brain.brainstormer to javafx.fxml;
     exports brain.brainstormer;
+
+    exports brain.brainstormer.controller;           // Export the controller package
+    opens brain.brainstormer.controller to javafx.fxml; // Open the controller package for JavaFX reflection
 }
