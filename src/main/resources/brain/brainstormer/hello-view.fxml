@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: #121212;" fx:controller="brain.brainstormer.controller.LoginController">
+<StackPane  xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: #121212;" fx:controller="brain.brainstormer.controller.LoginController">
   <VBox alignment="CENTER" spacing="20" style="-fx-padding: 50;">
     <Label text="Brain-Stormer" style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;"/>
 

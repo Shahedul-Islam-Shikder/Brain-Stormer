@@ -2,6 +2,7 @@ package brain.brainstormer.controller;
 
 import brain.brainstormer.service.UserService;
 import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.utils.SessionManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -9,6 +10,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.bson.Document;
 
 public class LoginController {
 
@@ -19,12 +21,12 @@ public class LoginController {
     @FXML
     private Button loginButton;
     @FXML
-    private Hyperlink registerButton;  // Changed from Button to Hyperlink
+    private Hyperlink registerButton;
 
     private final UserService userService;
 
     public LoginController() {
-        userService = new UserService(); // Initialize UserService
+        userService = new UserService();
     }
 
     @FXML
@@ -37,22 +39,28 @@ public class LoginController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
+        // Authenticate user
         if (userService.loginUser(username, password)) {
+            Document userDocument = userService.getUser(username); // Get user document
+
+            // Set session data
+            SessionManager.getInstance().setUserId(userDocument.getObjectId("_id").toHexString());
+            SessionManager.getInstance().setUsername(username);
+            SessionManager.getInstance().setEmail(userDocument.getString("email"));
+
             showAlert("Login Successful", "Welcome back, " + username + "!");
-            goToHome();  // Transition to home screen
+            goToHome(); // Transition to home screen
         } else {
             showAlert("Login Failed", "Invalid username or password.");
         }
     }
 
     private void goToRegister() {
-        // Get the current stage from the loginButton and switch to register.fxml
         Stage stage = (Stage) loginButton.getScene().getWindow();
         SceneSwitcher.switchScene(stage, "/brain/brainstormer/register.fxml", true);
     }
 
     private void goToHome() {
-        // Get the current stage from the loginButton and switch to home.fxml
         Stage stage = (Stage) loginButton.getScene().getWindow();
         SceneSwitcher.switchScene(stage, "/brain/brainstormer/home.fxml", true);
     }

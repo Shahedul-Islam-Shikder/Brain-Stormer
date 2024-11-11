@@ -61,4 +61,8 @@ public class UserService {
         // Returns true if a matching user is found, indicating username or email is taken
         return existingUser != null;
     }
+
+    public Document getUser(String username) {
+        return usersCollection.find(Filters.eq("username", username)).first();
+    }
 }
