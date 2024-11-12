@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -124,16 +125,35 @@ public class HomeController {
 
     private void showAddTemplateDialog() {
         Stage dialog = new Stage();
+        dialog.setMinHeight(400);
+        dialog.setMinWidth(400);
+        dialog.setResizable(false);
         dialog.setTitle("Add New Template");
         dialog.initModality(Modality.APPLICATION_MODAL);
 
         Label nameLabel = new Label("Template Name:");
+        nameLabel.setStyle("-fx-text-fill: #f7f5f5");
         TextField nameInput = new TextField();
+        nameInput.setPromptText("Enter Template name");
+        nameInput.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-background-radius: 10; -fx-border-radius: 10;" +
+                " -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;");
 
         Label descLabel = new Label("Description:");
-        TextField descInput = new TextField();
+        descLabel.setStyle("-fx-text-fill: #f7f5f5");
+        TextArea descInput = new TextArea();
+        descInput.setPromptText("Enter Description");
+        descInput.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-pref-height: 180px; fx-max-height: 180px; " +
+                "-fx-background-radius: 10; -fx-border-radius: 0;" + " -fx-padding: 10; -fx-background-color: #333333;" +
+                " -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777; -fx-control-inner-background: #333333;" +
+                "-fx-prompt-text-fill: #777777;" + "-fx-border-color: transparent; -fx-focus-color: transparent; " +
+                "-fx-faint-focus-color: transparent; -fx-effect: none;");
+        descInput.setWrapText(true);
+        descInput.setPrefRowCount(6);
+
+
 
         Button saveButton = new Button("Add Template");
+        saveButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
         saveButton.setOnAction(e -> {
             String name = nameInput.getText().trim();
             String description = descInput.getText().trim();
@@ -145,9 +165,10 @@ public class HomeController {
                 System.out.println("Both fields are required.");
             }
         });
-
-        VBox layout = new VBox(10, nameLabel, nameInput, descLabel, descInput, saveButton);
-        layout.setStyle("-fx-padding: 10;");
+        HBox saveButtonCentre = new HBox(saveButton);
+        saveButtonCentre.setAlignment(Pos.CENTER);
+        VBox layout = new VBox(10, nameLabel, nameInput, descLabel, descInput, saveButtonCentre);
+        layout.setStyle("-fx-padding: 10; -fx-background-color: #121212");
         dialog.setScene(new Scene(layout));
         dialog.show();
     }

@@ -48,7 +48,7 @@ public class LoginController {
             SessionManager.getInstance().setUsername(username);
             SessionManager.getInstance().setEmail(userDocument.getString("email"));
 
-            showAlert("Login Successful", "Welcome back, " + username + "!");
+            //showAlert("Login Successful", "Welcome back, " + username + "!");
             goToHome(); // Transition to home screen
         } else {
             showAlert("Login Failed", "Invalid username or password.");
