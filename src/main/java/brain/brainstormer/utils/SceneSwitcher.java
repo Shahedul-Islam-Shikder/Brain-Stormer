@@ -19,6 +19,8 @@ public class SceneSwitcher {
             // Set the new scene on the provided stage
             stage.setScene(new Scene(root));
 
+            stage.setMinHeight(768);
+            stage.setMinWidth(1366);
             // Set the stage to maximized if specified
             stage.setMaximized(maximize);
 
