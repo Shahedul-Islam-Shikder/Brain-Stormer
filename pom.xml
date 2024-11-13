@@ -37,6 +37,14 @@
       </dependency>
 
 
+    <!-- Chesslib Dependency -->
+    <dependency>
+      <groupId>com.github.bhlangonijr</groupId>
+      <artifactId>chesslib</artifactId>
+      <version>1.3.4</version>
+    </dependency>
+
+
       <dependency>
           <groupId>org.mongodb</groupId>
           <artifactId>mongodb-driver-sync</artifactId>
