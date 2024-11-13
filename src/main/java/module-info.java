@@ -14,6 +14,7 @@ module brain.brainstormer {
     requires org.mongodb.driver.core;
     requires org.mongodb.bson;
     requires jBCrypt;
+    requires chesslib;
 
     opens brain.brainstormer to javafx.fxml;
     exports brain.brainstormer;
