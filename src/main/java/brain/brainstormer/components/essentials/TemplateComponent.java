@@ -2,7 +2,7 @@ package brain.brainstormer.components.essentials;
 
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utils.SessionManager;
-import javafx.scene.control.Alert;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -44,11 +44,18 @@ public class TemplateComponent {
         templateBox.setStyle("-fx-background-color: #1E1E1E; -fx-padding: 15; -fx-background-radius: 10;");
 
         VBox textContainer = new VBox(5);
+
+        // Display the ObjectId above the title
+        Label objectIdLabel = new Label("ID: " + template.getObjectId("_id").toString());
+        objectIdLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #A0A0A0;");  // Grayish color for the ID
+
         Label nameLabel = new Label(template.getString("name"));
         nameLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;");
+
         Label descriptionLabel = new Label(template.getString("description"));
         descriptionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #B0B0B0;");
-        textContainer.getChildren().addAll(nameLabel, descriptionLabel);
+
+        textContainer.getChildren().addAll(objectIdLabel, nameLabel, descriptionLabel);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -69,6 +76,7 @@ public class TemplateComponent {
 
         return templateBox;
     }
+
 
     // Method to edit template
     private void editTemplate(Document template) {
