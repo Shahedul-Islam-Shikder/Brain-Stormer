@@ -18,9 +18,9 @@
             <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;" text="Brain-Stormer" />
 
             <VBox fx:id="sidebarArea" spacing="10" style="-fx-padding: 40 0;">
-<!--                <Button fx:id="templatesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Templates" />-->
-<!--                <Button fx:id="networkButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Network" />-->
-<!--                <Button fx:id="gamesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Games" />-->
+                <Button fx:id="templatesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Templates" />
+                <Button fx:id="networkButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Network" />
+                <Button fx:id="gamesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Games" />
             </VBox>
 
             <Region style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />

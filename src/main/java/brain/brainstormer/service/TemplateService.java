@@ -5,6 +5,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.types.ObjectId;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,8 +33,23 @@ public class TemplateService {
         templatesCollection.insertOne(template);
     }
 
-    // Retrieve a specific template by ID
+
+
+
     public Document getTemplateById(String templateId) {
-        return templatesCollection.find(Filters.eq("_id", templateId)).first();
+        try {
+            return templatesCollection.find(Filters.eq("_id", new ObjectId(templateId))).first();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid template ID format: " + templateId);
+            return null;
+        }
     }
+
+
+    // Delete a template by ID
+    public void deleteTemplate(String templateId) {
+        System.out.println("Attempting to delete template with ID: " + templateId);
+        templatesCollection.deleteOne(Filters.eq("_id", new org.bson.types.ObjectId(templateId)));
+    }
+
 }
