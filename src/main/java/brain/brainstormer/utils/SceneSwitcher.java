@@ -19,8 +19,10 @@ public class SceneSwitcher {
             // Set the new scene on the provided stage
             stage.setScene(new Scene(root));
 
+            stage.setResizable(true);
             // Set the stage to maximized if specified
             stage.setMaximized(maximize);
+
 
             stage.show();
         } catch (IOException e) {
