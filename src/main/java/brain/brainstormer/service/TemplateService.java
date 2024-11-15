@@ -29,7 +29,8 @@ public class TemplateService {
         Document template = new Document("userId", userId)
                 .append("name", name)
                 .append("description", description)
-                .append("dateCreated", new Date());
+                .append("dateCreated", new Date())
+                .append("components", new ArrayList<>()); // Initialize components as an empty array
         templatesCollection.insertOne(template);
     }
 
