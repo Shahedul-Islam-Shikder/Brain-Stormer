@@ -31,5 +31,8 @@ public class TemplateService {
         templatesCollection.insertOne(template);
     }
 
-
+    // Retrieve a specific template by ID
+    public Document getTemplateById(String templateId) {
+        return templatesCollection.find(Filters.eq("_id", templateId)).first();
+    }
 }

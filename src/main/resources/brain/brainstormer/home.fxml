@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -9,18 +10,17 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:controller="brain.brainstormer.controller.HomeController" prefHeight="785.0" prefWidth="1178.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane prefHeight="785.0" prefWidth="1178.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.HomeController">
     <HBox spacing="0" style="-fx-pref-height: 100%; -fx-pref-width: 100%;">
 
         <!-- Sidebar -->
-        <VBox prefHeight="698.0" prefWidth="300.0" style="-fx-background-color: #000000; -fx-pref-width: 300px; -fx-padding: 20;">
+        <VBox fx:id="sidebar" prefHeight="698.0" prefWidth="300.0" style="-fx-background-color: #000000; -fx-pref-width: 300px; -fx-padding: 20;">
             <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;" text="Brain-Stormer" />
 
-            <VBox spacing="10" style="-fx-padding: 40 0;">
-                <Button fx:id="templatesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Templates" />
-                <Button fx:id="networkButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Network" />
-                <Button fx:id="gamesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Games" />
-
+            <VBox fx:id="sidebarArea" spacing="10" style="-fx-padding: 40 0;">
+<!--                <Button fx:id="templatesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Templates" />-->
+<!--                <Button fx:id="networkButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Network" />-->
+<!--                <Button fx:id="gamesButton" style="-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;" text="Games" />-->
             </VBox>
 
             <Region style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
@@ -48,16 +48,19 @@
                 <Button style="-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;" text="Skibidi" />
             </HBox>
 
-            <!-- Content Cards -->
-            <VBox fx:id="mainContentArea" spacing="15" style="-fx-padding: 20 0;">
-
+            <!-- Scrollable Content Area for Templates -->
+            <VBox fx:id="mainContentArea" spacing="15" style="-fx-padding: 20; -fx-background-color: #121212;" VBox.vgrow="ALWAYS" minHeight="600">
+                <!-- Placeholder for dynamic content -->
             </VBox>
-            <Region VBox.vgrow="ALWAYS" />
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+
+
+
+
+            <!-- AnchorPane for Add Button at Bottom -->
+            <AnchorPane prefHeight="100.0" style="-fx-background-color: #121212;" VBox.vgrow="NEVER">
                 <children>
                     <!-- Floating Add Button at Bottom Right -->
-                    <Button fx:id="addButton" layoutX="599.0" layoutY="72.0" style="-fx-font-size: 28px; -fx-background-color: #333333; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 60px; -fx-pref-height: 60px;" text="+" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="12.0" />
-
+                    <Button fx:id="addButton" layoutX="599.0" layoutY="12.0" style="-fx-font-size: 28px; -fx-background-color: #333333; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 60px; -fx-pref-height: 60px;" text="+" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="12.0" />
                 </children>
             </AnchorPane>
         </VBox>

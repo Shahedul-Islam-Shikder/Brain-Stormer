@@ -1,6 +1,7 @@
 package brain.brainstormer.components.essentials;
 
 import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
 
 import javafx.scene.control.Button;
@@ -9,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.Stage;
 import org.bson.Document;
 
 import java.text.SimpleDateFormat;
@@ -45,9 +47,8 @@ public class TemplateComponent {
 
         VBox textContainer = new VBox(5);
 
-        // Display the ObjectId above the title
         Label objectIdLabel = new Label("ID: " + template.getObjectId("_id").toString());
-        objectIdLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #A0A0A0;");  // Grayish color for the ID
+        objectIdLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #A0A0A0;");
 
         Label nameLabel = new Label(template.getString("name"));
         nameLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;");
@@ -74,8 +75,16 @@ public class TemplateComponent {
 
         templateBox.getChildren().addAll(textContainer, spacer, dateLabel, editButton, deleteButton);
 
+        // Add click event to switch scenes
+        templateBox.setOnMouseClicked(event -> {
+            System.out.println("Hi");
+            Stage stage = (Stage) templateBox.getScene().getWindow();
+            SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
+        });
+
         return templateBox;
     }
+
 
 
     // Method to edit template

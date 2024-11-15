@@ -3,6 +3,7 @@ package brain.brainstormer.controller;
 import brain.brainstormer.chess.ChessClient;
 import brain.brainstormer.components.essentials.GameComponent;
 import brain.brainstormer.components.essentials.TemplateComponent;
+import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -28,23 +29,26 @@ public class HomeController {
     private Button logoutButton;
     @FXML
     private VBox mainContentArea;
+    @FXML
+    private VBox sidebarArea;
 
     @FXML
     private void initialize() {
         String username = SessionManager.getInstance().getUsername();
         welcomeLabel.setText("Hello, " + username + "!");
 
-        templatesButton.setOnAction(event -> loadTemplatesView());
-        networkButton.setOnAction(event -> loadNetwork());
-        gamesButton.setOnAction(event -> loadGames());
+        homeSideBar();
 
-        addButton.setOnAction(event -> showAddTemplateDialog());
-        logoutButton.setOnAction(event -> logout());
+
+
+
     }
 
     private void logout() {
         System.out.println("logout");
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
         SessionManager.getInstance().clearSession();
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/hello-view.fxml", true);
     }
 
     private void loadTemplatesView() {
@@ -92,5 +96,42 @@ public class HomeController {
         System.out.println("Games button clicked!");
         mainContentArea.getChildren().clear();
         gameComponent.loadGameView(mainContentArea);
+    }
+
+
+    // Method to clear the main content area and set up the standard sidebar
+    private void homeSideBar() {
+        // Clear sidebar and add standard buttons
+        sidebarArea.getChildren().clear();
+
+        VBox buttonContainer = new VBox(10);
+        buttonContainer.setStyle("-fx-padding: 40 0;");
+
+        Button templatesButton = new Button("Templates");
+        templatesButton.setId("templatesButton"); // Assign fx:id programmatically
+        templatesButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;");
+
+        Button networkButton = new Button("Network");
+        networkButton.setId("networkButton"); // Assign fx:id programmatically
+        networkButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;");
+
+        Button gamesButton = new Button("Games");
+        gamesButton.setId("gamesButton"); // Assign fx:id programmatically
+        gamesButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-font-size: 16px; -fx-padding: 10 0; -fx-border-color: #B0B0B0; -fx-border-width: 0 0 1 0; -fx-border-style: solid; -fx-pref-width: 280px; -fx-alignment: CENTER_LEFT;");
+
+        // Add buttons to the container
+        buttonContainer.getChildren().addAll(templatesButton, networkButton, gamesButton);
+
+        // Add the container to the sidebar
+        sidebarArea.getChildren().add(buttonContainer);
+
+        templatesButton.setOnAction(event -> loadTemplatesView());
+        networkButton.setOnAction(event -> loadNetwork());
+        gamesButton.setOnAction(event -> loadGames());
+
+        addButton.setOnAction(event -> showAddTemplateDialog());
+        logoutButton.setOnAction(event -> logout());
+
+
     }
 }
