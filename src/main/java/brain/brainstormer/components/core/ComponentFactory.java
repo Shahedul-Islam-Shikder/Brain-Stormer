@@ -59,6 +59,7 @@ public class ComponentFactory {
                 String dateString = config.getString("selectedDate");
                 LocalDate selectedDate = dateString != null && !dateString.isEmpty() ? LocalDate.parse(dateString) : null;
                 return new DatePickerComponent(id, type, description != null ? description : "No description", selectedDate);
+
             case "heading":
                 if (config == null) {
                     System.out.println("Error: Config document is missing for heading component.");
@@ -71,6 +72,14 @@ public class ComponentFactory {
             case "line_breaker":
                 return new LineBreakerComponent(id, description != null ? description : "No description");
 
+            case "link":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for link component.");
+                    return null;
+                }
+                String linkText = config.getString("linkText");
+                String url = config.getString("url");
+                return new LinkComponent(id, description, linkText != null ? linkText : "Open Link", url != null ? url : "");
 
             default:
                 System.out.println("Component type not recognized: " + type);

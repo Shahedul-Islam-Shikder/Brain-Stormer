@@ -9,12 +9,12 @@
     -fx-font-size: 14px;
     -fx-control-inner-background: #121212; /* Dark background */
     -fx-text-fill: #ffffff; /* White text */
-    -fx-border-color: rgba(0, 0, 0, 0.7); /* Custom border color */
+    -fx-border-color: transparent; /* Remove border */
     -fx-border-radius: 5px;
 
 }
 
 /* Style for TextArea hover */
 .text-area:hover {
-    -fx-border-color: #ffffff; /* Border color change on hover */
+    -fx-border-color: transparent; /* Keep border transparent on hover */
 }

@@ -63,6 +63,15 @@ public class ComponentSeeder {
                         .append("config", new Document()
                                 .append("description", "A simple line to separate sections"))
                         .append("createdAt", currentTimestamp)
+                        .append("lastUpdated", currentTimestamp),
+
+                new Document()
+                        .append("type", "link")
+                        .append("config", new Document()
+                                .append("linkText", "Open Documentation")
+                                .append("url", "https://example.com")
+                                .append("description", "A link to an external resource"))
+                        .append("createdAt", currentTimestamp)
                         .append("lastUpdated", currentTimestamp)
         );
 

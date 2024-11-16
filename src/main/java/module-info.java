@@ -16,6 +16,8 @@ module brain.brainstormer {
     requires jBCrypt;
     requires chesslib;
 
+    requires java.desktop;
+
     opens brain.brainstormer to javafx.fxml;
     exports brain.brainstormer;
 
