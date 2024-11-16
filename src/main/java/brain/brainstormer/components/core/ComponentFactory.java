@@ -81,6 +81,14 @@ public class ComponentFactory {
                 String url = config.getString("url");
                 return new LinkComponent(id, description, linkText != null ? linkText : "Open Link", url != null ? url : "");
 
+            case "code_snippet":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for code snippet component.");
+                    return null;
+                }
+                String codeContent = config.getString("code");
+                return new CodeSnippetComponent(id, description != null ? description : "Code Snippet", codeContent != null ? codeContent : "");
+
             default:
                 System.out.println("Component type not recognized: " + type);
                 return null;

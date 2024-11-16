@@ -72,6 +72,14 @@ public class ComponentSeeder {
                                 .append("url", "https://example.com")
                                 .append("description", "A link to an external resource"))
                         .append("createdAt", currentTimestamp)
+                        .append("lastUpdated", currentTimestamp),
+
+                new Document()
+                        .append("type", "code_snippet")
+                        .append("config", new Document()
+                                .append("code", "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }")
+                                .append("description", "A simple Java HelloWorld program"))
+                        .append("createdAt", currentTimestamp)
                         .append("lastUpdated", currentTimestamp)
         );
 

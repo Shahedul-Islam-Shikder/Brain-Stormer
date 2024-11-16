@@ -17,6 +17,7 @@ module brain.brainstormer {
     requires chesslib;
 
     requires java.desktop;
+    requires org.fxmisc.richtext;
 
     opens brain.brainstormer to javafx.fxml;
     exports brain.brainstormer;
