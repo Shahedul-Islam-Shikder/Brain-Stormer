@@ -33,9 +33,6 @@ public class TemplateService {
         templatesCollection.insertOne(template);
     }
 
-
-
-
     public Document getTemplateById(String templateId) {
         try {
             return templatesCollection.find(Filters.eq("_id", new ObjectId(templateId))).first();

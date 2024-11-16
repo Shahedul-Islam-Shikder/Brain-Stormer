@@ -100,6 +100,7 @@ public class HomeController {
 
             if (!name.isEmpty() && !description.isEmpty()) {
                 templateComponent.addTemplate(name, description);
+                loadTemplatesView();
                 dialog.close();
             } else {
                 System.out.println("Both fields are required.");

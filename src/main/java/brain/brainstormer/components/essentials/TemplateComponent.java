@@ -53,6 +53,21 @@ public class TemplateComponent {
 
         Button deleteButton = new Button("Delete");
         deleteButton.setStyle("-fx-background-color: #B22222; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 12px;");
+        deleteButton.setOnAction(e ->{
+
+            //gets template ID
+            String templateId = template.getObjectId("_id").toHexString();
+
+            //for testing purpose
+            System.out.println(templateId);
+
+            //deletes template from DB
+            templateService.deleteTemplate(templateId);
+
+            //refreshes the main content area
+            VBox parentContainer = (VBox) templateBox.getParent();
+            loadTemplatesView(parentContainer);
+        });
 
         templateBox.getChildren().addAll(textContainer, spacer, deleteButton);
 
