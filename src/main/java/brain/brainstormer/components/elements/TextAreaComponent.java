@@ -1,93 +1,51 @@
 package brain.brainstormer.components.elements;
 
-import brain.brainstormer.service.ComponentService;
-import javafx.scene.control.Control;
+import brain.brainstormer.components.core.CoreComponent;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
 import org.bson.Document;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class TextAreaComponent extends Components {
-    private String initialText;
+public class TextAreaComponent extends CoreComponent {
+    private String text;
     private int rows;
 
-    private Timer debounceTimer; // Timer for debouncing
-
-    // Constructor
-    public TextAreaComponent(String id, String name, String description, String initialText, int rows) {
-        super(id, name, description);
-        this.initialText = initialText != null ? initialText : ""; // Default to empty string if null
-        this.rows = rows > 0 ? rows : 5; // Default to 5 if rows <= 0
+    public TextAreaComponent(String id, String description, String text, int rows) {
+        super(id, "textarea", description);
+        this.text = text != null ? text : "";
+        this.rows = rows > 0 ? rows : 5;
     }
 
     @Override
-    public Control render() {
-        TextArea textArea = new TextArea(initialText);   // Create JavaFX TextArea with initial text
-        textArea.setPrefRowCount(rows);                  // Set the number of visible rows
-        textArea.setWrapText(true);                      // Enable text wrapping
+    public Node render() {
+        VBox container = new VBox(5);
+        container.getStyleClass().add("vbox-container");  // Apply container style
 
-        // Apply modern styling
-        textArea.setStyle(
-                "-fx-control-inner-background: rgba(0, 0, 0, 0.7);" + // Semi-transparent input area
-                        "-fx-background-color: rgba(0, 0, 0, 0.5);" +         // Semi-transparent border area
-                        "-fx-text-fill: #FFFFFF;" +                           // White text
-                        "-fx-border-color: #666666;" +                       // Subtle gray border
-                        "-fx-border-radius: 8px;" +                          // Rounded corners
-                        "-fx-font-size: 14px;"                            // Font size
+        TextArea textArea = new TextArea(text);
+        textArea.setPrefRowCount(rows);
+        textArea.setWrapText(true);
+        textArea.getStyleClass().add("text-area");  // Apply TextArea style
 
-        );
-
-        // Add a listener to track changes in the text with debouncing
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            initialText = newValue; // Update the initialText field dynamically
-            debounceSave(ComponentService.getInstance(), getId());
+            text = newValue;
+            saveToDatabase();
         });
 
-        return textArea;
+        container.getChildren().add(textArea);
+        return container;
     }
 
-    // Debounced save to database
-    private void debounceSave(ComponentService componentService, String templateId) {
-        if (debounceTimer != null) {
-            debounceTimer.cancel(); // Cancel any previous scheduled task
-        }
-
-        debounceTimer = new Timer();
-        debounceTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                saveToDatabase(componentService, templateId);
-            }
-        }, 500); // Delay in milliseconds (e.g., 500ms)
+    public Document toDocument() {
+        return new Document("_id", getId())
+                .append("type", "textarea")
+                .append("config", new Document("text", text)
+                        .append("description", getDescription()))
+                .append("createdAt", "2024-11-16T08:00:00Z")
+                .append("lastUpdated", "2024-11-16T09:00:00Z");
     }
 
-    public void saveToDatabase(ComponentService componentService, String templateId) {
-        // Create a MongoDB document for this component
-        Document componentDocument = new Document("id", getId())
-                .append("name", getName())
-                .append("description", getDescription())
-                .append("initialText", initialText)
-                .append("rows", rows);
-
-        // Update the component in the database
-        componentService.updateComponentInTemplate(templateId, getId(), componentDocument);
-    }
-
-    // Getters and Setters
-    public String getInitialText() {
-        return initialText;
-    }
-
-    public void setInitialText(String initialText) {
-        this.initialText = initialText;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public void setRows(int rows) {
-        this.rows = rows > 0 ? rows : 5; // Ensure rows are positive
+    private void saveToDatabase() {
+        System.out.println("Saving text to database: " + text);
     }
 }

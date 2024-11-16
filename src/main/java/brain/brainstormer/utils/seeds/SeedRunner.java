@@ -14,5 +14,7 @@ public class SeedRunner {
 
         // Close the database connection after seeding
         DatabaseConnection.getInstance().close();
+
+        System.out.println("Seeding complete.");
     }
 }

@@ -1,0 +1,29 @@
+/* Container style */
+.hbox-container {
+    -fx-background-color: #121212;
+    -fx-padding: 10px;
+}
+
+/* Label style */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffffff; /* White text color */
+    -fx-font-weight: bold;
+}
+
+/* Checkbox style */
+.check-box {
+    -fx-background-color: transparent;
+    -fx-border-color: #ffffff; /* White border */
+    -fx-border-radius: 3px;
+    -fx-padding: 5px;
+    -fx-text-fill: #ffffff;
+}
+
+.check-box:selected {
+    -fx-mark-color: #2a9df4; /* Custom color for selected check */
+}
+
+.check-box:hover {
+    -fx-border-color: #2a9df4; /* Change border color on hover */
+}

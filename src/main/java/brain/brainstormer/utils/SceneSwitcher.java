@@ -16,13 +16,19 @@ public class SceneSwitcher {
             FXMLLoader loader = new FXMLLoader(SceneSwitcher.class.getResource(fxmlPath));
             Parent root = loader.load();
 
+            // Create a new scene and add stylesheets
+            Scene newScene = new Scene(root);
+            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/checkbox.css").toExternalForm());
+            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/textarea.css").toExternalForm());
+            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/datepicker.css").toExternalForm());
+
+
             // Set the new scene on the provided stage
-            stage.setScene(new Scene(root));
+            stage.setScene(newScene);
 
             stage.setResizable(true);
             // Set the stage to maximized if specified
             stage.setMaximized(maximize);
-
 
             stage.show();
         } catch (IOException e) {

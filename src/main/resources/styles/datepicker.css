@@ -1,0 +1,24 @@
+/* styles/datepicker.css */
+.date-picker {
+    -fx-background-color: #13294B; /* Midnight blue background */
+    -fx-text-fill: #E0E0E0; /* Light text color */
+    -fx-font-size: 14px;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #1F3A5B; /* Slightly lighter shade for buttons */
+}
+
+.date-picker:hover {
+    -fx-background-color: #1E3550; /* Slightly brighter blue on hover */
+}
+
+.date-picker-popup {
+    -fx-background-color: #13294B;
+    -fx-text-fill: #E0E0E0;
+}
+
+.date-picker .text-field {
+    -fx-control-inner-background: #13294B;
+    -fx-prompt-text-fill: #B0B0B0; /* Dimmed prompt text */
+}

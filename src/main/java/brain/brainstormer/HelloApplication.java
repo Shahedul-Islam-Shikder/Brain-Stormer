@@ -15,10 +15,17 @@ public class HelloApplication extends Application {
     }
 
     // Utility method to load scenes with specific dimensions and window settings
+    // Utility method to load scenes with specific dimensions and window settings
     private void loadScene(Stage stage, String fxmlFile, String title, int width, int height, boolean maximize) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fxmlFile));
         Scene scene = new Scene(fxmlLoader.load(), width, height);
         stage.setTitle(title);
+
+
+
+
+
+
         stage.setScene(scene);
 
         // Set stage to maximized if specified, otherwise set preferred size
@@ -31,6 +38,7 @@ public class HelloApplication extends Application {
 
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch();
