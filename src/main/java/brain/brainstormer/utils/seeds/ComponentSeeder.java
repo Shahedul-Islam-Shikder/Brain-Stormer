@@ -34,7 +34,7 @@ public class ComponentSeeder {
                         .append("lastUpdated", currentTimestamp),
 
                 new Document()
-                        .append("type", "textfield")
+                        .append("type", "textarea")
                         .append("config", new Document()
                                 .append("text", "")
                                 .append("description", "A text field for notes or inputs"))
