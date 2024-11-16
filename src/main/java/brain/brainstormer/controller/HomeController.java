@@ -7,10 +7,7 @@ import brain.brainstormer.utils.SessionManager;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -82,7 +79,7 @@ public class HomeController {
         descLabel.setStyle("-fx-text-fill: #f7f5f5");
         TextArea descInput = new TextArea();
         descInput.setPromptText("Enter Description");
-        descInput.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-pref-height: 180px; fx-max-height: 180px; " +
+        descInput.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-pref-height: 180px; -fx-max-height: 180px; " +
                 "-fx-background-radius: 10; -fx-border-radius: 0;" + " -fx-padding: 10; -fx-background-color: #333333;" +
                 " -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777; -fx-control-inner-background: #333333;" +
                 "-fx-prompt-text-fill: #777777;" + "-fx-border-color: transparent; -fx-focus-color: transparent; " +
@@ -103,6 +100,7 @@ public class HomeController {
                 loadTemplatesView();
                 dialog.close();
             } else {
+                LoginController.showAlert("Field Empty","Both field must be used.");
                 System.out.println("Both fields are required.");
             }
         });

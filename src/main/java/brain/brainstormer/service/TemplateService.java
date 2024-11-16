@@ -50,4 +50,11 @@ public class TemplateService {
         templatesCollection.deleteOne(Filters.eq("_id", new org.bson.types.ObjectId(templateId)));
     }
 
+    public void updateTemplate(String templateId, String name, String description) {
+        templatesCollection.updateOne(
+                Filters.eq("_id", new ObjectId(templateId)),
+                new Document("$set", new Document("name", name).append("description", description))
+        );
+    }
+
 }
