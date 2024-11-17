@@ -51,6 +51,7 @@ public class TemplateService {
     }
 
     public void updateTemplate(String templateId, String name, String description) {
+        System.out.println("Attempting to update template with ID: " + templateId);
         templatesCollection.updateOne(
                 Filters.eq("_id", new ObjectId(templateId)),
                 new Document("$set", new Document("name", name).append("description", description))

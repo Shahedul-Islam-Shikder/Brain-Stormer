@@ -4,6 +4,7 @@ import brain.brainstormer.components.essentials.GameComponent;
 import brain.brainstormer.components.essentials.TemplateComponent;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.utils.StyleUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -69,28 +70,21 @@ public class HomeController {
         dialog.initModality(Modality.APPLICATION_MODAL);
 
         Label nameLabel = new Label("Template Name:");
-        nameLabel.setStyle("-fx-text-fill: #f7f5f5");
+        nameLabel.getStyleClass().add("label-text");
+
         TextField nameInput = new TextField();
         nameInput.setPromptText("Enter Template name");
-        nameInput.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-background-radius: 10; -fx-border-radius: 10;" +
-                " -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;");
+        nameInput.getStyleClass().add("input-field");
 
         Label descLabel = new Label("Description:");
-        descLabel.setStyle("-fx-text-fill: #f7f5f5");
+        descLabel.getStyleClass().add("label-text");
+
         TextArea descInput = new TextArea();
         descInput.setPromptText("Enter Description");
-        descInput.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-pref-height: 180px; -fx-max-height: 180px; " +
-                "-fx-background-radius: 10; -fx-border-radius: 0;" + " -fx-padding: 10; -fx-background-color: #333333;" +
-                " -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777; -fx-control-inner-background: #333333;" +
-                "-fx-prompt-text-fill: #777777;" + "-fx-border-color: transparent; -fx-focus-color: transparent; " +
-                "-fx-faint-focus-color: transparent; -fx-effect: none;");
-        descInput.setWrapText(true);
-        descInput.setPrefRowCount(6);
-
-
+        descInput.getStyleClass().add("text-area");
 
         Button saveButton = new Button("Add Template");
-        saveButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
+        saveButton.getStyleClass().add("button-primary");
         saveButton.setOnAction(e -> {
             String name = nameInput.getText().trim();
             String description = descInput.getText().trim();
@@ -100,15 +94,20 @@ public class HomeController {
                 loadTemplatesView();
                 dialog.close();
             } else {
-                LoginController.showAlert("Field Empty","Both field must be used.");
-                System.out.println("Both fields are required.");
+                LoginController.showAlert("Field Empty", "Both fields must be used.");
             }
         });
+
         HBox saveButtonCentre = new HBox(saveButton);
         saveButtonCentre.setAlignment(Pos.CENTER);
+
         VBox layout = new VBox(10, nameLabel, nameInput, descLabel, descInput, saveButtonCentre);
-        layout.setStyle("-fx-padding: 10; -fx-background-color: #121212");
-        dialog.setScene(new Scene(layout));
+        layout.getStyleClass().add("container");
+
+        Scene scene = new Scene(layout);
+        StyleUtil.applyStylesheet(scene);
+
+        dialog.setScene(scene);
         dialog.show();
     }
 
