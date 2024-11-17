@@ -8,6 +8,7 @@ public class ChessClient {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private String playerRole;
 
     public ChessClient(String serverAddress, int port) {
         try {
@@ -20,27 +21,67 @@ public class ChessClient {
         }
     }
 
-
     public void start() {
         try {
-            System.out.println(in.readLine()); // Server greeting
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("Enter room code or type 'new' to create a room:");
+
+            // Set username for chat identification
+            System.out.print("Enter your username: ");
+            String username = reader.readLine();
+            out.println(username);  // Send username to server
+
+            // Room Code and Mode Setup
+            System.out.print("Enter room code or type 'new' to create a room: ");
             String roomCode = reader.readLine();
-            out.println(roomCode);
-            System.out.println("Server: " + in.readLine()); // Confirmation of room
+            out.println(roomCode);  // Send room code to server
+
+            System.out.println(in.readLine()); // Room creation/join confirmation
+            playerRole = in.readLine(); // Receive role (White, Black, or Spectator)
+            System.out.println("You are playing as: " + playerRole);
+
+            // Start a thread to listen for incoming messages
+            new Thread(this::listenForMessages).start();
+
+            // Handle user input for moves or chat
+            while (true) {
+                System.out.print("Type your move or chat message: ");
+                String message = reader.readLine();
+
+                // If the message starts with "CHAT:", send it as a chat message
+                if (message.startsWith("CHAT:")) {
+                    out.println(message);
+                } else if (playerRole.equals("White") || playerRole.equals("Black")) {
+                    // If the user is a player, send it as a move
+                    out.println(message);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-
-    public void sendMoveToServer(String move) throws IOException {
-        out.println(move); // Send the move string directly to the server
+    private void listenForMessages() {
+        try {
+            String message;
+            while ((message = in.readLine()) != null) {
+                if (message.startsWith("CHAT:")) {
+                    // Display chat message
+                    System.out.println(message.substring(5)); // Remove "CHAT:" prefix and display
+                } else {
+                    // Display move or system message
+                    System.out.println("Server: " + message);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String receiveMoveFromServer() throws IOException {
-        return in.readLine();
+    public String getPlayerRole() {
+        return playerRole;
+    }
+
+    public void close() throws IOException {
+        socket.close();
     }
 }

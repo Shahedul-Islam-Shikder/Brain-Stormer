@@ -1,33 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Pos?>
+
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.layout.HBox?>
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="brain.brainstormer.controller.ChessController">
-    <!-- Title and player names at the top -->
+<BorderPane style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.ChessController">
+
+    <!-- Top section with title and player names -->
     <top>
-        <VBox alignment="CENTER" prefWidth="600">
-            <Label text="Chess" style="-fx-font-size: 24px; -fx-font-weight: bold;" alignment="CENTER"/>
-            <HBox alignment="CENTER" spacing="20">
-                <Label fx:id="whitePlayerName" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="White Player"/>
-                <Label text="vs" style="-fx-font-size: 16px;"/>
-                <Label fx:id="blackPlayerName" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Black Player"/>
+        <VBox alignment="CENTER" spacing="10">
+            <Label alignment="CENTER" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" text="Chess" />
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="555.0" spacing="20">
+                <!-- White player info -->
+                <VBox prefHeight="47.0" prefWidth="260.0" style="-fx-background-color: red; -fx-padding: 5; -fx-border-radius: 5; -fx-background-radius: 5;">
+                    <Label fx:id="whitePlayerNameLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="Mosabbir76" />
+                    <Label fx:id="whitePlayerTimeLabel" style="-fx-font-size: 12px; -fx-text-fill: white;" text="Time: 4:25" />
+                </VBox>
+
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="vs" />
+
+                <!-- Black player info -->
+                <VBox alignment="TOP_RIGHT" prefHeight="47.0" prefWidth="260.0" style="-fx-background-color: #EEEEEE; -fx-padding: 5; -fx-border-radius: 5; -fx-background-radius: 5;">
+                    <Label fx:id="blackPlayerNameLabel" prefHeight="20.0" prefWidth="68.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: black;" text="Mew1212" />
+                    <Label fx:id="blackPlayerTimeLabel" style="-fx-font-size: 12px; -fx-text-fill: black;" text="Time: 4:05" />
+                </VBox>
             </HBox>
-            <Label fx:id="roomCodeLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="Room Code: 123456" alignment="CENTER"/>
-            <Label fx:id="waitingLabel" style="-fx-font-size: 14px; -fx-text-fill: gray;" text="Waiting for another player..." alignment="CENTER"/>
         </VBox>
     </top>
 
     <!-- Centered chessboard -->
     <center>
-        <VBox alignment="CENTER" prefWidth="600" prefHeight="600">
-            <GridPane fx:id="chessBoard" alignment="CENTER" hgap="0" vgap="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-                <!-- Cells will be added dynamically in the controller -->
-            </GridPane>
+        <VBox alignment="CENTER" prefHeight="600" prefWidth="600">
+            <GridPane fx:id="chessBoard" alignment="CENTER" hgap="0" vgap="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
         </VBox>
     </center>
+
+    <!-- Right side panel with move history and controls -->
+    <right>
+        <VBox alignment="TOP_LEFT" prefHeight="581.0" prefWidth="282.0" spacing="10" style="-fx-padding: 10; -fx-background-color: #333333; -fx-border-radius: 10; -fx-background-radius: 10;">
+            <!-- Room Code and Spectator Status -->
+            <Label fx:id="roomCodeLabel" style="-fx-font-size: 14px; -fx-text-fill: white; -fx-background-color: GREEN;" text="Room: 12256" />
+            <Label fx:id="spectatorStatusLabel" prefHeight="27.0" prefWidth="178.0" text="Spectator: 0" textFill="WHITE" wrapText="true" />
+         <Label prefHeight="18.0" prefWidth="372.0" text="Waiting for other Players..." textFill="#eeeeee" />
+
+                  <!-- Move List -->
+            <TextArea fx:id="moveHistoryArea" editable="false" prefHeight="300" style="-fx-font-size: 14px; -fx-text-fill: white; -fx-control-inner-background: #2A2A2A;" wrapText="true" />
+
+                  <!-- Previous and Next buttons for move navigation -->
+<!--            onMouseClicked="#onPreviousMove" onMouseClicked="#onNextMove"-->
+            <HBox alignment="CENTER" spacing="10">
+                <Label prefHeight="30.0" prefWidth="92.0" style="-fx-font-size: 14px; -fx-background-color: #13294B; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 5;" text="Previous" />
+                <Label alignment="CENTER" prefHeight="30.0" prefWidth="92.0" style="-fx-font-size: 14px; -fx-background-color: #13294B; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 5;" text="Next" />
+            </HBox>
+         <BorderPane.margin>
+            <Insets bottom="20.0" right="10.0" top="20.0" />
+         </BorderPane.margin>
+        </VBox>
+    </right>
 </BorderPane>
