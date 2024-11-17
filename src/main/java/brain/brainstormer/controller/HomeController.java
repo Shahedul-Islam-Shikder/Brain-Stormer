@@ -54,7 +54,7 @@ public class HomeController {
         logoutButton.setOnAction(event -> logout());
     }
 
-
+    //TODO make style moduler && seperate the gui and the logic
 
     private void loadTemplatesView() {
         mainContentArea.getChildren().clear();

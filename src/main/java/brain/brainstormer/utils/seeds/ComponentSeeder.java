@@ -14,6 +14,7 @@ public class ComponentSeeder {
     public ComponentSeeder(MongoDatabase database) {
         this.componentCollection = database.getCollection("components");
     }
+    //TODO add name ;
 
     public void seedComponents() {
         // Clean the existing components collection

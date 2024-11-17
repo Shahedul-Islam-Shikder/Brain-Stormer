@@ -22,6 +22,7 @@ public class SceneSwitcher {
             newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/textarea.css").toExternalForm());
             newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/datepicker.css").toExternalForm());
             newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/code.css").toExternalForm());
+            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/dialog.css").toExternalForm());
 
 
             // Set the new scene on the provided stage
