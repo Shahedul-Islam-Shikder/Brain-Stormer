@@ -6,7 +6,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+
 <BorderPane style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.ChessController">
+=======
+<BorderPane style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.ChessController">
+
     <!-- Title and player names at the top -->
     <top>
         <VBox alignment="CENTER" prefWidth="600">
@@ -16,8 +20,13 @@
                 <Label style="-fx-font-size: 16px;" text="vs" textFill="WHITE" />
                 <Label fx:id="blackPlayerName" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Black Player" textFill="WHITE" />
             </HBox>
+
             <Label fx:id="roomCodeLabel" alignment="CENTER" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: green;" />
             <Label fx:id="waitingLabel" alignment="CENTER" style="-fx-font-size: 14px; -fx-text-fill: white;" text="Waiting for another player..." />
+
+            <Label fx:id="roomCodeLabel" alignment="CENTER" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Room Code: 123456" textFill="#7f9bf2" />
+            <Label fx:id="waitingLabel" alignment="CENTER" style="-fx-font-size: 14px; -fx-text-fill: gray;" text="Waiting for another player..." />
+
         </VBox>
     </top>
 

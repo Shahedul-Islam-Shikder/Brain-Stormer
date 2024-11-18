@@ -122,7 +122,7 @@ public class ChessController {
 
         for (Square square : Square.values()) {
             if (square == Square.NONE) continue;
-
+            waitingLabel.setText("");
             StackPane cell = squareMap.get(square);
             if (cell != null) {
                 cell.getChildren().clear();

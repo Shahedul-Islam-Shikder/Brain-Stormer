@@ -4,6 +4,7 @@ import brain.brainstormer.controller.LoginController;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.utils.StyleUtil;
 import brain.brainstormer.utils.TemplateData;
 import com.mongodb.client.model.Filters;
 import javafx.geometry.Pos;
@@ -51,17 +52,20 @@ public class TemplateComponent {
         VBox textContainer = new VBox(5);
 
         Label nameLabel = new Label(template.getString("name"));
-        nameLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;");
+        nameLabel.getStyleClass().add("label-text");
+
 
         Label descriptionLabel = new Label(template.getString("description"));
-        descriptionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #B0B0B0;");
+        descriptionLabel.getStyleClass().add("label-text");
+
         textContainer.getChildren().addAll(nameLabel, descriptionLabel);
+        StyleUtil.applyStylesheet(textContainer);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button deleteButton = new Button("Delete");
-        deleteButton.setStyle("-fx-background-color: #B22222; -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 12px;");
+        deleteButton.getStyleClass().add("button-danger");
         deleteButton.setOnAction(e ->{
 
             //gets template ID
@@ -79,8 +83,7 @@ public class TemplateComponent {
         });
 
         Button editButton = new Button("Edit");
-        editButton.setStyle("-fx-background-color:  #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10; " +
-                "-fx-font-size: 12px;-fx-pref-height: 20px; -fx-pref-width: 50px");
+        editButton.getStyleClass().add("button-secondary");
         editButton.setOnAction(ed ->{
             Stage dialog = new Stage();
             dialog.setMinHeight(400);
@@ -90,28 +93,28 @@ public class TemplateComponent {
             dialog.initModality(Modality.APPLICATION_MODAL);
 
             Label nameFieldLabel = new Label("Template Name:");
-            nameFieldLabel.setStyle("-fx-text-fill: #f7f5f5");
+            nameFieldLabel.getStyleClass().add("label-text");
+
             TextField nameInput2 = new TextField();
             String currentName = nameLabel.getText();
             nameInput2.setText(currentName);
-            nameInput2.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-background-radius: 10; -fx-border-radius: 10;" +
-                    " -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;");
+            nameInput2.getStyleClass().add("input-field");
 
             Label descLabel = new Label("Description:");
-            descLabel.setStyle("-fx-text-fill: #f7f5f5");
+            descLabel.getStyleClass().add("label-text");
+
+
             TextArea descInput2 = new TextArea();
             String currentDescription = descriptionLabel.getText();
             descInput2.setText(currentDescription);
-            descInput2.setStyle("-fx-pref-width: 380px; -fx-max-width: 380px; -fx-pref-height: 180px; -fx-max-height: 180px; " +
-                    "-fx-background-radius: 10; -fx-border-radius: 0;" + " -fx-padding: 10; -fx-background-color: #333333;" +
-                    " -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777; -fx-control-inner-background: #333333;" +
-                    "-fx-prompt-text-fill: #777777;" + "-fx-border-color: transparent; -fx-focus-color: transparent; " +
-                    "-fx-faint-focus-color: transparent; -fx-effect: none;");
+            descInput2.getStyleClass().add("text-area");
+//
             descInput2.setWrapText(true);
             descInput2.setPrefRowCount(6);
 
             Button saveButton = new Button("Save Changes");
-            saveButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
+            saveButton.getStyleClass().add("button-primary");
+
             saveButton.setOnAction(e -> {
                 String name = nameInput2.getText().trim();
                 String description = descInput2.getText().trim();
@@ -127,15 +130,23 @@ public class TemplateComponent {
                     System.out.println("Both fields are required.");
                 }
             });
+
             HBox saveButtonCentre = new HBox(saveButton);
             saveButtonCentre.setAlignment(Pos.CENTER);
+
             VBox layout = new VBox(10, nameFieldLabel, nameInput2, descLabel, descInput2, saveButtonCentre);
-            layout.setStyle("-fx-padding: 10; -fx-background-color: #121212");
-            dialog.setScene(new Scene(layout));
+            layout.getStyleClass().add("container");
+
+
+            Scene scene = new Scene(layout);
+            StyleUtil.applyStylesheet(scene);
+
+            dialog.setScene(scene);
             dialog.show();
         });
 
-        templateBox.getChildren().addAll(textContainer, spacer,editButton, deleteButton);
+        templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
+        StyleUtil.applyStylesheet(templateBox);
 
         // Set the template ID and switch scenes
         templateBox.setOnMouseClicked(event -> {
