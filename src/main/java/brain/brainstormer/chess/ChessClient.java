@@ -20,21 +20,14 @@ public class ChessClient {
         }
     }
 
-
-    public void start() {
+    public void start(String roomCode) {
         try {
-            System.out.println(in.readLine()); // Server greeting
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("Enter room code or type 'new' to create a room:");
-            String roomCode = reader.readLine();
-            out.println(roomCode);
+            out.println(roomCode); // Send the room code or "new" to create a room
             System.out.println("Server: " + in.readLine()); // Confirmation of room
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
     public void sendMoveToServer(String move) throws IOException {
         out.println(move); // Send the move string directly to the server

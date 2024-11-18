@@ -3,7 +3,7 @@ package brain.brainstormer.controller;
 import brain.brainstormer.chess.ChessClient;
 import brain.brainstormer.chess.ChessLogic;
 import brain.brainstormer.utilGui.Dialogs;
-import brain.brainstormer.utils.ChessBoardUtils;
+import brain.brainstormer.utils.Chessutils;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
@@ -30,10 +30,14 @@ public class ChessController {
     @FXML
     private GridPane chessBoard;
 
+
+
     @FXML
     private Label roomCodeLabel; // Label to display the room code
     @FXML
     private Label waitingLabel;
+
+
 
 
 
@@ -58,28 +62,36 @@ public class ChessController {
 
         // Initialize and start client to connect to server
         chessClient = new ChessClient("localhost", 12345);
-        chessClient.start();
+        String roomCode = Chessutils.roomCode;
+        if (roomCode.isEmpty()) {
+            // Host a new game
+            chessClient.start("new");
+            try {
+                roomCode = chessClient.receiveMoveFromServer(); // Receives the generated room code
+                System.out.println("Hosting room. Code: " + roomCode);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Join an existing room with code
+            chessClient.start(roomCode);
+            System.out.println("Joined room with code: " + roomCode);
+        }
 
-
-        String roomCode = "123456"; // Room code passed from GameComponent
         roomCodeLabel.setText("Room Code: " + roomCode);
 
-        // Wait for another player (this could be dynamically handled with your server logic)
-        waitingLabel.setText("Waiting for another player...");
-
-        // Receive initial role from the server and set isMyTurn accordingly
-
+        // Receive role and assign turn accordingly
         try {
-            playerRole = chessClient.receiveMoveFromServer(); // Assume this returns "White" or "Black"
-            System.out.println("Player role: " + playerRole);
+            playerRole = chessClient.receiveMoveFromServer();
+            System.out.println("Player role received: " + playerRole);
 
-            // Set isMyTurn based on the role received
+            // Set turn based on player role
             isMyTurn = "White".equals(playerRole); // White starts the game
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // Start a new thread to listen for server moves
+        // Start a new thread to listen for moves from the server
         Thread serverListenerThread = new Thread(this::listenForServerMoves);
         serverListenerThread.setDaemon(true);
         serverListenerThread.start();
@@ -114,7 +126,7 @@ public class ChessController {
             StackPane cell = squareMap.get(square);
             if (cell != null) {
                 cell.getChildren().clear();
-                String color = ChessBoardUtils.isLightSquare(square) ? "#f0d9b5" : "#b58863";
+                String color = Chessutils.isLightSquare(square) ? "#f0d9b5" : "#b58863";
                 cell.setStyle("-fx-background-color: " + color + ";");
             }
         }
@@ -139,7 +151,7 @@ public class ChessController {
         for (Square square : Square.values()) {
             if (square == Square.NONE) continue;
 
-            String color = square.equals(checkedKingSquare) ? "red" : (ChessBoardUtils.isLightSquare(square) ? "#f0d9b5" : "#b58863");
+            String color = square.equals(checkedKingSquare) ? "red" : (Chessutils.isLightSquare(square) ? "#f0d9b5" : "#b58863");
             StackPane cell = squareMap.get(square);
             if (cell != null) {
                 cell.setStyle("-fx-background-color: " + color + ";");
@@ -184,51 +196,66 @@ public class ChessController {
     }
 
     private void handleSquareClick(Square square) {
-        if (!isMyTurn) return; // Ensure it's the player's turn
+        if (!isMyTurn || "Spectator".equals(playerRole)) return; // Prevent move if it's not player's turn or if the player is a spectator
 
         Piece piece = chessGame.getBoard().getPiece(square);
 
-        // Check if the player is trying to select their own piece
         if (selectedSquare == null) {
-            if (piece == null || piece == Piece.NONE) return; // Empty square, ignore
-
-            // Determine if the piece belongs to the player
-            boolean isWhitePiece = piece.getPieceSide() == Side.WHITE;
-            if ((playerRole.equals("White") && !isWhitePiece) || (playerRole.equals("Black") && isWhitePiece)) {
-                return; // Block move if piece does not belong to the player
-            }
-
-            // Select square and highlight moves if valid
-            selectedSquare = square;
-            clearHighlights();
-            highlightLegalMoves(selectedSquare);
+            handlePieceSelection(square, piece);
         } else {
-            Piece promotionPiece = null;
+            handleMove(square, piece);
+        }
+    }
 
-            // Check if the move is a promotion move
-            if (chessGame.isPromotionMove(selectedSquare, square)) {
-                promotionPiece = Dialogs.showPromotionDialog(playerRole.equals("White"));
+
+    // Method to handle piece selection
+    private void handlePieceSelection(Square square, Piece piece) {
+        if (piece == null || piece == Piece.NONE) return; // Empty square, ignore
+
+        // Determine if the piece belongs to the player
+        boolean isWhitePiece = piece.getPieceSide() == Side.WHITE;
+        if ((playerRole.equals("White") && !isWhitePiece) || (playerRole.equals("Black") && isWhitePiece)) {
+            System.out.println(playerRole+"fdjfldskjfj");
+            return; // Block move if piece does not belong to the player
+        }
+
+        // Select square and highlight moves if valid
+        selectedSquare = square;
+        clearHighlights();
+        highlightLegalMoves(selectedSquare);
+    }
+
+    // Method to handle the move
+    private void handleMove(Square targetSquare, Piece targetPiece) {
+        Piece promotionPiece = null;
+
+        // Check if the move is a promotion move
+        if (chessGame.isPromotionMove(selectedSquare, targetSquare)) {
+            promotionPiece = Dialogs.showPromotionDialog(playerRole.equals("White"));
+        }
+
+        // Attempt move and update server
+        if (chessGame.makeMove(selectedSquare, targetSquare, promotionPiece)) {
+            refreshBoard();
+            sendMoveToServer(selectedSquare, targetSquare, promotionPiece);
+            isMyTurn = false; // End turn after a move
+        }
+
+        // Reset selection
+        clearHighlights();
+        selectedSquare = null;
+    }
+
+    // Method to send the move to the server, with promotion if applicable
+    private void sendMoveToServer(Square from, Square to, Piece promotionPiece) {
+        try {
+            String moveMessage = from + " " + to;
+            if (promotionPiece != null) {
+                moveMessage += " " + promotionPiece.value(); // Append promotion piece type
             }
-
-            // Attempt move and update server
-            if (chessGame.makeMove(selectedSquare, square, promotionPiece)) {
-                refreshBoard();
-                try {
-                    // Create a message to include promotion piece if it exists
-                    String moveMessage = selectedSquare + " " + square;
-                    if (promotionPiece != null) {
-                        moveMessage += " " + promotionPiece.value(); // Append promotion piece type
-                    }
-                    chessClient.sendMoveToServer(moveMessage); // Send move with promotion info if applicable
-                    isMyTurn = false; // End turn after a move
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Reset selection
-            clearHighlights();
-            selectedSquare = null;
+            chessClient.sendMoveToServer(moveMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -246,16 +273,18 @@ public class ChessController {
                     continue;
                 }
 
-                Move move = parseMove(serverMove); // Parse the move string received from the server
-
-                if (move != null) {
-                    Platform.runLater(() -> {
-                        chessGame.makeMove(move.getFrom(), move.getTo());
-                        refreshBoard();
-                        isMyTurn = true;
-                    });
-                } else {
-                    System.err.println("Failed to parse move from server: " + serverMove);
+                // Only players process moves; spectators observe
+                if (!"Spectator".equals(playerRole)) {
+                    Move move = parseMove(serverMove);
+                    if (move != null) {
+                        Platform.runLater(() -> {
+                            chessGame.makeMove(move.getFrom(), move.getTo());
+                            refreshBoard();
+                            isMyTurn = true;
+                        });
+                    } else {
+                        System.err.println("Failed to parse move from server: " + serverMove);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -263,6 +292,7 @@ public class ChessController {
             }
         }
     }
+
 
 
     private Move parseMove(String moveStr) {

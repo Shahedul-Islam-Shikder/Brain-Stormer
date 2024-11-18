@@ -2,7 +2,8 @@ package brain.brainstormer.utils;
 
 import com.github.bhlangonijr.chesslib.Square;
 
-public class ChessBoardUtils {
+public class Chessutils {
+    public static String roomCode = "";
 
     public static boolean isLightSquare(Square square) {
         // Use the square name (e.g., "A1", "B2") to determine color
