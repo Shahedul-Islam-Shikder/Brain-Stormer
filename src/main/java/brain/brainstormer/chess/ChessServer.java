@@ -91,11 +91,9 @@ public class ChessServer {
         }
     }
 
-    // Make GameRoom a static nested class
-    public static class GameRoom {
+    static class GameRoom {
         private List<Socket> players = new ArrayList<>();
         private String roomCode;
-        private Map<Socket, String> playerRoles = new HashMap<>(); // Store player roles
 
         public GameRoom() {
             this.roomCode = generateRoomCode();
@@ -108,21 +106,8 @@ public class ChessServer {
         public synchronized String addPlayer(Socket player) throws IOException {
             players.add(player);
 
-            String role;
-            if (players.size() == 1) {
-                // Randomly assign "White" or "Black" to the first player
-                role = Math.random() < 0.5 ? "White" : "Black";
-            } else if (players.size() == 2) {
-                // Assign the opposite color to the second player
-                role = (playerRoles.get(players.get(0)).equals("White")) ? "Black" : "White";
-            } else {
-                // All additional players are spectators
-                role = "Spectator";
-            }
-
-            // Store the assigned role for this player in the map
-            playerRoles.put(player, role);
-
+            // Assign role based on the order of connection
+            String role = (players.size() == 1) ? "White" : "Black";
             sendMessage(player, role);
 
             if (players.size() == 1) {
@@ -132,10 +117,6 @@ public class ChessServer {
             return role;
         }
 
-        // Get the role of a specific player
-        public String getPlayerRole(Socket player) {
-            return playerRoles.getOrDefault(player, "Spectator");
-        }
 
         public synchronized int getPlayerCount() {
             return players.size();
@@ -163,7 +144,6 @@ public class ChessServer {
 
         public synchronized void removePlayer(Socket player) {
             players.remove(player);
-            playerRoles.remove(player); // Remove role when player disconnects
         }
 
         private void sendMessage(Socket player, String message) throws IOException {

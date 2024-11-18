@@ -122,7 +122,7 @@ public class ChessController {
 
         for (Square square : Square.values()) {
             if (square == Square.NONE) continue;
-            waitingLabel.setText("");
+
             StackPane cell = squareMap.get(square);
             if (cell != null) {
                 cell.getChildren().clear();
@@ -196,7 +196,7 @@ public class ChessController {
     }
 
     private void handleSquareClick(Square square) {
-        if (!isMyTurn || "Spectator".equals(playerRole)) return; // Prevent move if it's not player's turn or if the player is a spectator
+        if (!isMyTurn) return; // Ensure it's the player's turn
 
         Piece piece = chessGame.getBoard().getPiece(square);
 
@@ -206,7 +206,6 @@ public class ChessController {
             handleMove(square, piece);
         }
     }
-
 
     // Method to handle piece selection
     private void handlePieceSelection(Square square, Piece piece) {
@@ -273,18 +272,16 @@ public class ChessController {
                     continue;
                 }
 
-                // Only players process moves; spectators observe
-                if (!"Spectator".equals(playerRole)) {
-                    Move move = parseMove(serverMove);
-                    if (move != null) {
-                        Platform.runLater(() -> {
-                            chessGame.makeMove(move.getFrom(), move.getTo());
-                            refreshBoard();
-                            isMyTurn = true;
-                        });
-                    } else {
-                        System.err.println("Failed to parse move from server: " + serverMove);
-                    }
+                Move move = parseMove(serverMove); // Parse the move string received from the server
+
+                if (move != null) {
+                    Platform.runLater(() -> {
+                        chessGame.makeMove(move.getFrom(), move.getTo());
+                        refreshBoard();
+                        isMyTurn = true;
+                    });
+                } else {
+                    System.err.println("Failed to parse move from server: " + serverMove);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -292,7 +289,6 @@ public class ChessController {
             }
         }
     }
-
 
 
     private Move parseMove(String moveStr) {
