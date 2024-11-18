@@ -1,7 +1,9 @@
 package brain.brainstormer.components.essentials;
 
 import brain.brainstormer.chess.ChessClient;
+import brain.brainstormer.utils.Chessutils;
 import brain.brainstormer.utils.SceneSwitcher;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -85,15 +87,34 @@ public class GameComponent {
         // Set button actions
         hostButton.setOnAction(e -> {
             System.out.println("Host a Game button clicked!");
-            Stage stage = (Stage) hostButton.getScene().getWindow();
-            SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
+            Chessutils.roomCode = roomCodeField.getText().trim();
+
+            Platform.runLater(() -> {
+
+                Stage stage = (Stage) hostButton.getScene().getWindow();
+                SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
+
+
+            });
+
+
             dialog.close();
+
         });
 
         joinButton.setOnAction(e -> {
             System.out.println("Join a Game button clicked!");
-            Stage stage = (Stage) joinButton.getScene().getWindow();
-            SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
+            Chessutils.roomCode = roomCodeField.getText().trim();
+
+
+
+            Platform.runLater(() -> {
+
+                Stage stage = (Stage) hostButton.getScene().getWindow();
+                SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
+
+
+            });
             dialog.close();
         });
 
