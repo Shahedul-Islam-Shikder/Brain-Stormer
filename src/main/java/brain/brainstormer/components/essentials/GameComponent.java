@@ -2,9 +2,11 @@ package brain.brainstormer.components.essentials;
 
 import brain.brainstormer.chess.ChessClient;
 import brain.brainstormer.utils.SceneSwitcher;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -60,43 +62,51 @@ public class GameComponent {
         Stage dialog = new Stage();
         dialog.setTitle("Game Options");
         dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setResizable(false);
 
-        // Buttons for hosting or joining a game
+        // Label for dialog title
+        Label titleLabel = new Label("What would you like to do?");
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;");
+
+
+        // Host and Join Game buttons
         Button hostButton = new Button("Host a Game");
         Button joinButton = new Button("Join a Game");
 
-        // Set actions for the buttons
+        // Set button styles
+        hostButton.setStyle("-fx-background-color: #1E3A8A; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 20; -fx-border-radius: 10; -fx-background-radius: 10;");
+        joinButton.setStyle("-fx-background-color: #1E3A8A; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 20; -fx-border-radius: 10; -fx-background-radius: 10;");
+
+        // Text field for room code input
+        TextField roomCodeField = new TextField();
+        roomCodeField.setPromptText("Room Code");
+        roomCodeField.setStyle("-fx-background-color: #333333; -fx-text-fill: white; -fx-prompt-text-fill: gray; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10;");
+
+        // Set button actions
         hostButton.setOnAction(e -> {
-            // Host game: Create a new room
             System.out.println("Host a Game button clicked!");
-
-            // Switch scene to chess game
-            Stage stage = (Stage) playButton.getScene().getWindow();
+            Stage stage = (Stage) hostButton.getScene().getWindow();
             SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
-
-            // Close the dialog
             dialog.close();
         });
 
         joinButton.setOnAction(e -> {
-            // Join game: Join a room with a code
-            System.out.println("Host a Game button clicked!");
-
-            // Switch scene to chess game
-            Stage stage = (Stage) playButton.getScene().getWindow();
+            System.out.println("Join a Game button clicked!");
+            Stage stage = (Stage) joinButton.getScene().getWindow();
             SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
-
-            // Close the dialog
             dialog.close();
         });
 
-        // Add buttons to layout
-        VBox layout = new VBox(10, hostButton, joinButton);
-        layout.setStyle("-fx-padding: 10;");
-        dialog.setScene(new Scene(layout));
+        // Layout for buttons and room code field
+        VBox layout = new VBox(15, titleLabel, hostButton, roomCodeField, joinButton);
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-padding: 30; -fx-background-color: #1E1E1E;");
 
-        // Show the dialog
+        // Set scene and show dialog
+        Scene scene = new Scene(layout, 300, 400);
+        dialog.setScene(scene);
         dialog.show();
     }
+
 
 }
