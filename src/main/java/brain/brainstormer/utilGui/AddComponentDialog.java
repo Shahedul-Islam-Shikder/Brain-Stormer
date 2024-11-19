@@ -2,11 +2,11 @@ package brain.brainstormer.utilGui;
 
 import brain.brainstormer.components.core.ComponentFactory;
 import brain.brainstormer.components.core.CoreComponent;
+import brain.brainstormer.components.elements.GrouperComponent;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.service.ComponentService;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
@@ -21,17 +21,27 @@ import java.util.Optional;
 
 public class AddComponentDialog {
 
-    private final String templateId;
+    private final String templateId; // For template-related components
+    private final GrouperComponent grouperComponent; // For Grouper-related components
     private final ComponentService componentService;
     private final ListView<HBox> componentList = new ListView<>();
 
+    // Constructor for adding to a template
     public AddComponentDialog(String templateId, ComponentService componentService) {
         this.templateId = templateId;
+        this.grouperComponent = null; // Not used in this context
+        this.componentService = componentService;
+    }
+
+    // Constructor for adding to a Grouper
+    public AddComponentDialog(GrouperComponent grouperComponent, ComponentService componentService) {
+        this.templateId = null; // Not used in this context
+        this.grouperComponent = grouperComponent;
         this.componentService = componentService;
     }
 
     public void init() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Add Component");
 
         Text headerText = new Text("Add Component");
@@ -60,7 +70,13 @@ public class AddComponentDialog {
             if (selectedBox != null) {
                 Text nameText = (Text) selectedBox.getChildren().get(0);
                 String componentName = nameText.getText();
-                addComponent(componentName);
+
+                // Add component to the appropriate target
+                if (templateId != null) {
+                    addComponentToTemplate(componentName);
+                } else if (grouperComponent != null) {
+                    addComponentToGrouper(componentName);
+                }
             }
         }
     }
@@ -90,7 +106,7 @@ public class AddComponentDialog {
         }
     }
 
-    private void addComponent(String componentName) {
+    private void addComponentToTemplate(String componentName) {
         Document componentData = componentService.getComponentsCollection().find(new Document("type", componentName)).first();
         CoreComponent component = ComponentFactory.createComponent(componentData);
         if (component == null) {
@@ -99,18 +115,47 @@ public class AddComponentDialog {
         }
 
         if (component instanceof Initializable) {
-            // Pass all required parameters to ComponentDialogBox
             ComponentDialogBox dialogBox = new ComponentDialogBox(component, false, componentService, templateId);
             dialogBox.showDialog();
         } else {
-            // Directly add to the database if no initial configuration is needed
             componentService.addComponentToTemplate(templateId, component);
         }
     }
 
+    private void addComponentToGrouper(String componentName) {
+        // Retrieve the component metadata from MongoDB
+        Document componentData = componentService.getComponentsCollection().find(new Document("type", componentName)).first();
+        if (componentData == null) {
+            showError("Component metadata not found for: " + componentName);
+            return;
+        }
+
+        // Create the component using the factory
+        CoreComponent component = ComponentFactory.createComponent(componentData);
+        if (component == null) {
+            showError("Component creation failed for: " + componentName);
+            return;
+        }
+
+        // If the component is Initializable, handle it exclusively through the dialog
+        if (component instanceof Initializable) {
+            ComponentDialogBox dialogBox = new ComponentDialogBox(component, false, componentService, grouperComponent);
+            dialogBox.showDialog();
+            return; // Exit to avoid duplicate addition
+        }
+
+        // Render the component and add it to the Grouper
+        javafx.scene.Node renderedComponent = component.render();
+        grouperComponent.addComponent(renderedComponent);
+
+        // Save the component to the Grouper's database entry
+        componentService.addComponentsToGrouper(grouperComponent.getId(), java.util.List.of(component));
+    }
+
+
 
     private void showError(String message) {
-        Alert alert = new Alert(AlertType.ERROR);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setContentText(message);
         alert.showAndWait();

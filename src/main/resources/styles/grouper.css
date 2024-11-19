@@ -1,0 +1,25 @@
+/* Grouper HBox Style */
+.grouper-hbox {
+    -fx-background-color: #333333;
+    -fx-background-radius: 20px;
+}
+
+/* Grouper VBox Style */
+.grouper-vbox {
+    -fx-background-color: #121212;
+    -fx-background-radius: 20px;
+}
+
+/* Plus Button Style */
+.grouper-plus-button {
+    -fx-background-color: #1E90FF;
+    -fx-background-radius: 10000px;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-cursor: hand;
+}
+
+/* Plus Button Hover Effect */
+.grouper-plus-button:hover {
+    -fx-background-color: #4169E1;
+}

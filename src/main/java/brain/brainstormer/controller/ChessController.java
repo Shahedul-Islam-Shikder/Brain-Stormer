@@ -2,7 +2,7 @@ package brain.brainstormer.controller;
 
 import brain.brainstormer.chess.ChessClient;
 import brain.brainstormer.chess.ChessLogic;
-import brain.brainstormer.utilGui.Dialogs;
+import brain.brainstormer.utilGui.ChessDialogs;
 import brain.brainstormer.utils.Chessutils;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
@@ -230,7 +230,7 @@ public class ChessController {
 
         // Check if the move is a promotion move
         if (chessGame.isPromotionMove(selectedSquare, targetSquare)) {
-            promotionPiece = Dialogs.showPromotionDialog(playerRole.equals("White"));
+            promotionPiece = ChessDialogs.showPromotionDialog(playerRole.equals("White"));
         }
 
         // Attempt move and update server

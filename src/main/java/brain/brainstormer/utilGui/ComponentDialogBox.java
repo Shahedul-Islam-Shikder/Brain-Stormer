@@ -1,6 +1,7 @@
 package brain.brainstormer.utilGui;
 
 import brain.brainstormer.components.core.CoreComponent;
+import brain.brainstormer.components.elements.GrouperComponent;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.service.ComponentService;
 import javafx.geometry.Insets;
@@ -12,16 +13,30 @@ import java.util.Optional;
 
 public class ComponentDialogBox {
 
+
     private final CoreComponent component;
     private final boolean isEditing;
     private final ComponentService componentService;
-    private final String templateId;
+    private final String templateId; // For template-related operations
+    private final GrouperComponent grouperComponent; // For Grouper-related operations
 
+    // Constructor for adding/editing components in a Template
     public ComponentDialogBox(CoreComponent component, boolean isEditing, ComponentService componentService, String templateId) {
         this.component = component;
         this.isEditing = isEditing;
         this.componentService = componentService;
         this.templateId = templateId;
+        this.grouperComponent = null; // Not used in this context
+    }
+
+
+    // Constructor for adding to a Grouper
+    public ComponentDialogBox(CoreComponent component, boolean isEditing, ComponentService componentService, GrouperComponent grouperComponent) {
+        this.component = component;
+        this.isEditing = isEditing;
+        this.componentService = componentService;
+        this.templateId = null; // Not used when adding to Grouper
+        this.grouperComponent = grouperComponent;
     }
 
     public void showDialog() {
@@ -59,14 +74,29 @@ public class ComponentDialogBox {
             if (isEditing) {
                 editComponentInDatabase(componentData);
             } else {
-                addComponentToDatabase(componentData);
+                addComponentToTarget(componentData);
             }
         }
     }
 
-    private void addComponentToDatabase(Document componentData) {
-        System.out.println("Adding component to database: " + componentData.toJson());
-        componentService.addComponentToTemplate(templateId, component);  // Saves the component with initial values
+    private void addComponentToTarget(Document componentData) {
+        if (templateId != null) {
+            // Add to the template
+            System.out.println("Adding component to template: " + componentData.toJson());
+            componentService.addComponentToTemplate(templateId, component); // Saves the component with initial values
+        } else if (grouperComponent != null) {
+            // Add to the Grouper
+            System.out.println("Adding component to Grouper: " + componentData.toJson());
+
+            // Render the component and add to the Grouper's children
+            javafx.scene.Node renderedComponent = component.render();
+            grouperComponent.addComponent(renderedComponent);
+
+            // Save the component to the Grouper's database entry
+            componentService.addComponentsToGrouper(grouperComponent.getId(), java.util.List.of(component));
+        } else {
+            System.err.println("Error: No valid target specified for component addition.");
+        }
     }
 
     private void editComponentInDatabase(Document componentData) {

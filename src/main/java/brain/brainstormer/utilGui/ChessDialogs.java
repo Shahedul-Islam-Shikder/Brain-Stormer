@@ -6,7 +6,7 @@ import javafx.scene.control.ChoiceDialog;
 
 import java.util.Optional;
 
-public class Dialogs {
+public class ChessDialogs {
 
     // Method to show the promotion dialog
     public static Piece showPromotionDialog(boolean isWhite) {

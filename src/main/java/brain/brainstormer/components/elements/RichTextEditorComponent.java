@@ -1,7 +1,6 @@
 package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;

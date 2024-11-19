@@ -95,6 +95,15 @@ public class ComponentFactory {
                 }
                 String htmlContent = config.getString("htmlContent");
                 return new RichTextEditorComponent(id, description != null ? description : "Rich Text Editor", htmlContent);
+            case "h-group":
+            case "v-group":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for grouper component.");
+                    return null;
+                }
+                String alignment = config.getString("alignment");
+                int spacing = config.getInteger("spacing", 10); // Default spacing
+                return new GrouperComponent(id, type, alignment != null ? alignment : "CENTER_LEFT", spacing);
 
 
             default:

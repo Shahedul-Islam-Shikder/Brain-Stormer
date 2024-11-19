@@ -98,7 +98,20 @@ public class ComponentSeeder {
                                                 "</div>")
                                 .append("description", "A fancy rich text editor for stylish content"))
                         .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp)
+                        .append("lastUpdated", currentTimestamp),
+                new Document().append("type", "h-group")
+                        .append("config", new Document("alignment", "CENTER_LEFT"))
+                        .append("children", Arrays.asList())
+                        .append("createdAt", new Document("$currentDate", true))
+                        .append("lastUpdated", new Document("$currentDate", true)),
+                new Document()
+                        .append("type", "v-group")
+                        .append("config", new Document("alignment", "TOP_CENTER"))
+                        .append("children", Arrays.asList())
+                        .append("createdAt", new Document("$currentDate", true))
+                        .append("lastUpdated", new Document("$currentDate", true))
+
+
 
 
         );
