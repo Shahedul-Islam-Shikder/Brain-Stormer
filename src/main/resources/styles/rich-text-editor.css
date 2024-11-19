@@ -1,0 +1,39 @@
+/* Container Style */
+.vbox-container {
+    background-color: #121212; /* Dark background */
+    padding: 10px;
+    border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+/* HTMLEditor Style */
+.rich-text-editor .tool-bar {
+    -fx-background-color: #1c1c1c; /* Dark toolbar background */
+    -fx-border-color: #2e2e2e; /* Subtle border for separation */
+    -fx-border-width: 0 0 1px 0; /* Border at the bottom */
+}
+
+.rich-text-editor .content {
+    -fx-background-color: #121212; /* Match dark theme */
+    -fx-text-fill: #f0f0f0; /* Light text color */
+    -fx-border-color: #2e2e2e; /* Subtle border */
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+.rich-text-editor {
+    -fx-font-family: "Arial", sans-serif; /* Clean font */
+    -fx-font-size: 14px;
+    -fx-text-fill: #f0f0f0; /* Text inside editor */
+}
+
+/* Button Hover Effect */
+.rich-text-editor .tool-bar .button:hover {
+    -fx-background-color: #2d2d2d; /* Highlight on hover */
+}
+
+/* Text Highlight */
+.rich-text-editor .content:selected {
+    -fx-background-color: #2a2a2a; /* Subtle selection highlight */
+    -fx-text-fill: #ffffff; /* Keep selected text readable */
+}

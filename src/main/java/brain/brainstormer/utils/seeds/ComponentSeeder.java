@@ -81,7 +81,26 @@ public class ComponentSeeder {
                                 .append("code", "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }")
                                 .append("description", "A simple Java HelloWorld program"))
                         .append("createdAt", currentTimestamp)
+                        .append("lastUpdated", currentTimestamp),
+                new Document()
+                        .append("type", "rich_text_editor")
+                        .append("config", new Document()
+                                .append("htmlContent",
+                                        "<div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>" +
+                                                "    <h1 style='color: #1E90FF; text-align: center;'>Welcome to the Rich Text Editor</h1>" +
+                                                "    <p style='font-size: 16px;'>This is an <b>awesome</b> rich text editor component for your BrainStormer project!</p>" +
+                                                "    <ul>" +
+                                                "        <li style='color: #FF4500;'>Create beautiful formatted text</li>" +
+                                                "        <li style='color: #32CD32;'>Add <i>colors</i>, <b>styles</b>, and links</li>" +
+                                                "        <li style='color: #9400D3;'>Integrate with MongoDB for saving</li>" +
+                                                "    </ul>" +
+                                                "    <p>Start typing below to customize this content:</p>" +
+                                                "</div>")
+                                .append("description", "A fancy rich text editor for stylish content"))
+                        .append("createdAt", currentTimestamp)
                         .append("lastUpdated", currentTimestamp)
+
+
         );
 
         // Insert each component metadata into the database

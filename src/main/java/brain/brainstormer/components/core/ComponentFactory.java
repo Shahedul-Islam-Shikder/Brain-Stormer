@@ -88,6 +88,14 @@ public class ComponentFactory {
                 }
                 String codeContent = config.getString("code");
                 return new CodeSnippetComponent(id, description != null ? description : "Code Snippet", codeContent != null ? codeContent : "");
+            case "rich_text_editor":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for rich text editor component.");
+                    return null;
+                }
+                String htmlContent = config.getString("htmlContent");
+                return new RichTextEditorComponent(id, description != null ? description : "Rich Text Editor", htmlContent);
+
 
             default:
                 System.out.println("Component type not recognized: " + type);
