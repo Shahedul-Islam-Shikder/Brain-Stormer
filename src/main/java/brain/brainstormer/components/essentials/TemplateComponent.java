@@ -46,6 +46,43 @@ public class TemplateComponent {
         }
     }
 
+    private void handleTemplateButtonClick(Document template, Button templateButton) {
+        // Store the selected template ID for later use
+        String templateId = template.getObjectId("_id").toHexString();
+        TemplateData.getInstance().setCurrentTemplateId(templateId);
+
+        // Get the stage from the button's scene (this is the correct way to get the stage)
+        Stage stage = (Stage) templateButton.getScene().getWindow();
+
+        // Switch to the template view
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
+    }
+    public void loadTemplateButtons(HBox templateButtonRow) {
+        templateButtonRow.getChildren().clear();  // Clear any existing buttons
+
+        String userId = SessionManager.getInstance().getUserId();
+        List<Document> templates = templateService.getUserTemplates(userId);
+
+        // If there are no templates, show a placeholder message
+        if (templates.isEmpty()) {
+            Button placeholderButton = new Button("No templates available");
+            placeholderButton.setStyle("-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;");
+            templateButtonRow.getChildren().add(placeholderButton);
+        } else {
+            // Create a button for each template
+            for (Document template : templates) {
+                Button templateButton = new Button(template.getString("name"));
+                templateButton.setStyle("-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;");
+
+                // Add an event handler to navigate to the template view on button click
+                templateButton.setOnAction(e -> handleTemplateButtonClick(template, templateButton));
+
+                templateButtonRow.getChildren().add(templateButton);  // Add the button to the HBox
+            }
+        }
+    }
+
+
     private HBox createTemplateBox(Document template) {
         HBox templateBox = new HBox(10);
         templateBox.setStyle("-fx-background-color: #1E1E1E; -fx-padding: 15; -fx-background-radius: 10;");
@@ -79,6 +116,7 @@ public class TemplateComponent {
 
             //refreshes the main content area
             VBox parentContainer = (VBox) templateBox.getParent();
+
             loadTemplatesView(parentContainer);
         });
 

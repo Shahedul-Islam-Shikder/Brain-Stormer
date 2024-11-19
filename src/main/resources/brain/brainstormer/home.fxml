@@ -37,14 +37,8 @@
                 <Button style="-fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;" text="Search" />
             </HBox>
 
-            <!-- Button Row -->
-            <HBox prefHeight="44.0" spacing="10">
-                <Button style="-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;" text="Skibidi" />
-                <Button style="-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;" text="Skibidi" />
-                <Button style="-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;" text="Skibidi" />
-                <Button style="-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;" text="Skibidi" />
-                <Button style="-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;" text="Skibidi" />
-                <Button style="-fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-font-size: 14px; -fx-background-radius: 10;" text="Skibidi" />
+            <HBox fx:id="templateButtonRow" prefHeight="44.0" spacing="10">
+                <!-- Buttons will be dynamically added here -->
             </HBox>
 
             <!-- Scrollable Content Area for Templates -->

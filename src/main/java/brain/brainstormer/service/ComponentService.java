@@ -9,6 +9,8 @@ import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ComponentService {
@@ -21,6 +23,15 @@ public class ComponentService {
         MongoDatabase database = DatabaseConnection.getInstance().getDatabase();
         templatesCollection = database.getCollection("templates");
         componentsCollection = database.getCollection("components");
+    }
+
+    // Fetch all templates from the database
+    public List<String> getTemplateNames() {
+        List<String> templateNames = new ArrayList<>();
+        for (Document doc : templatesCollection.find()) {
+            templateNames.add(doc.getString("name")); // Assuming the template has a "name" field
+        }
+        return templateNames;
     }
 
     public static ComponentService getInstance() {
