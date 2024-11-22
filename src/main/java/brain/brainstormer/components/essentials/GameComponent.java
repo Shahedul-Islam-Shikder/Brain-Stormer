@@ -20,7 +20,7 @@ public class GameComponent {
 
     Button playButton;
 
-    private ChessClient chessClient; // ChessClient to manage communication
+
 
     // Method to load the game view and show the Chess logo with options
     public void loadGameView(VBox mainContentArea) {

@@ -21,24 +21,27 @@ import java.util.Optional;
 
 public class AddComponentDialog {
 
-    private final String templateId; // For template-related components
+    private String templateId; // For template-related components
     private final GrouperComponent grouperComponent; // For Grouper-related components
     private final ComponentService componentService;
     private final ListView<HBox> componentList = new ListView<>();
 
     // Constructor for adding to a template
-    public AddComponentDialog(String templateId, ComponentService componentService) {
+    public AddComponentDialog(String templateId, ComponentService componentService ) {
         this.templateId = templateId;
         this.grouperComponent = null; // Not used in this context
         this.componentService = componentService;
     }
 
     // Constructor for adding to a Grouper
-    public AddComponentDialog(GrouperComponent grouperComponent, ComponentService componentService) {
-        this.templateId = null; // Not used in this context
+    public AddComponentDialog(String templateId,GrouperComponent grouperComponent, ComponentService componentService ) {
+        this.templateId = templateId;
         this.grouperComponent = grouperComponent;
         this.componentService = componentService;
+
     }
+
+    // Initialize the dialog box with the component list for template or Grouper
 
     public void init() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -72,9 +75,10 @@ public class AddComponentDialog {
                 String componentName = nameText.getText();
 
                 // Add component to the appropriate target
-                if (templateId != null) {
+                if (grouperComponent == null) {
                     addComponentToTemplate(componentName);
-                } else if (grouperComponent != null) {
+                    System.out.println("Why you");
+                } else {
                     addComponentToGrouper(componentName);
                 }
             }
@@ -139,17 +143,17 @@ public class AddComponentDialog {
 
         // If the component is Initializable, handle it exclusively through the dialog
         if (component instanceof Initializable) {
-            ComponentDialogBox dialogBox = new ComponentDialogBox(component, false, componentService, grouperComponent);
+            ComponentDialogBox dialogBox = new ComponentDialogBox(templateId,component, false, componentService, grouperComponent);
             dialogBox.showDialog();
             return; // Exit to avoid duplicate addition
         }
 
-        // Render the component and add it to the Grouper
-        javafx.scene.Node renderedComponent = component.render();
-        grouperComponent.addComponent(renderedComponent);
+//        // Render the component and add it to the Grouper
+//        javafx.scene.Node renderedComponent = component.render();
+//        grouperComponent.addComponent(renderedComponent);
 
         // Save the component to the Grouper's database entry
-        componentService.addComponentsToGrouper(grouperComponent.getId(), java.util.List.of(component));
+        componentService.addComponentsToGrouper(templateId,grouperComponent.getId(), java.util.List.of(component));
     }
 
 

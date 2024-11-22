@@ -3,6 +3,7 @@ package brain.brainstormer.components.elements;
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.utilGui.AddComponentDialog;
+import brain.brainstormer.utils.TemplateData;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -80,37 +81,31 @@ public class GrouperComponent extends CoreComponent {
     }
 
     private void openAddComponentDialog(Node parentContainer) {
+        // Retrieve the current template ID from TemplateData
+        String templateId = TemplateData.getInstance().getCurrentTemplateId();
+
+        // Ensure templateId is not null or empty before proceeding
+        if (templateId == null || templateId.isEmpty()) {
+            System.err.println("No template ID is set. Please set a valid template ID before adding components.");
+            return;
+        }
+
+        // Initialize services and dialog
         ComponentService componentService = ComponentService.getInstance();
-        AddComponentDialog dialog = new AddComponentDialog(this, componentService);
+        AddComponentDialog dialog = new AddComponentDialog(templateId, this, componentService);
+
+        // Open the dialog
         dialog.init();
     }
+
 
     @Override
     public Node render() {
         return container; // Always return the same container instance
     }
 
-    public void addComponent(Node component) {
-        children.add(component);
 
-        // Dynamically update the UI
-        if (container instanceof HBox) {
-            ((HBox) container).getChildren().add(((HBox) container).getChildren().size() - 1, component);
-        } else if (container instanceof VBox) {
-            ((VBox) container).getChildren().add(((VBox) container).getChildren().size() - 1, component);
-        }
-    }
 
-    public void removeComponent(Node component) {
-        children.remove(component);
-
-        // Dynamically remove from the UI
-        if (container instanceof HBox) {
-            ((HBox) container).getChildren().remove(component);
-        } else if (container instanceof VBox) {
-            ((VBox) container).getChildren().remove(component);
-        }
-    }
 
     @Override
     public Document toDocument() {
@@ -126,4 +121,13 @@ public class GrouperComponent extends CoreComponent {
     public List<Node> getChildren() {
         return children;
     }
+    public void addChild(Node child) {
+        children.add(child); // Add to internal list
+        if (container instanceof HBox) {
+            ((HBox) container).getChildren().add(children.size() - 1, child); // Add before the "+" button
+        } else if (container instanceof VBox) {
+            ((VBox) container).getChildren().add(children.size() - 1, child); // Add before the "+" button
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class ComponentFactory {
 
@@ -101,9 +102,23 @@ public class ComponentFactory {
                     System.out.println("Error: Config document is missing for grouper component.");
                     return null;
                 }
+
                 String alignment = config.getString("alignment");
                 int spacing = config.getInteger("spacing", 10); // Default spacing
-                return new GrouperComponent(id, type, alignment != null ? alignment : "CENTER_LEFT", spacing);
+                GrouperComponent grouper = new GrouperComponent(id, type, alignment != null ? alignment : "CENTER_LEFT", spacing);
+
+                // Process children
+                List<Document> children = metadata.getList("children", Document.class);
+                if (children != null) {
+                    for (Document child : children) {
+                        CoreComponent childComponent = createComponent(child); // Use factory recursively
+                        if (childComponent != null) {
+                            grouper.addChild(childComponent.render()); // Render and add to Grouper
+                        }
+                    }
+                }
+                return grouper;
+
 
 
             default:

@@ -6,6 +6,7 @@ import org.bson.Document;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class ComponentSeeder {
@@ -20,8 +21,6 @@ public class ComponentSeeder {
         // Clean the existing components collection
         componentCollection.drop();
 
-        // Current timestamp for createdAt and lastUpdated fields
-        String currentTimestamp = Instant.now().toString();
 
         // Define components with updated structure
         List<Document> components = Arrays.asList(
@@ -31,24 +30,24 @@ public class ComponentSeeder {
                                 .append("checked", false)
                                 .append("title", "Checkbox Title")
                                 .append("description", "A simple checkbox for true/false states"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
 
                 new Document()
                         .append("type", "textarea")
                         .append("config", new Document()
                                 .append("text", "")
                                 .append("description", "A text field for notes or inputs"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
 
                 new Document()
                         .append("type", "datepicker")
                         .append("config", new Document()
                                 .append("selectedDate", "2024-11-16")
                                 .append("description", "Select a date for the event"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
 
                 new Document()
                         .append("type", "heading")
@@ -56,15 +55,15 @@ public class ComponentSeeder {
                                 .append("title", "Heading Title")
                                 .append("level", 1) // Default level is h1
                                 .append("description", "Heading component for section titles"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
 
                 new Document()
                         .append("type", "line_breaker")
                         .append("config", new Document()
                                 .append("description", "A simple line to separate sections"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
 
                 new Document()
                         .append("type", "link")
@@ -72,16 +71,16 @@ public class ComponentSeeder {
                                 .append("linkText", "Open Documentation")
                                 .append("url", "https://example.com")
                                 .append("description", "A link to an external resource"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
 
                 new Document()
                         .append("type", "code_snippet")
                         .append("config", new Document()
                                 .append("code", "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }")
                                 .append("description", "A simple Java HelloWorld program"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
                 new Document()
                         .append("type", "rich_text_editor")
                         .append("config", new Document()
@@ -97,19 +96,19 @@ public class ComponentSeeder {
                                                 "    <p>Start typing below to customize this content:</p>" +
                                                 "</div>")
                                 .append("description", "A fancy rich text editor for stylish content"))
-                        .append("createdAt", currentTimestamp)
-                        .append("lastUpdated", currentTimestamp),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
                 new Document().append("type", "h-group")
                         .append("config", new Document("alignment", "CENTER_LEFT"))
                         .append("children", Arrays.asList())
-                        .append("createdAt", new Document("$currentDate", true))
-                        .append("lastUpdated", new Document("$currentDate", true)),
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
                 new Document()
                         .append("type", "v-group")
                         .append("config", new Document("alignment", "TOP_CENTER"))
                         .append("children", Arrays.asList())
-                        .append("createdAt", new Document("$currentDate", true))
-                        .append("lastUpdated", new Document("$currentDate", true))
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date())
 
 
 

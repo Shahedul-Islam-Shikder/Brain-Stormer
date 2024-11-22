@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -53,7 +54,7 @@ public class ComponentService {
     }
 
     // Adds multiple components to a grouper's children in MongoDB
-    public void addComponentsToGrouper(String grouperId, List<CoreComponent> components) {
+    public void addComponentsToGrouper(String templateId, String grouperId, List<CoreComponent> components) {
         if (components == null || components.isEmpty()) {
             System.out.println("No components to add to the Grouper.");
             return;
@@ -73,13 +74,29 @@ public class ComponentService {
             return;
         }
 
-        // Use $push with $each to add multiple components in one operation
         try {
-            componentsCollection.updateOne(
-                    Filters.eq("_id", new ObjectId(grouperId)),
-                    Updates.pushEach("children", componentDocuments)
+            // Debugging: Print input parameters
+            System.out.println("Template ID: " + templateId);
+            System.out.println("Grouper ID: " + grouperId);
+            System.out.println("Components to Add: " + componentDocuments);
+
+//             Perform the update
+            UpdateResult result = templatesCollection.updateOne(
+                    Filters.and(
+                            Filters.eq("_id", new ObjectId(templateId)), // Find the template
+                            Filters.eq("components._id", grouperId) // Match the specific Grouper
+                    ),
+                    Updates.pushEach("components.$.children", componentDocuments) // Add components to children
             );
-            System.out.println("Components added to Grouper in MongoDB.");
+
+            // Check the result of the update
+            if (result.getModifiedCount() > 0) {
+                System.out.println("Components successfully added to Grouper in MongoDB.");
+            } else {
+                System.err.println("No matching Grouper found or no updates made.");
+            }
+
+
         } catch (Exception e) {
             System.err.println("Failed to add components to Grouper: " + e.getMessage());
         }
@@ -88,7 +105,20 @@ public class ComponentService {
 
 
 
+
+
+
     public MongoCollection<Document> getComponentsCollection() {
         return componentsCollection;
     }
 }
+
+
+
+
+
+
+
+
+
+

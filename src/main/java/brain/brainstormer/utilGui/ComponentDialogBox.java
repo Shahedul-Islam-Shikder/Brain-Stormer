@@ -31,11 +31,11 @@ public class ComponentDialogBox {
 
 
     // Constructor for adding to a Grouper
-    public ComponentDialogBox(CoreComponent component, boolean isEditing, ComponentService componentService, GrouperComponent grouperComponent) {
+    public ComponentDialogBox(String templateId, CoreComponent component, boolean isEditing, ComponentService componentService, GrouperComponent grouperComponent) {
         this.component = component;
         this.isEditing = isEditing;
         this.componentService = componentService;
-        this.templateId = null; // Not used when adding to Grouper
+        this.templateId = templateId; // Not used when adding to Grouper
         this.grouperComponent = grouperComponent;
     }
 
@@ -80,22 +80,17 @@ public class ComponentDialogBox {
     }
 
     private void addComponentToTarget(Document componentData) {
-        if (templateId != null) {
+        if (grouperComponent == null) {
             // Add to the template
             System.out.println("Adding component to template: " + componentData.toJson());
             componentService.addComponentToTemplate(templateId, component); // Saves the component with initial values
-        } else if (grouperComponent != null) {
+        } else {
             // Add to the Grouper
             System.out.println("Adding component to Grouper: " + componentData.toJson());
 
-            // Render the component and add to the Grouper's children
-            javafx.scene.Node renderedComponent = component.render();
-            grouperComponent.addComponent(renderedComponent);
 
             // Save the component to the Grouper's database entry
-            componentService.addComponentsToGrouper(grouperComponent.getId(), java.util.List.of(component));
-        } else {
-            System.err.println("Error: No valid target specified for component addition.");
+            componentService.addComponentsToGrouper(templateId, grouperComponent.getId(), java.util.List.of(component));
         }
     }
 
