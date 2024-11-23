@@ -92,7 +92,30 @@ public class ChessServer {
                 }
             }
         }
+
+        private void disconnect() {
+            try {
+                if (currentRoom != null) {
+                    currentRoom.removePlayer(socket);
+                    System.out.println("Server: Player disconnected from room " + currentRoom.getRoomCode());
+
+                    if (currentRoom.getPlayerCount() == 0) {
+                        rooms.remove(currentRoom);
+                        System.out.println("Server: Room " + currentRoom.getRoomCode() + " removed (empty).");
+                    } else {
+                        currentRoom.sendMessageToAll("A player has disconnected.");
+                    }
+                }
+                if (socket != null && !socket.isClosed()) {
+                    socket.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+
 
     static class GameRoom {
         private List<Socket> players = new ArrayList<>();
@@ -148,7 +171,11 @@ public class ChessServer {
 
         public synchronized void removePlayer(Socket player) {
             players.remove(player);
+            if (players.size() > 0) {
+                sendMessageToAll("A player has left the game.");
+            }
         }
+
 
         private void sendMessage(Socket player, String message) throws IOException {
             if (player != null && !player.isClosed()) {

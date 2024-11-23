@@ -34,8 +34,8 @@ public class ChessController {
 
     @FXML
     private Label roomCodeLabel; // Label to display the room code
-    @FXML
-    private Label waitingLabel;
+
+
 
 
 
@@ -89,10 +89,12 @@ public class ChessController {
         try {
 
             playerRole = chessClient.receiveMoveFromServer();
+
             System.out.println("Player role received: " + playerRole);
 
             // Set turn based on player role
             isMyTurn = "White".equals(playerRole); // White starts the game
+//            updateTurnText();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,6 +127,7 @@ public class ChessController {
     private void refreshBoard() {
         clearHighlights();
         highlightCheckedKing();
+
 
         for (Square square : Square.values()) {
             if (square == Square.NONE) continue;
@@ -239,12 +242,24 @@ public class ChessController {
             promotionPiece = ChessDialogs.showPromotionDialog(playerRole.equals("White"));
         }
 
+        //Check if Checkmate
+        if(chessGame.isCheckmate()){
+            ChessDialogs.showCheckmateDialog(playerRole.equals("Black" ) ? "White" : "Black");
+            chessClient.close();
+            Platform.runLater(() -> {
+                chessClient.close(); // Close the chess client or any resources if necessary
+                roomCodeLabel.getScene().getWindow().hide(); // Close the game window
+            });
+
+        }
+
         // Attempt move and update server
         if (chessGame.makeMove(selectedSquare, targetSquare, promotionPiece)) {
             refreshBoard();
             sendMoveToServer(selectedSquare, targetSquare, promotionPiece);
 
-            isMyTurn = false; // End turn after a move
+            isMyTurn = false;
+//            updateTurnText();// End turn after a move
 
         }
 
@@ -287,8 +302,17 @@ public class ChessController {
                     Platform.runLater(() -> {
                         chessGame.makeMove(move.getFrom(), move.getTo());
                         refreshBoard();
-                        isMyTurn = true;
+                        clearHighlights();
 
+                        // Check if the game is in checkmate after the move
+                        if (chessGame.isCheckmate()) {
+                            ChessDialogs.showCheckmateDialog(playerRole.equals("White") ? "Black" : "White"); // The opponent wins
+                            chessClient.close(); // Close the connection
+                            chessBoard.getScene().getWindow().hide(); // Close the game window
+                        } else {
+                            isMyTurn = true; // Your turn after opponent's move
+//                        updateTurnText(); // Uncomment if turn text is needed
+                        }
                     });
                 } else {
                     System.err.println("Failed to parse move from server: " + serverMove);
@@ -299,6 +323,7 @@ public class ChessController {
             }
         }
     }
+
 
 
     private Move parseMove(String moveStr) {
@@ -322,5 +347,18 @@ public class ChessController {
         }
         return null;
     }
+
+//    private void updateTurnText() {
+//        Platform.runLater(() -> {
+//            if (isMyTurn) {
+//                turnText.setText("Your Turn");
+//                turnText.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: green;");
+//            } else {
+//                turnText.setText("Opponent's Turn");
+//                turnText.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: red;");
+//            }
+//        });
+//    }
+
 
 }

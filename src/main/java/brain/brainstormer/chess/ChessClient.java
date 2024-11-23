@@ -36,4 +36,12 @@ public class ChessClient {
     public String receiveMoveFromServer() throws IOException {
         return in.readLine();
     }
+
+    public void close() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

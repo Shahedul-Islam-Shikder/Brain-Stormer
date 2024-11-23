@@ -33,4 +33,7 @@
             </GridPane>
         </VBox>
     </center>
+   <bottom>
+      <VBox alignment="CENTER" prefHeight="121.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>
