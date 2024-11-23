@@ -75,13 +75,19 @@ public class ChessController {
         } else {
             // Join an existing room with code
             chessClient.start(roomCode);
+            try {
+                chessClient.receiveMoveFromServer();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("Joined room with code: " + roomCode);
         }
 
-        roomCodeLabel.setText("Room Code: " + roomCode);
+        roomCodeLabel.setText(roomCode);
 
         // Receive role and assign turn accordingly
         try {
+
             playerRole = chessClient.receiveMoveFromServer();
             System.out.println("Player role received: " + playerRole);
 
@@ -214,7 +220,7 @@ public class ChessController {
         // Determine if the piece belongs to the player
         boolean isWhitePiece = piece.getPieceSide() == Side.WHITE;
         if ((playerRole.equals("White") && !isWhitePiece) || (playerRole.equals("Black") && isWhitePiece)) {
-            System.out.println(playerRole+"fdjfldskjfj");
+
             return; // Block move if piece does not belong to the player
         }
 
@@ -237,7 +243,9 @@ public class ChessController {
         if (chessGame.makeMove(selectedSquare, targetSquare, promotionPiece)) {
             refreshBoard();
             sendMoveToServer(selectedSquare, targetSquare, promotionPiece);
+
             isMyTurn = false; // End turn after a move
+
         }
 
         // Reset selection
@@ -265,6 +273,7 @@ public class ChessController {
         while (true) {
             try {
                 String serverMove = chessClient.receiveMoveFromServer();
+                System.out.println("Controller: Server move received: " + serverMove);
                 if (serverMove == null) break;
 
                 if (serverMove.equals("Waiting for another player...") || serverMove.equals("Game start!")) {
@@ -279,6 +288,7 @@ public class ChessController {
                         chessGame.makeMove(move.getFrom(), move.getTo());
                         refreshBoard();
                         isMyTurn = true;
+
                     });
                 } else {
                     System.err.println("Failed to parse move from server: " + serverMove);

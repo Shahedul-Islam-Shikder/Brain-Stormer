@@ -1,10 +1,7 @@
 package brain.brainstormer.chess;
 
 
-import com.github.bhlangonijr.chesslib.Board;
-import com.github.bhlangonijr.chesslib.Piece;
-import com.github.bhlangonijr.chesslib.Side;
-import com.github.bhlangonijr.chesslib.Square;
+import com.github.bhlangonijr.chesslib.*;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveGenerator;
 import com.github.bhlangonijr.chesslib.move.MoveGeneratorException;
@@ -20,17 +17,30 @@ public class ChessLogic {
         this.board = new Board(); // Initialize the board
         this.moveStack = new Stack<>(); // Initialize the move stack
     }
-
-    // Method to check if a move is a pawn promotion
     public boolean isPromotionMove(Square from, Square to) {
         Piece movingPiece = board.getPiece(from);
-        String toSquareName = to.name();
-        char toRankChar = toSquareName.charAt(1);
+        // Check for null piece
+        if (movingPiece == null) {
+            return false;
+        }
 
-        // Check if the moving piece is a pawn and it's moving to the last rank
-        return (movingPiece == Piece.WHITE_PAWN && toRankChar == '8') ||
-                (movingPiece == Piece.BLACK_PAWN && toRankChar == '1');
+        // Get the ranks of the starting and destination squares
+        Rank fromRank = from.getRank();
+        Rank toRank = to.getRank();
+
+
+        if(movingPiece == Piece.WHITE_PAWN && fromRank == Rank.RANK_7 && toRank == Rank.RANK_8) {
+            return true;
+        }
+
+        if (movingPiece == Piece.BLACK_PAWN && fromRank == Rank.RANK_2 && toRank == Rank.RANK_1) {
+            return true;
+        }
+
+        return false;
     }
+
+
 
     // Primary makeMove method with promotion piece
     public boolean makeMove(Square from, Square to, Piece promotionPiece) {

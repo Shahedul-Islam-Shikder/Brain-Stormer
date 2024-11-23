@@ -44,7 +44,8 @@ public class ChessServer {
                 if ("new".equalsIgnoreCase(roomCode)) {
                     currentRoom = new GameRoom();
                     rooms.add(currentRoom);
-                    out.println("Room created. Code: " + currentRoom.getRoomCode());
+                    System.out.println("Server: New room created with code: " + currentRoom.getRoomCode());
+                    out.println(currentRoom.getRoomCode());
                     System.out.println("New room created with code: " + currentRoom.getRoomCode());
                 } else {
                     currentRoom = getRoomByCode(roomCode);
@@ -53,11 +54,12 @@ public class ChessServer {
                         socket.close();
                         return;
                     }
-                    out.println("Joined room: " + roomCode);
+                    out.println(roomCode);
                     System.out.println("Client joined room: " + roomCode);
                 }
 
                 String playerRole = currentRoom.addPlayer(socket);
+                System.out.println("Server-> Player role: " + playerRole);
                 out.println(playerRole); // Send role ("White" or "Black")
 
                 while (currentRoom.getPlayerCount() < 2) {
@@ -66,6 +68,7 @@ public class ChessServer {
                 }
 
                 currentRoom.sendMessageToAll("Game start!");
+                System.out.println("Server->"+playerRole + " player connected to room: " + roomCode);
 
                 String message;
                 while ((message = in.readLine()) != null) {
@@ -109,6 +112,7 @@ public class ChessServer {
             // Assign role based on the order of connection
             String role = (players.size() == 1) ? "White" : "Black";
             sendMessage(player, role);
+            System.out.println("Server: Setting Server->"+role + " player role");
 
             if (players.size() == 1) {
                 sendMessage(player, "Waiting for another player...");
@@ -154,7 +158,7 @@ public class ChessServer {
         }
 
         private String generateRoomCode() {
-            return Integer.toString((int) (Math.random() * 1000000));
+            return Integer.toString((int) (Math.random() * 10000));
         }
     }
 
