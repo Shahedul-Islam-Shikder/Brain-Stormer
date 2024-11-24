@@ -146,7 +146,7 @@ public class TemplateComponent {
             String currentDescription = descriptionLabel.getText();
             descInput2.setText(currentDescription);
             descInput2.getStyleClass().add("text-area");
-//
+
             descInput2.setWrapText(true);
             descInput2.setPrefRowCount(6);
 

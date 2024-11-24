@@ -5,6 +5,7 @@ import brain.brainstormer.components.essentials.TemplateComponent;
 import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.utils.StyleUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -87,13 +88,18 @@ public class HomeController {
 
         Label nameLabel = new Label("Template Name:");
         TextField nameInput = new TextField();
+        nameInput.getStyleClass().add("input-field");
         nameInput.setPromptText("Enter Template name");
 
         Label descLabel = new Label("Description:");
+        descLabel.getStyleClass().add("label-text");
         TextArea descInput = new TextArea();
+        descInput.getStyleClass().add("text-area");
         descInput.setPromptText("Enter Description");
 
         Button saveButton = new Button("Add Template");
+        saveButton.getStyleClass().add("button-primary");
+
         saveButton.setOnAction(e -> {
             String name = nameInput.getText().trim();
             String description = descInput.getText().trim();
@@ -111,8 +117,17 @@ public class HomeController {
             }
         });
 
-        VBox layout = new VBox(10, nameLabel, nameInput, descLabel, descInput, saveButton);
-        dialog.setScene(new Scene(layout));
+        HBox saveButtonCentre = new HBox(saveButton);
+        saveButtonCentre.setAlignment(Pos.CENTER);
+
+
+        VBox layout = new VBox(10, nameLabel, nameInput, descLabel, descInput, saveButtonCentre);
+        layout.getStyleClass().add("container");
+
+        Scene scene = new Scene(layout);
+        StyleUtil.applyStylesheet(scene);
+
+        dialog.setScene(scene);
         dialog.show();
     }
 }
