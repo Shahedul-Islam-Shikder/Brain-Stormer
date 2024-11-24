@@ -44,14 +44,22 @@ public class ComponentService {
 
     // Adds a configured component to the template's component array in MongoDB
     public void addComponentToTemplate(String templateId, CoreComponent component) {
+        // Convert the component to a Document
         Document componentData = component.toDocument();
 
+        // Generate a new unique ID for the component in the database
+        String newComponentId = new ObjectId().toHexString();
+        componentData.put("_id", newComponentId); // Assign a new ID to the database document
+
+        // Push the updated component data to the template
         templatesCollection.updateOne(
-                Filters.eq("_id", new ObjectId(templateId)),
-                Updates.push("components", componentData)
+                Filters.eq("_id", new ObjectId(templateId)), // Match the template by ID
+                Updates.push("components", componentData) // Add the new component to the array
         );
-        System.out.println("Component added to template in MongoDB.");
+
+        System.out.println("Component added to template in MongoDB with new database ID: " + newComponentId);
     }
+
 
     // Adds multiple components to a grouper's children in MongoDB
     public void addComponentsToGrouper(String templateId, String grouperId, List<CoreComponent> components) {
@@ -79,6 +87,8 @@ public class ComponentService {
             System.out.println("Template ID: " + templateId);
             System.out.println("Grouper ID: " + grouperId);
             System.out.println("Components to Add: " + componentDocuments);
+
+
 
 //             Perform the update
             UpdateResult result = templatesCollection.updateOne(

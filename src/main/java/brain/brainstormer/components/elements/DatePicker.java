@@ -2,15 +2,20 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.utils.Debouncer;
+import brain.brainstormer.utils.TemplateData;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import org.bson.Document;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public class DatePicker extends CoreComponent implements Initializable {
     private LocalDate selectedDate;
+    private static final Debouncer<String> debouncer = new Debouncer<>(1000); // 1-second debounce delay
 
     public DatePicker(String id, String type, String description, LocalDate initialDate) {
         super(id, type, description);
@@ -49,7 +54,31 @@ public class DatePicker extends CoreComponent implements Initializable {
                 .append("lastUpdated", "2024-11-16T09:00:00Z");  // Placeholder for timestamp
     }
 
+    @Override
     public void saveToDatabase() {
-        // Implement save logic here
+        try {
+            TemplateService templateService = TemplateService.getInstance(); // Use singleton TemplateService
+
+            String templateId = TemplateData.getInstance().getCurrentTemplateId();
+            if (templateId == null || templateId.isEmpty()) {
+                System.err.println("No current template ID set in TemplateData.");
+                return;
+            }
+
+            // Prepare the updated component document
+            Document updatedComponent = new Document("config", new Document("selectedDate", selectedDate != null ? selectedDate.toString() : "")
+                    .append("description", getDescription()))
+                    .append("lastUpdated", new Date());
+
+            // Debounce the save operation
+            String debouncerKey = templateId + ":" + getId(); // Unique key for this DatePicker
+            debouncer.debounce(debouncerKey, () -> {
+                System.out.println("Debounced update triggered for DatePicker: " + getId());
+                templateService.updateComponentInTemplate(templateId, getId(), updatedComponent);
+            });
+
+        } catch (Exception e) {
+            System.err.println("Failed to save DatePicker state to database: " + e.getMessage());
+        }
     }
 }

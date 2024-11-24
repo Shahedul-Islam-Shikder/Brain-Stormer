@@ -77,7 +77,7 @@ public class AddComponentDialog {
                 // Add component to the appropriate target
                 if (grouperComponent == null) {
                     addComponentToTemplate(componentName);
-                    System.out.println("Why you");
+
                 } else {
                     addComponentToGrouper(componentName);
                 }
