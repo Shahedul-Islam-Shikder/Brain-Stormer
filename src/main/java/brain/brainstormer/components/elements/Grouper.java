@@ -7,10 +7,7 @@ import brain.brainstormer.utils.TemplateData;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
@@ -18,14 +15,14 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GrouperComponent extends CoreComponent {
+public class Grouper extends CoreComponent {
     private final String layout; // "HBox" or "VBox"
     private final String alignment;
     private final int spacing;
     private final List<Node> children;
     private Node container; // Keep a single instance of the container
 
-    public GrouperComponent(String id, String type, String alignment, int spacing) {
+    public Grouper(String id, String type, String alignment, int spacing) {
         super(id, type, "A grouper component for dynamic layouts");
         this.layout = type.equals("h-group") ? "HBox" : "VBox";
         this.alignment = alignment != null ? alignment : "CENTER_LEFT"; // Default alignment
@@ -116,6 +113,11 @@ public class GrouperComponent extends CoreComponent {
                 .append("children", new ArrayList<>()) // Children will be dynamically updated
                 .append("createdAt", new Document("$currentDate", true))
                 .append("lastUpdated", new Document("$currentDate", true));
+    }
+
+    @Override
+    public void saveToDatabase() {
+
     }
 
     public List<Node> getChildren() {

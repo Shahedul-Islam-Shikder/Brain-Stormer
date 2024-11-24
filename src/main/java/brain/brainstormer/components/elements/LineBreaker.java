@@ -6,9 +6,9 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
 
-public class LineBreakerComponent extends CoreComponent {
+public class LineBreaker extends CoreComponent {
 
-    public LineBreakerComponent(String id, String description) {
+    public LineBreaker(String id, String description) {
         super(id, "line_breaker", description);
     }
 
@@ -34,5 +34,10 @@ public class LineBreakerComponent extends CoreComponent {
         return new Document("_id", getId())
                 .append("type", "line_breaker")
                 .append("description", getDescription());
+    }
+
+    @Override
+    public void saveToDatabase() {
+
     }
 }

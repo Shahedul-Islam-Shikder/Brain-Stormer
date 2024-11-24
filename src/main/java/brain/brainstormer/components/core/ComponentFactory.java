@@ -41,7 +41,7 @@ public class ComponentFactory {
                 }
                 boolean isChecked = config.getBoolean("checked", false);
                 String title = config.getString("title");
-                return new CheckBoxComponent(id, description != null ? description : "No description", isChecked, title);
+                return new CheckBox(id, description != null ? description : "No description", isChecked, title);
 
             case "textarea":
                 if (config == null) {
@@ -50,7 +50,7 @@ public class ComponentFactory {
                 }
                 String initialText = config.getString("text");
                 int rows = config.getInteger("rows", 5); // Default to 5 if missing
-                return new TextAreaComponent(id, description != null ? description : "No description", initialText != null ? initialText : "", rows);
+                return new TextArea(id, description != null ? description : "No description", initialText != null ? initialText : "", rows);
 
             case "datepicker":
                 if (config == null) {
@@ -59,7 +59,7 @@ public class ComponentFactory {
                 }
                 String dateString = config.getString("selectedDate");
                 LocalDate selectedDate = dateString != null && !dateString.isEmpty() ? LocalDate.parse(dateString) : null;
-                return new DatePickerComponent(id, type, description != null ? description : "No description", selectedDate);
+                return new DatePicker(id, type, description != null ? description : "No description", selectedDate);
 
             case "heading":
                 if (config == null) {
@@ -68,10 +68,10 @@ public class ComponentFactory {
                 }
                 String headingTitle = config.getString("title");
                 int level = config.getInteger("level", 1);
-                return new HeadingComponent(id, description, headingTitle != null ? headingTitle : "Untitled", level);
+                return new Heading(id, description, headingTitle != null ? headingTitle : "Untitled", level);
 
             case "line_breaker":
-                return new LineBreakerComponent(id, description != null ? description : "No description");
+                return new LineBreaker(id, description != null ? description : "No description");
 
             case "link":
                 if (config == null) {
@@ -80,7 +80,7 @@ public class ComponentFactory {
                 }
                 String linkText = config.getString("linkText");
                 String url = config.getString("url");
-                return new LinkComponent(id, description, linkText != null ? linkText : "Open Link", url != null ? url : "");
+                return new Link(id, description, linkText != null ? linkText : "Open Link", url != null ? url : "");
 
             case "code_snippet":
                 if (config == null) {
@@ -88,14 +88,14 @@ public class ComponentFactory {
                     return null;
                 }
                 String codeContent = config.getString("code");
-                return new CodeSnippetComponent(id, description != null ? description : "Code Snippet", codeContent != null ? codeContent : "");
+                return new CodeSnippet(id, description != null ? description : "Code Snippet", codeContent != null ? codeContent : "");
             case "rich_text_editor":
                 if (config == null) {
                     System.out.println("Error: Config document is missing for rich text editor component.");
                     return null;
                 }
                 String htmlContent = config.getString("htmlContent");
-                return new RichTextEditorComponent(id, description != null ? description : "Rich Text Editor", htmlContent);
+                return new RichTextEditor(id, description != null ? description : "Rich Text Editor", htmlContent);
             case "h-group":
             case "v-group":
                 if (config == null) {
@@ -105,7 +105,7 @@ public class ComponentFactory {
 
                 String alignment = config.getString("alignment");
                 int spacing = config.getInteger("spacing", 10); // Default spacing
-                GrouperComponent grouper = new GrouperComponent(id, type, alignment != null ? alignment : "CENTER_LEFT", spacing);
+                Grouper grouper = new Grouper(id, type, alignment != null ? alignment : "CENTER_LEFT", spacing);
 
                 // Process children
                 List<Document> children = metadata.getList("children", Document.class);

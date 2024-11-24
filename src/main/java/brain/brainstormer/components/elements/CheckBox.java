@@ -6,17 +6,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import org.bson.Document;
 
 import java.util.List;
-import java.util.Optional;
 
-public class CheckBoxComponent extends CoreComponent implements Initializable {
+public class CheckBox extends CoreComponent implements Initializable {
     private boolean isChecked;
     private String title;
 
-    public CheckBoxComponent(String id, String description, boolean initialChecked, String title) {
+    public CheckBox(String id, String description, boolean initialChecked, String title) {
         super(id, "checkbox", description);
         this.isChecked = initialChecked;
         this.title = title;
@@ -30,7 +28,7 @@ public class CheckBoxComponent extends CoreComponent implements Initializable {
         container.setAlignment(Pos.CENTER_LEFT);  // Align items to the left
         container.getStyleClass().add("hbox-container");  // Apply container style from CSS
 
-        CheckBox checkBox = new CheckBox();
+        javafx.scene.control.CheckBox checkBox = new javafx.scene.control.CheckBox();
         checkBox.setSelected(isChecked);
         checkBox.getStyleClass().add("check-box");  // Apply checkbox style from CSS
 
@@ -57,7 +55,7 @@ public class CheckBoxComponent extends CoreComponent implements Initializable {
         titleField.setText(title);  // Initialize with the current title if available
 
         // Create a CheckBox to set the initial checked state
-        CheckBox defaultCheckedBox = new CheckBox("Checked by default");
+        javafx.scene.control.CheckBox defaultCheckedBox = new javafx.scene.control.CheckBox("Checked by default");
         defaultCheckedBox.setSelected(isChecked);  // Initialize with current isChecked state
 
         // Listeners to update values when the fields change
@@ -79,7 +77,7 @@ public class CheckBoxComponent extends CoreComponent implements Initializable {
                 .append("lastUpdated", "2024-11-16T09:00:00Z");
     }
 
-    private void saveToDatabase() {
+    public void saveToDatabase() {
         // Implement save logic here
     }
 

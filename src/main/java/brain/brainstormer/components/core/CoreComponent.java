@@ -37,4 +37,6 @@ public abstract class CoreComponent {
     // toDocument() method is used to convert the component to a Document object.
 
     public abstract Document toDocument();
+
+    public abstract void saveToDatabase();
 }

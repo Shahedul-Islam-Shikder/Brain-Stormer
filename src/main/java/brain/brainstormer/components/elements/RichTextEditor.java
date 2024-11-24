@@ -6,10 +6,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import org.bson.Document;
 
-public class RichTextEditorComponent extends CoreComponent {
+public class RichTextEditor extends CoreComponent {
     private String htmlContent;
 
-    public RichTextEditorComponent(String id, String description, String initialHtmlContent) {
+    public RichTextEditor(String id, String description, String initialHtmlContent) {
         super(id, "rich_text_editor", description);
         this.htmlContent = initialHtmlContent != null ? initialHtmlContent : "<p></p>"; // Default empty paragraph
     }
@@ -43,6 +43,11 @@ public class RichTextEditorComponent extends CoreComponent {
                         .append("description", getDescription()))
                 .append("createdAt", "2024-11-16T08:00:00Z")
                 .append("lastUpdated", "2024-11-16T09:00:00Z");
+    }
+
+    @Override
+    public void saveToDatabase() {
+
     }
 
     // Getter for the current HTML content

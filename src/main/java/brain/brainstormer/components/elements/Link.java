@@ -12,11 +12,11 @@ import org.bson.Document;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class LinkComponent extends CoreComponent implements Initializable {
+public class Link extends CoreComponent implements Initializable {
     private String linkText;
     private String url;
 
-    public LinkComponent(String id, String description, String linkText, String url) {
+    public Link(String id, String description, String linkText, String url) {
         super(id, "link", description);
         this.linkText = linkText;
         this.url = url;
@@ -69,5 +69,10 @@ public class LinkComponent extends CoreComponent implements Initializable {
                 .append("config", new Document("linkText", linkText)
                         .append("url", url)
                         .append("description", getDescription()));
+    }
+
+    @Override
+    public void saveToDatabase() {
+
     }
 }

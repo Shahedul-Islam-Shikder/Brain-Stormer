@@ -1,7 +1,7 @@
 package brain.brainstormer.utilGui;
 
 import brain.brainstormer.components.core.CoreComponent;
-import brain.brainstormer.components.elements.GrouperComponent;
+import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.service.ComponentService;
 import javafx.geometry.Insets;
@@ -18,7 +18,7 @@ public class ComponentDialogBox {
     private final boolean isEditing;
     private final ComponentService componentService;
     private final String templateId; // For template-related operations
-    private final GrouperComponent grouperComponent; // For Grouper-related operations
+    private final Grouper grouperComponent; // For Grouper-related operations
 
     // Constructor for adding/editing components in a Template
     public ComponentDialogBox(CoreComponent component, boolean isEditing, ComponentService componentService, String templateId) {
@@ -31,7 +31,7 @@ public class ComponentDialogBox {
 
 
     // Constructor for adding to a Grouper
-    public ComponentDialogBox(String templateId, CoreComponent component, boolean isEditing, ComponentService componentService, GrouperComponent grouperComponent) {
+    public ComponentDialogBox(String templateId, CoreComponent component, boolean isEditing, ComponentService componentService, Grouper grouperComponent) {
         this.component = component;
         this.isEditing = isEditing;
         this.componentService = componentService;

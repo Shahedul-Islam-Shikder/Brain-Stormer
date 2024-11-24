@@ -10,11 +10,11 @@ import org.bson.Document;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
-public class CodeSnippetComponent extends CoreComponent {
+public class CodeSnippet extends CoreComponent {
     private CodeArea codeArea;
     private String code;
 
-    public CodeSnippetComponent(String id, String description, String code) {
+    public CodeSnippet(String id, String description, String code) {
         super(id, "code_snippet", description);
         this.code = code;
         initializeCodeArea();
@@ -54,6 +54,11 @@ public class CodeSnippetComponent extends CoreComponent {
                 .append("type", "code_snippet")
                 .append("config", new Document("code", code)
                         .append("description", getDescription()));
+    }
+
+    @Override
+    public void saveToDatabase() {
+
     }
 
     public String getCode() {

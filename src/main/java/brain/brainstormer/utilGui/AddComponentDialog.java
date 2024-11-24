@@ -2,7 +2,7 @@ package brain.brainstormer.utilGui;
 
 import brain.brainstormer.components.core.ComponentFactory;
 import brain.brainstormer.components.core.CoreComponent;
-import brain.brainstormer.components.elements.GrouperComponent;
+import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.service.ComponentService;
 import javafx.geometry.Insets;
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class AddComponentDialog {
 
     private String templateId; // For template-related components
-    private final GrouperComponent grouperComponent; // For Grouper-related components
+    private final Grouper grouperComponent; // For Grouper-related components
     private final ComponentService componentService;
     private final ListView<HBox> componentList = new ListView<>();
 
@@ -34,7 +34,7 @@ public class AddComponentDialog {
     }
 
     // Constructor for adding to a Grouper
-    public AddComponentDialog(String templateId,GrouperComponent grouperComponent, ComponentService componentService ) {
+    public AddComponentDialog(String templateId, Grouper grouperComponent, ComponentService componentService ) {
         this.templateId = templateId;
         this.grouperComponent = grouperComponent;
         this.componentService = componentService;

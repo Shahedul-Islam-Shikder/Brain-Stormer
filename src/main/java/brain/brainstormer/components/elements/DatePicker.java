@@ -4,22 +4,21 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
-import javafx.scene.control.DatePicker;
 import org.bson.Document;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class DatePickerComponent extends CoreComponent implements Initializable {
+public class DatePicker extends CoreComponent implements Initializable {
     private LocalDate selectedDate;
 
-    public DatePickerComponent(String id, String type, String description, LocalDate initialDate) {
+    public DatePicker(String id, String type, String description, LocalDate initialDate) {
         super(id, type, description);
         this.selectedDate = initialDate != null ? initialDate : LocalDate.now();
     }
 
     public Control render() {
-        DatePicker datePicker = new DatePicker(selectedDate);
+        javafx.scene.control.DatePicker datePicker = new javafx.scene.control.DatePicker(selectedDate);
         datePicker.getStyleClass().add("date-picker"); // Apply custom style from CSS
 
         // Update selectedDate whenever the value changes and save to database
@@ -33,7 +32,7 @@ public class DatePickerComponent extends CoreComponent implements Initializable 
 
     @Override
     public List<Node> getInputFields() {
-        DatePicker datePickerField = new DatePicker(selectedDate);
+        javafx.scene.control.DatePicker datePickerField = new javafx.scene.control.DatePicker(selectedDate);
         datePickerField.setPromptText("Select a date");
         datePickerField.getStyleClass().add("date-picker");
 
@@ -50,7 +49,7 @@ public class DatePickerComponent extends CoreComponent implements Initializable 
                 .append("lastUpdated", "2024-11-16T09:00:00Z");  // Placeholder for timestamp
     }
 
-    private void saveToDatabase() {
+    public void saveToDatabase() {
         // Implement save logic here
     }
 }

@@ -4,18 +4,17 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.text.Font;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
 
 import java.util.List;
 import javafx.scene.control.TextField;
 
-public class HeadingComponent extends CoreComponent implements Initializable {
+public class Heading extends CoreComponent implements Initializable {
     private String title;
     private int headingLevel;
 
-    public HeadingComponent(String id, String description, String title, int headingLevel) {
+    public Heading(String id, String description, String title, int headingLevel) {
         super(id, "heading", description);
         this.title = title;
         this.headingLevel = headingLevel;
@@ -76,5 +75,10 @@ public class HeadingComponent extends CoreComponent implements Initializable {
                 .append("config", new Document("title", title)
                         .append("level", headingLevel)
                         .append("description", getDescription()));
+    }
+
+    @Override
+    public void saveToDatabase() {
+
     }
 }

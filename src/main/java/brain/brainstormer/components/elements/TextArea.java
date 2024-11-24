@@ -1,17 +1,15 @@
 package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
 
-public class TextAreaComponent extends CoreComponent {
+public class TextArea extends CoreComponent {
     private String text;
     private int rows;
 
-    public TextAreaComponent(String id, String description, String text, int rows) {
+    public TextArea(String id, String description, String text, int rows) {
         super(id, "textarea", description);
         this.text = text != null ? text : "";
         this.rows = rows > 0 ? rows : 5;
@@ -22,7 +20,7 @@ public class TextAreaComponent extends CoreComponent {
         VBox container = new VBox(5);
         container.getStyleClass().add("vbox-container");  // Apply container style
 
-        TextArea textArea = new TextArea(text);
+        javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea(text);
         textArea.setPrefRowCount(rows);
         textArea.setWrapText(true);
         textArea.getStyleClass().add("text-area");  // Apply TextArea style
@@ -45,7 +43,7 @@ public class TextAreaComponent extends CoreComponent {
                 .append("lastUpdated", "2024-11-16T09:00:00Z");
     }
 
-    private void saveToDatabase() {
+    public void saveToDatabase() {
         System.out.println("Saving text to database: " + text);
     }
 }
