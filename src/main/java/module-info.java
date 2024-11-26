@@ -1,5 +1,4 @@
 module brain.brainstormer {
-    requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
 
@@ -18,6 +17,7 @@ module brain.brainstormer {
 
     requires java.desktop;
     requires org.fxmisc.richtext;
+    requires de.jensd.fx.glyphs.fontawesome;
 
     opens brain.brainstormer to javafx.fxml;
     exports brain.brainstormer;
