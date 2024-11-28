@@ -5,19 +5,26 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.service.ComponentService;
+import brain.brainstormer.utils.StyleUtil;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
 import java.util.Optional;
+
 
 public class AddComponentDialog {
 
@@ -44,8 +51,12 @@ public class AddComponentDialog {
     // Initialize the dialog box with the component list for template or Grouper
 
     public void init() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Add Component");
+        Stage dialog = new Stage();
+        dialog.setMinHeight(460);
+        dialog.setMinWidth(420);
+        dialog.setResizable(false);
+        dialog.setTitle("Add Component");
+        dialog.initModality(Modality.APPLICATION_MODAL);
 
         Text headerText = new Text("Add Component");
         headerText.setFont(new Font("Arial", 20));
@@ -56,34 +67,66 @@ public class AddComponentDialog {
         componentList.setStyle("-fx-background-color: #1e1e1e;");
         componentList.setPrefHeight(300);
 
-        VBox dialogContent = new VBox(headerBox, componentList);
+
+        Button saveButton = new Button("Add");
+        saveButton.getStyleClass().add("button-primary");
+        saveButton.setMinHeight(55);
+        saveButton.setMinWidth(80);
+        saveButton.setOnAction(e-> {
+            handleButtonClick(dialog);
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().add("button-danger");
+        cancelButton.setMinHeight(55);
+        cancelButton.setMinWidth(80);
+        cancelButton.setStyle("-fx-font-size: 18px;");
+        cancelButton.setOnAction(e ->{
+            dialog.close();
+        });
+
+        HBox buttonContainer = new HBox(50,saveButton,cancelButton);
+        buttonContainer.setAlignment(Pos.CENTER);
+
+        VBox dialogContent = new VBox(headerBox, componentList,buttonContainer);
         dialogContent.setSpacing(10);
         dialogContent.setPadding(new Insets(20));
-        alert.getDialogPane().setContent(dialogContent);
+        dialogContent.getStyleClass().add("container");
+        //dialog.getDialogPane().setContent(dialogContent);
 
+        Scene scene = new Scene(dialogContent);
+        StyleUtil.applyStylesheet(scene);
         loadComponents();
 
-        handleButtonClick(alert);
+
+        dialog.setScene(scene);
+        dialog.show();
     }
 
-    private void handleButtonClick(Alert alert) {
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            HBox selectedBox = componentList.getSelectionModel().getSelectedItem();
-            if (selectedBox != null) {
-                Text nameText = (Text) selectedBox.getChildren().get(0);
-                String componentName = nameText.getText();
+    private void handleButtonClick(Stage dialog) {
+        // Get the selected item from the component list
+        HBox selectedBox = componentList.getSelectionModel().getSelectedItem();
+        if (selectedBox != null) {
+            // Extract the component name from the selected item
+            Text nameText = (Text) selectedBox.getChildren().get(0);
+            String componentName = nameText.getText();
 
-                // Add component to the appropriate target
-                if (grouperComponent == null) {
-                    addComponentToTemplate(componentName);
-
-                } else {
-                    addComponentToGrouper(componentName);
-                }
+            // Add the component to the appropriate target
+            if (grouperComponent == null) {
+                addComponentToTemplate(componentName);
+            } else {
+                addComponentToGrouper(componentName);
             }
+
+            // Close the dialog after the component is added
+            dialog.close();
+        } else {
+            // Show a message if no item is selected (optional)
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Please select a component to add.", ButtonType.OK);
+            alert.showAndWait();
         }
     }
+
 
     private void loadComponents() {
         MongoCollection<Document> collection = componentService.getComponentsCollection();
@@ -95,7 +138,7 @@ public class AddComponentDialog {
                 String description = component.getString("description");
 
                 Text nameText = new Text(name);
-                nameText.setFont(new Font("Arial", 16));
+                nameText.setFont(new Font("Arial", 12));
                 nameText.setStyle("-fx-font-weight: bold; -fx-fill: #FFFFFF;");
                 Text descriptionText = new Text(description);
                 descriptionText.setFont(new Font("Arial", 12));
