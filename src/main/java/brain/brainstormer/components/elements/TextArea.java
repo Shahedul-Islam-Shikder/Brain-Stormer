@@ -82,4 +82,9 @@ public class TextArea extends CoreComponent {
             System.err.println("Failed to save TextArea state to database: " + e.getMessage());
         }
     }
+
+    @Override
+    public void delete() {
+
+    }
 }

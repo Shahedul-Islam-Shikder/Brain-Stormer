@@ -75,4 +75,9 @@ public class Link extends CoreComponent implements Initializable {
     public void saveToDatabase() {
 
     }
+
+    @Override
+    public void delete() {
+
+    }
 }

@@ -162,6 +162,11 @@ public class CodeSnippet extends CoreComponent {
         }
     }
 
+    @Override
+    public void delete() {
+
+    }
+
     public String getCode() {
         return codeArea.getText();
     }

@@ -112,6 +112,44 @@ public class ComponentService {
         }
     }
 
+    public void deleteComponentFromTemplate(String templateId, String componentId) {
+        try {
+            // Remove the component from the template's components array
+            templatesCollection.updateOne(
+                    Filters.eq("_id", new ObjectId(templateId)),
+                    Updates.pull("components", new Document("_id", componentId))
+            );
+
+            System.out.println("Component deleted from template: " + componentId);
+        } catch (Exception e) {
+            System.err.println("Failed to delete component from template: " + e.getMessage());
+        }
+    }
+
+    public void updateComponentInTemplate(String templateId, String componentId, Document updatedComponentData) {
+        try {
+            // Perform the update in the components array
+            UpdateResult result = templatesCollection.updateOne(
+                    Filters.and(
+                            Filters.eq("_id", new ObjectId(templateId)), // Match the template
+                            Filters.eq("components._id", componentId)    // Match the specific component by ID
+                    ),
+                    Updates.set("components.$", updatedComponentData) // Update the matched component
+            );
+
+            // Log the result
+            if (result.getModifiedCount() > 0) {
+                System.out.println("Component updated in template: " + componentId);
+            } else {
+                System.err.println("No matching component found or no updates made.");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to update component in template: " + e.getMessage());
+        }
+    }
+
+
+
 
 
 

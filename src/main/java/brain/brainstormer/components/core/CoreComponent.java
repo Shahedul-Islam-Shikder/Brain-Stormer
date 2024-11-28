@@ -39,4 +39,6 @@ public abstract class CoreComponent {
     public abstract Document toDocument();
 
     public abstract void saveToDatabase();
+    public abstract void delete();
+
 }

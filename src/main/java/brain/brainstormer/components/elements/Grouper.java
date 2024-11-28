@@ -135,6 +135,11 @@ public class Grouper extends CoreComponent {
         // Placeholder for database save functionality
     }
 
+    @Override
+    public void delete() {
+
+    }
+
     public void addChild(Node child) {
         children.add(child);
 
