@@ -1,6 +1,6 @@
 /* Container style */
 .hbox-container {
-    -fx-background-color: #121212;
+    -fx-background-color: transparent;
     -fx-padding: 10px;
 }
 
@@ -14,8 +14,8 @@
 /* Checkbox style */
 .check-box {
     -fx-background-color: transparent;
-    -fx-border-color: #ffffff; /* White border */
-    -fx-border-radius: 3px;
+
+
     -fx-padding: 5px;
     -fx-text-fill: #ffffff;
 }

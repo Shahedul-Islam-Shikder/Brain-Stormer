@@ -4,7 +4,9 @@ import brain.brainstormer.components.core.ComponentFactory;
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.service.ComponentService;
+import brain.brainstormer.utils.SceneSwitcher;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -17,6 +19,7 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
+import java.util.List;
 import java.util.Optional;
 
 public class AddComponentDialog {
@@ -124,36 +127,39 @@ public class AddComponentDialog {
         } else {
             componentService.addComponentToTemplate(templateId, component);
         }
+
+        // Refresh the template content
+        TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
+        if (controller != null) {
+            controller.refreshTemplateContent(templateId);
+        }
     }
 
     private void addComponentToGrouper(String componentName) {
-        // Retrieve the component metadata from MongoDB
         Document componentData = componentService.getComponentsCollection().find(new Document("type", componentName)).first();
         if (componentData == null) {
             showError("Component metadata not found for: " + componentName);
             return;
         }
 
-        // Create the component using the factory
         CoreComponent component = ComponentFactory.createComponent(componentData);
         if (component == null) {
             showError("Component creation failed for: " + componentName);
             return;
         }
 
-        // If the component is Initializable, handle it exclusively through the dialog
         if (component instanceof Initializable) {
-            ComponentDialogBox dialogBox = new ComponentDialogBox(templateId,component, false, componentService, grouperComponent);
+            ComponentDialogBox dialogBox = new ComponentDialogBox(templateId, component, false, componentService, grouperComponent);
             dialogBox.showDialog();
-            return; // Exit to avoid duplicate addition
+        } else {
+            componentService.addComponentsToGrouper(templateId, grouperComponent.getId(), List.of(component));
         }
 
-//        // Render the component and add it to the Grouper
-//        javafx.scene.Node renderedComponent = component.render();
-//        grouperComponent.addComponent(renderedComponent);
-
-        // Save the component to the Grouper's database entry
-        componentService.addComponentsToGrouper(templateId,grouperComponent.getId(), java.util.List.of(component));
+        // Refresh the template content
+        TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
+        if (controller != null) {
+            controller.refreshTemplateContent(templateId);
+        }
     }
 
 

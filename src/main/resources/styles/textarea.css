@@ -7,10 +7,12 @@
 /* Style for the TextArea */
 .text-area {
     -fx-font-size: 14px;
-    -fx-control-inner-background: #121212; /* Dark background */
-    -fx-text-fill: #ffffff; /* White text */
-    -fx-border-color: transparent; /* Remove border */
-    -fx-border-radius: 5px;
+    -fx-control-inner-background: #000000; /* Dark background */
+    -fx-text-fill: #eeeeee; /* White text */
+    -fx-background-color: transparent;
+    -fx-focus-color: #000000;
+
+
 
 }
 
