@@ -4,19 +4,28 @@ import brain.brainstormer.components.core.ComponentFactory;
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.service.ComponentService;
+import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.utils.StyleUtil;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
+import java.util.List;
 import java.util.Optional;
 
 public class AddComponentDialog {

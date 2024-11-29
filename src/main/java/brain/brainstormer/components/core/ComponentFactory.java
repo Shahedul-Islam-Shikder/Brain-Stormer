@@ -126,7 +126,7 @@ public class ComponentFactory {
                     return null;
                 }
 
-                TableComponent tableComponent = new TableComponent(
+                Table tableComponent = new Table(
                         id,
                         description != null ? description : "No description"
                 );

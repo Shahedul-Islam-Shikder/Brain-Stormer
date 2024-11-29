@@ -15,11 +15,11 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableComponent extends CoreComponent implements Initializable {
+public class Table extends CoreComponent implements Initializable {
     private List<List<String>> rowData;
     private List<String> columnTypes; // New: Tracks column types (Text/Date Picker)
 
-    public TableComponent(String id, String description) {
+    public Table(String id, String description) {
         super(id, "table", description);
         this.rowData = new ArrayList<>();
         this.columnTypes = new ArrayList<>();
@@ -238,6 +238,11 @@ public class TableComponent extends CoreComponent implements Initializable {
 
     @Override
     public void saveToDatabase() {
+
+    }
+
+    @Override
+    public void delete() {
 
     }
 
