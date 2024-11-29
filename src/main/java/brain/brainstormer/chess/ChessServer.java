@@ -36,15 +36,13 @@ public class ChessServer {
         }
 
         @Override
-
-
         public void run() {
             try {
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
 
                 // Read the JSON object from the client
-                String messageJson = in.readLine(); // Initial message containing username and room code
+                String messageJson = in.readLine();
                 JsonObject startMessage = gson.fromJson(messageJson, JsonObject.class);
 
                 String username = startMessage.get("username").getAsString();
@@ -53,65 +51,44 @@ public class ChessServer {
                 System.out.println("Received username: " + username);
                 System.out.println("Received room code from client: " + roomCode);
 
-                // Handle room creation or joining
-                if ("new".equalsIgnoreCase(roomCode)) {
+                // Find or create the game room
+                currentRoom = getRoomByCode(roomCode);
+                if (currentRoom == null && "new".equalsIgnoreCase(roomCode)) {
                     currentRoom = new GameRoom();
                     rooms.add(currentRoom);
-
-                    JsonObject roomCodeMessage = createMessage("roomCode", currentRoom.getRoomCode());
-                    out.println(gson.toJson(roomCodeMessage));
-
-                    System.out.println("New room created with code: " + currentRoom.getRoomCode());
-                } else {
-                    currentRoom = getRoomByCode(roomCode);
-                    if (currentRoom == null) {
-                        out.println(gson.toJson(createMessage("error", "Room not found. Closing connection.")));
-                        socket.close();
-                        return;
-                    }
-
-                    out.println(gson.toJson(createMessage("status", "Joined room: " + roomCode)));
-                    System.out.println("Client joined room: " + roomCode);
+                    out.println(gson.toJson(createMessage("roomCode", currentRoom.getRoomCode())));
+                } else if (currentRoom == null) {
+                    out.println(gson.toJson(createMessage("error", "Room not found. Closing connection.")));
+                    socket.close();
+                    return;
                 }
 
-                // Assign the player's role and add the username
-                String playerRole = currentRoom.addPlayer(socket, username);
-                out.println(gson.toJson(createMessage("role", playerRole)));
-                System.out.println("Player " + username + " assigned role: " + playerRole);
+                // Add the client to the room as a player or spectator
+                String role = currentRoom.addPlayer(socket, username);
+                System.out.println("User " + username + " assigned role: " + role);
 
-                // Wait for both players to join
-                while (currentRoom.getPlayerCount() < 2) {
-                    Thread.sleep(500);
-                    out.println(gson.toJson(createMessage("status", "Waiting for another player...")));
+                if ("Spectator".equals(role)) {
+                    currentRoom.broadcastToSpectators(createMessage("status", username + " joined as a spectator.").toString());
                 }
 
-                // Broadcast user information when the game starts
-                currentRoom.sendMessageToAll(createMessage("users", currentRoom.getUsers()).toString());
-                currentRoom.sendMessageToAll(createMessage("status", "Game start!").toString());
-
-                // Process incoming messages
-                while ((messageJson = in.readLine()) != null) { // Reuse the same variable
-                    System.out.println("Received from client: " + messageJson);
+                // Listen for client messages
+                while ((messageJson = in.readLine()) != null) {
+                    System.out.println("Received message: " + messageJson);
                     processMessage(messageJson);
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 disconnect();
             }
         }
 
-
-
-
         private void processMessage(String messageJson) {
             try {
-                // Parse incoming message
                 JsonObject message = gson.fromJson(messageJson, JsonObject.class);
                 String type = message.get("type").getAsString();
                 JsonObject data = message.getAsJsonObject("data");
 
-                // Route based on the message type
                 switch (type) {
                     case "move":
                         handleMove(data);
@@ -133,13 +110,13 @@ public class ChessServer {
             String from = data.get("from").getAsString();
             String to = data.get("to").getAsString();
             System.out.println("Processing move from: " + from + " to: " + to);
-            currentRoom.broadcastMove(createMessage("move", data).toString());
+            currentRoom.sendGameUpdate(createMessage("move", data).toString());
         }
 
         private void handleChat(JsonObject data) {
             String message = data.get("message").getAsString();
             System.out.println("Broadcasting chat: " + message);
-            currentRoom.sendMessageToAll(createMessage("chat", data).toString());
+            currentRoom.sendGameUpdate(createMessage("chat", data).toString());
         }
 
         private JsonObject createMessage(String type, Object data) {
@@ -168,6 +145,7 @@ public class ChessServer {
     static class GameRoom {
         private List<Socket> players = new ArrayList<>();
         private Map<Socket, User> playerMap = new HashMap<>();
+        private List<Socket> spectators = new ArrayList<>();
         private String roomCode;
 
         public GameRoom() {
@@ -177,28 +155,40 @@ public class ChessServer {
         public String getRoomCode() {
             return roomCode;
         }
+
         public synchronized int getPlayerCount() {
-            return players.size(); // This method resolves the error
+            return players.size();
         }
 
-        public synchronized String addPlayer(Socket player, String username) throws IOException {
-            players.add(player);
+        public synchronized String addPlayer(Socket client, String username) throws IOException {
+            String role;
 
-            // Assign role based on connection order
-            String role = (players.size() == 1) ? "White" : "Black";
-            User user = new User(username, role);
-            playerMap.put(player, user);
+            if (players.size() < 2) {
+                role = (players.size() == 0) ? "White" : "Black";
+                players.add(client);
+                playerMap.put(client, new User(username, role));
+            } else {
+                role = "Spectator";
+                spectators.add(client);
+            }
 
-            sendMessage(player, createMessage("role", role).toString());
+            sendMessage(client, createMessage("role", role).toString());
             return role;
         }
 
-        public synchronized List<User> getUsers() {
-            return new ArrayList<>(playerMap.values());
+        public synchronized void broadcastToSpectators(String message) {
+            for (Socket spectator : spectators) {
+                try {
+                    sendMessage(spectator, message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        public synchronized void broadcastMove(String moveJson) {
-            sendMessageToAll(moveJson);
+        public synchronized void sendGameUpdate(String message) {
+            sendMessageToAll(message);
+            broadcastToSpectators(message);
         }
 
         public synchronized void sendMessageToAll(String message) {
@@ -217,9 +207,9 @@ public class ChessServer {
             sendMessageToAll(createMessage("status", "A player has left the game.").toString());
         }
 
-        private void sendMessage(Socket player, String message) throws IOException {
-            if (player != null && !player.isClosed()) {
-                PrintWriter out = new PrintWriter(player.getOutputStream(), true);
+        private void sendMessage(Socket client, String message) throws IOException {
+            if (client != null && !client.isClosed()) {
+                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 out.println(message);
             }
         }
@@ -241,35 +231,25 @@ public class ChessServer {
     }
 
     static class User {
-        public  String username; // Immutable field
-        public String role;     // Immutable field
+        private final String username;
+        private final String role;
 
-        // Constructor for creating User objects
         public User(String username, String role) {
-            //! TODO: Make the fields private
             this.username = username;
             this.role = role;
         }
 
-        // Public getter for 'username'
         public String getUsername() {
             return username;
         }
 
-        // Public getter for 'role'
         public String getRole() {
             return role;
         }
 
-        // Override 'toString' for better debugging
         @Override
         public String toString() {
-            return "User{" +
-                    "username='" + username + '\'' +
-                    ", role='" + role + '\'' +
-                    '}';
+            return "User{" + "username='" + username + '\'' + ", role='" + role + '\'' + '}';
         }
     }
-
-
 }

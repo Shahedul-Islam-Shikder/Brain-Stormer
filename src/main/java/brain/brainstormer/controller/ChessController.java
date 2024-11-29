@@ -89,14 +89,20 @@ public class ChessController {
 
             roomCodeLabel.setText(roomCode);
 
-            // Receive role and assign turn accordingly
+            // Receive role and determine turn or spectator status
             JsonObject roleMessage = chessClient.receiveMessage();
             if (roleMessage != null && roleMessage.has("data")) {
                 playerRole = roleMessage.get("data").getAsString();
                 System.out.println("Player role received: " + playerRole);
 
-                // Set turn based on player role
-                isMyTurn = "White".equals(playerRole);
+                if ("White".equals(playerRole)) {
+                    isMyTurn = true; // White starts the game
+                } else if ("Black".equals(playerRole)) {
+                    isMyTurn = false; // Black goes second
+                } else if ("Spectator".equals(playerRole)) {
+                    isMyTurn = false; // Spectators don't play
+                    System.out.println("You are a spectator. Watching the game.");
+                }
             } else {
                 throw new IllegalStateException("Failed to receive player role from server.");
             }
@@ -109,6 +115,7 @@ public class ChessController {
             e.printStackTrace();
         }
     }
+
 
 
 
@@ -318,6 +325,7 @@ public class ChessController {
                         case "usernames":
                             // Parse usernames and update the GUI
                             List<String> usernames = gson.fromJson(data, List.class);
+                            System.out.println("users !");
                             updatePlayerLabels(usernames);
                             break;
                         default:

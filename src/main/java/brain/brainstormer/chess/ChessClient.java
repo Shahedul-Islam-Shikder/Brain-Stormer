@@ -2,7 +2,6 @@ package brain.brainstormer.chess;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
 import java.net.*;
@@ -28,50 +27,32 @@ public class ChessClient {
 
     public void start(JsonObject startMessage) {
         try {
-            // Send the JSON object to the server
             out.println(gson.toJson(startMessage));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-
     public void sendMove(String moveJson) {
-        out.println(moveJson); // Send the JSON string to the server
+        out.println(moveJson);
     }
 
-
     public void sendChat(String chatMessage) {
-        try {
-            JsonObject chatData = new JsonObject();
-            chatData.addProperty("message", chatMessage);
-
-            JsonObject message = createMessage("chat", chatData);
-            out.println(gson.toJson(message)); // Send the chat as a JSON message
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        JsonObject chatData = new JsonObject();
+        chatData.addProperty("message", chatMessage);
+        JsonObject message = createMessage("chat", chatData);
+        out.println(gson.toJson(message));
     }
 
     public JsonObject receiveMessage() {
         try {
-            String messageJson = in.readLine(); // Read incoming message
-            if (messageJson != null) {
-                // Ignore plain text prompts
-                if (!messageJson.trim().startsWith("{")) {
-                    System.out.println("Server: " + messageJson); // Log the prompt
-                    return null;
-                }
-                // Try parsing as a JSON object
-                return gson.fromJson(messageJson, JsonObject.class);
-            }
+            String messageJson = in.readLine();
+            return gson.fromJson(messageJson, JsonObject.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-
 
     public void close() {
         try {
