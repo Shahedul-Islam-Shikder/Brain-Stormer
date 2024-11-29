@@ -108,12 +108,22 @@ public class ComponentSeeder {
                         .append("config", new Document("alignment", "TOP_CENTER"))
                         .append("children", Arrays.asList())
                         .append("createdAt", new Date()) // Current timestamp
-                        .append("lastUpdated", new Date())
+                        .append("lastUpdated", new Date()),
 
-
-
+        new Document()
+                .append("type", "table")
+                .append("config", new Document()
+                        .append("rowData", Arrays.asList(
+                                Arrays.asList("Header 1", "Header 2", "Header 3"), // Header row
+                                Arrays.asList("Row 1 Col 1", "Row 1 Col 2", "Row 1 Col 3"), // Data row
+                                Arrays.asList("Row 2 Col 1", "Row 2 Col 2", "Row 2 Col 3")  // Data row
+                        ))
+                        .append("description", "A table component with rows and columns"))
+                .append("createdAt", new Date())
+                .append("lastUpdated", new Date())
 
         );
+
 
         // Insert each component metadata into the database
         componentCollection.insertMany(components);

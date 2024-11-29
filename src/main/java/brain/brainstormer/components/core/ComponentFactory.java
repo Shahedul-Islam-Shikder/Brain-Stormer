@@ -5,6 +5,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ComponentFactory {
@@ -119,6 +120,38 @@ public class ComponentFactory {
                 }
                 return grouper;
 
+            case "table":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for table component.");
+                    return null;
+                }
+
+                TableComponent tableComponent = new TableComponent(
+                        id,
+                        description != null ? description : "No description"
+                );
+
+                List<List<String>> rowData = new ArrayList<>();
+                List<?> rowList = config.getList("rowData", List.class);
+
+                if (rowList != null && !rowList.isEmpty()) {
+                    for (Object row : rowList) {
+                        if (row instanceof List<?>) {
+                            List<String> rowDataList = new ArrayList<>();
+                            for (Object cell : (List<?>) row) {
+                                if (cell instanceof String) {
+                                    rowDataList.add((String) cell);
+                                } else {
+                                    rowDataList.add(cell.toString());
+                                }
+                            }
+                            rowData.add(rowDataList);
+                        }
+                    }
+                }
+
+                tableComponent.setRows(rowData); // Set the row data after creating the instance
+                return tableComponent;
 
 
             default:
