@@ -18,6 +18,7 @@ module brain.brainstormer {
     requires java.desktop;
     requires org.fxmisc.richtext;
     requires de.jensd.fx.glyphs.fontawesome;
+    requires com.google.gson;
 
     opens brain.brainstormer to javafx.fxml;
     exports brain.brainstormer;

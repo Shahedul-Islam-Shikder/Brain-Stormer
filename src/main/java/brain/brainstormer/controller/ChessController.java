@@ -4,12 +4,15 @@ import brain.brainstormer.chess.ChessClient;
 import brain.brainstormer.chess.ChessLogic;
 import brain.brainstormer.utilGui.ChessDialogs;
 import brain.brainstormer.utils.Chessutils;
+import brain.brainstormer.utils.SessionManager;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.github.bhlangonijr.chesslib.move.MoveGenerator;
 import com.github.bhlangonijr.chesslib.move.MoveGeneratorException;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -19,8 +22,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,17 +31,8 @@ public class ChessController {
     @FXML
     private GridPane chessBoard;
 
-
-
     @FXML
     private Label roomCodeLabel; // Label to display the room code
-
-
-
-
-
-
-
 
     private ChessLogic chessGame;
     private Map<Square, StackPane> squareMap;
@@ -50,10 +42,16 @@ public class ChessController {
     private boolean isMyTurn = false;
     private String playerRole;
 
+    private final Gson gson = new Gson(); // For JSON message handling
+
     public ChessController() {
         chessGame = new ChessLogic();
         squareMap = new HashMap<>();
     }
+
+    @FXML
+
+    private Label whitePlayerName, blackPlayerName;
 
     @FXML
     public void initialize() {
@@ -62,48 +60,56 @@ public class ChessController {
 
         // Initialize and start client to connect to server
         chessClient = new ChessClient("localhost", 12345);
+
         String roomCode = Chessutils.roomCode;
-        if (roomCode.isEmpty()) {
-            // Host a new game
-            chessClient.start("new");
-            try {
-                roomCode = chessClient.receiveMoveFromServer(); // Receives the generated room code
-                System.out.println("Hosting room. Code: " + roomCode);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // Join an existing room with code
-            chessClient.start(roomCode);
-            try {
-                chessClient.receiveMoveFromServer();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("Joined room with code: " + roomCode);
-        }
+        String username = SessionManager.getInstance().getUsername();
 
-        roomCodeLabel.setText(roomCode);
-
-        // Receive role and assign turn accordingly
         try {
+            JsonObject startMessage = new JsonObject();
+            startMessage.addProperty("username", username);
+            startMessage.addProperty("roomCode", roomCode.isEmpty() ? "new" : roomCode);
 
-            playerRole = chessClient.receiveMoveFromServer();
+            // Send the start message (username and room code)
+            chessClient.start(startMessage);
 
-            System.out.println("Player role received: " + playerRole);
+            // If hosting, receive and set the generated room code
+            if (roomCode.isEmpty()) {
+                JsonObject roomCodeMessage = chessClient.receiveMessage();
+                if (roomCodeMessage != null && roomCodeMessage.has("data")) {
+                    roomCode = roomCodeMessage.get("data").getAsString();
+                    System.out.println("Hosting room. Code: " + roomCode);
+                } else {
+                    throw new IllegalStateException("Failed to receive room code from server.");
+                }
+            } else {
+                System.out.println("Joined room with code: " + roomCode);
+            }
 
-            // Set turn based on player role
-            isMyTurn = "White".equals(playerRole); // White starts the game
-//            updateTurnText();
-        } catch (IOException e) {
+            roomCodeLabel.setText(roomCode);
+
+            // Receive role and assign turn accordingly
+            JsonObject roleMessage = chessClient.receiveMessage();
+            if (roleMessage != null && roleMessage.has("data")) {
+                playerRole = roleMessage.get("data").getAsString();
+                System.out.println("Player role received: " + playerRole);
+
+                // Set turn based on player role
+                isMyTurn = "White".equals(playerRole);
+            } else {
+                throw new IllegalStateException("Failed to receive player role from server.");
+            }
+
+            // Start a new thread to listen for server messages
+            Thread serverListenerThread = new Thread(this::listenForServerMessages);
+            serverListenerThread.setDaemon(true);
+            serverListenerThread.start();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // Start a new thread to listen for moves from the server
-        Thread serverListenerThread = new Thread(this::listenForServerMoves);
-        serverListenerThread.setDaemon(true);
-        serverListenerThread.start();
     }
+
+
+
 
     private void setupChessBoardUI() {
         final int cellSize = 60;
@@ -127,7 +133,6 @@ public class ChessController {
     private void refreshBoard() {
         clearHighlights();
         highlightCheckedKing();
-
 
         for (Square square : Square.values()) {
             if (square == Square.NONE) continue;
@@ -154,6 +159,48 @@ public class ChessController {
         }
     }
 
+    private void handleSquareClick(Square square) {
+        if (!isMyTurn) return; // Ensure it's the player's turn
+
+        Piece piece = chessGame.getBoard().getPiece(square);
+
+        if (selectedSquare == null) {
+            handlePieceSelection(square, piece);
+        } else {
+            handleMove(square, piece);
+        }
+    }
+
+    private void handlePieceSelection(Square square, Piece piece) {
+        if (piece == null || piece == Piece.NONE) return; // Empty square, ignore
+
+        boolean isWhitePiece = piece.getPieceSide() == Side.WHITE;
+        if ((playerRole.equals("White") && !isWhitePiece) || (playerRole.equals("Black") && isWhitePiece)) {
+            return; // Block move if piece does not belong to the player
+        }
+
+        selectedSquare = square;
+        clearHighlights();
+        highlightLegalMoves(selectedSquare);
+    }
+
+    private void handleMove(Square targetSquare, Piece targetPiece) {
+        Piece promotionPiece = null;
+
+        if (chessGame.isPromotionMove(selectedSquare, targetSquare)) {
+            promotionPiece = ChessDialogs.showPromotionDialog(playerRole.equals("White"));
+        }
+
+        if (chessGame.makeMove(selectedSquare, targetSquare, promotionPiece)) {
+            refreshBoard();
+            sendMoveToServer(selectedSquare, targetSquare, promotionPiece);
+            isMyTurn = false;
+        }
+
+        clearHighlights();
+        selectedSquare = null;
+    }
+
     private void clearHighlights() {
         Square checkedKingSquare = chessGame.getCheckedKingSquare();
 
@@ -168,6 +215,36 @@ public class ChessController {
             }
         }
     }
+    private void sendMoveToServer(Square from, Square to, Piece promotionPiece) {
+        JsonObject moveData = new JsonObject();
+        moveData.addProperty("from", from.toString());
+        moveData.addProperty("to", to.toString());
+        if (promotionPiece != null) {
+            moveData.addProperty("promotion", promotionPiece.value());
+        }
+        moveData.addProperty("username", SessionManager.getInstance().getUsername());
+
+        JsonObject moveMessage = createMessage("move", moveData);
+        chessClient.sendMove(moveMessage.toString());
+    }
+
+
+
+
+    private void listenForServerMessages() {
+        try {
+            while (true) {
+                JsonObject serverMessage = chessClient.receiveMessage();
+                if (serverMessage == null) break; // Stop if no message is received
+
+                Platform.runLater(() -> processServerMessage(serverMessage));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error in server listener thread.");
+        }
+    }
+
 
     private void highlightCheckedKing() {
         Square checkedKingSquare = chessGame.getCheckedKingSquare();
@@ -204,161 +281,91 @@ public class ChessController {
         }
     }
 
-    private void handleSquareClick(Square square) {
-        if (!isMyTurn) return; // Ensure it's the player's turn
-
-        Piece piece = chessGame.getBoard().getPiece(square);
-
-        if (selectedSquare == null) {
-            handlePieceSelection(square, piece);
-        } else {
-            handleMove(square, piece);
-        }
-    }
-
-    // Method to handle piece selection
-    private void handlePieceSelection(Square square, Piece piece) {
-        if (piece == null || piece == Piece.NONE) return; // Empty square, ignore
-
-        // Determine if the piece belongs to the player
-        boolean isWhitePiece = piece.getPieceSide() == Side.WHITE;
-        if ((playerRole.equals("White") && !isWhitePiece) || (playerRole.equals("Black") && isWhitePiece)) {
-
-            return; // Block move if piece does not belong to the player
-        }
-
-        // Select square and highlight moves if valid
-        selectedSquare = square;
-        clearHighlights();
-        highlightLegalMoves(selectedSquare);
-    }
-
-    // Method to handle the move
-    private void handleMove(Square targetSquare, Piece targetPiece) {
-        Piece promotionPiece = null;
-
-        // Check if the move is a promotion move
-        if (chessGame.isPromotionMove(selectedSquare, targetSquare)) {
-            promotionPiece = ChessDialogs.showPromotionDialog(playerRole.equals("White"));
-        }
-
-        //Check if Checkmate
-        if(chessGame.isCheckmate()){
-            ChessDialogs.showCheckmateDialog(playerRole.equals("Black" ) ? "White" : "Black");
-            chessClient.close();
-            Platform.runLater(() -> {
-                chessClient.close(); // Close the chess client or any resources if necessary
-                roomCodeLabel.getScene().getWindow().hide(); // Close the game window
-            });
-
-        }
-
-        // Attempt move and update server
-        if (chessGame.makeMove(selectedSquare, targetSquare, promotionPiece)) {
-            refreshBoard();
-            sendMoveToServer(selectedSquare, targetSquare, promotionPiece);
-
-            isMyTurn = false;
-//            updateTurnText();// End turn after a move
-
-        }
-
-        // Reset selection
-        clearHighlights();
-        selectedSquare = null;
-    }
-
-    // Method to send the move to the server, with promotion if applicable
-    private void sendMoveToServer(Square from, Square to, Piece promotionPiece) {
+    private void processServerMessage(JsonObject message) {
         try {
-            String moveMessage = from + " " + to;
-            if (promotionPiece != null) {
-                moveMessage += " " + promotionPiece.value(); // Append promotion piece type
+            String type = message.get("type").getAsString();
+
+            if (message.has("data")) {
+                if (message.get("data").isJsonObject()) {
+                    JsonObject data = message.getAsJsonObject("data");
+                    switch (type) {
+                        case "move":
+                            processMove(data);
+                            break;
+                        case "chat":
+                            displayChatMessage(data);
+                            break;
+                        default:
+                            System.err.println("Unknown message type with object data: " + type);
+                            break; // Ensure no fall-through
+                    }
+                } else if (message.get("data").isJsonPrimitive()) {
+                    String data = message.get("data").getAsString();
+                    switch (type) {
+                        case "roomCode":
+                            System.out.println("Room code received: " + data);
+                            break;
+                        case "status":
+                            System.out.println("Status message: " + data);
+                            break;
+                        case "role":
+                            System.out.println("Player role received: " + data);
+                            playerRole = data;
+                            isMyTurn = "White".equals(playerRole);
+                            break;
+                        case "usernames":
+                            // Parse usernames and update the GUI
+                            List<String> usernames = gson.fromJson(data, List.class);
+                            updatePlayerLabels(usernames);
+                            break;
+                        default:
+                            System.err.println("Unknown message type with primitive data: " + type);
+                            break;
+                    }
+                }
+            } else {
+                System.err.println("Invalid message: Missing 'data' field.");
             }
-            chessClient.sendMoveToServer(moveMessage);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error processing server message: " + message);
         }
     }
 
-
-
-
-    private void listenForServerMoves() {
-        while (true) {
-            try {
-                String serverMove = chessClient.receiveMoveFromServer();
-                System.out.println("Controller: Server move received: " + serverMove);
-                if (serverMove == null) break;
-
-                if (serverMove.equals("Waiting for another player...") || serverMove.equals("Game start!")) {
-                    System.out.println("Server status: " + serverMove);
-                    continue;
-                }
-
-                Move move = parseMove(serverMove); // Parse the move string received from the server
-
-                if (move != null) {
-                    Platform.runLater(() -> {
-                        chessGame.makeMove(move.getFrom(), move.getTo());
-                        refreshBoard();
-                        clearHighlights();
-
-                        // Check if the game is in checkmate after the move
-                        if (chessGame.isCheckmate()) {
-                            ChessDialogs.showCheckmateDialog(playerRole.equals("White") ? "Black" : "White"); // The opponent wins
-                            chessClient.close(); // Close the connection
-                            chessBoard.getScene().getWindow().hide(); // Close the game window
-                        } else {
-                            isMyTurn = true; // Your turn after opponent's move
-//                        updateTurnText(); // Uncomment if turn text is needed
-                        }
-                    });
-                } else {
-                    System.err.println("Failed to parse move from server: " + serverMove);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                break;
+    // New method to update player labels
+    private void updatePlayerLabels(List<String> usernames) {
+        Platform.runLater(() -> {
+            if (usernames.size() > 0) {
+                whitePlayerName.setText("White: " + usernames.get(0));
             }
-        }
-    }
-
-
-
-    private Move parseMove(String moveStr) {
-        try {
-            String[] parts = moveStr.split(" ");
-            if (parts.length == 2 || parts.length == 3) { // Adjust to 3 for promotion
-                Square from = Square.valueOf(parts[0].toUpperCase());
-                Square to = Square.valueOf(parts[1].toUpperCase());
-                Move move = new Move(from, to);
-
-                if (parts.length == 3) {
-                    Piece promotionPiece = Piece.fromValue(parts[2].toUpperCase());
-                    chessGame.makeMove(from, to, promotionPiece);
-                } else {
-                    chessGame.makeMove(from, to);
-                }
-                return move;
+            if (usernames.size() > 1) {
+                blackPlayerName.setText("Black: " + usernames.get(1));
             }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Invalid move format received: " + moveStr);
-        }
-        return null;
+        });
     }
 
-//    private void updateTurnText() {
-//        Platform.runLater(() -> {
-//            if (isMyTurn) {
-//                turnText.setText("Your Turn");
-//                turnText.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: green;");
-//            } else {
-//                turnText.setText("Opponent's Turn");
-//                turnText.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: red;");
-//            }
-//        });
-//    }
 
 
+
+    private void processMove(JsonObject data) {
+        Square from = Square.valueOf(data.get("from").getAsString());
+        Square to = Square.valueOf(data.get("to").getAsString());
+        Piece promotionPiece = data.has("promotion") ?
+                Piece.fromValue(data.get("promotion").getAsString()) : null;
+
+        chessGame.makeMove(from, to, promotionPiece);
+        refreshBoard();
+        isMyTurn = true;
+    }
+
+    private JsonObject createMessage(String type, JsonObject data) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type", type);
+        message.add("data", data);
+        return message;
+    }
+
+    private void displayChatMessage(JsonObject data) {
+        System.out.println("Chat: " + data.get("message").getAsString());
+    }
 }
