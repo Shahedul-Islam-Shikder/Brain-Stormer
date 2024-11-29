@@ -113,4 +113,9 @@ public class Heading extends CoreComponent implements Initializable {
             System.err.println("Failed to save Heading state to database: " + e.getMessage());
         }
     }
+
+    @Override
+    public void delete() {
+
+    }
 }

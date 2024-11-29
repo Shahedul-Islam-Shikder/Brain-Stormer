@@ -32,6 +32,8 @@ public class TextArea extends CoreComponent {
         textArea.setPrefRowCount(rows);
         textArea.setWrapText(true);
         textArea.getStyleClass().add("text-area");  // Apply TextArea style
+        // Add padding top 10 px
+        textArea.setPadding(new javafx.geometry.Insets(10, 0, 0, 0));
 
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             text = newValue;
@@ -79,5 +81,10 @@ public class TextArea extends CoreComponent {
         } catch (Exception e) {
             System.err.println("Failed to save TextArea state to database: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void delete() {
+
     }
 }

@@ -1,0 +1,56 @@
+/* Set the background color to black for the entire CodeArea and make text white */
+.code-area {
+    -fx-background-color: #000000; /* Black background */
+
+    -fx-font-size: 14px; /* Increase font size */
+    -fx-font-family: Consolas, "Courier New", monospace; /* Set a monospace font for better readability */
+    -fx-cursor-color: #ffffff;
+}
+
+.code-area .text {
+    -fx-fill: #ffffff; /* Default text color set to white */
+}
+
+/* Line number styling */
+.lineno {
+    -fx-background-color: #000000; /* Black background for line numbers */
+
+}
+
+
+
+/* Highlighting styles */
+.keyword {
+    -fx-fill: #d73a49 !important; /* Red for keywords */
+    -fx-font-weight: bold;
+}
+
+.paren {
+    -fx-fill: purple !important; /* Green for parentheses */
+}
+
+.brace {
+    -fx-fill: #6f42c1 !important; /* Purple for braces */
+}
+
+.bracket {
+    -fx-fill: #005cc5 !important; /* Blue for brackets */
+}
+
+.semicolon {
+    -fx-fill: #e36209 !important; /* Orange for semicolons */
+}
+
+/* Set the caret (text cursor) color to white */
+.caret {
+    -fx-stroke: white;
+}
+
+.string {
+    -fx-fill: green !important; /* Dark blue for strings */
+}
+
+.comment {
+    -fx-fill: #6a737d !important; /* Gray for comments */
+    -fx-font-style: italic;
+}

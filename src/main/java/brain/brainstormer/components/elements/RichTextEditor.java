@@ -83,6 +83,11 @@ public class RichTextEditor extends CoreComponent {
         }
     }
 
+    @Override
+    public void delete() {
+
+    }
+
     // Getter for the current HTML content
     public String getHtmlContent() {
         return htmlContent;

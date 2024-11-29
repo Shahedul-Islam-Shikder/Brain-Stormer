@@ -2,13 +2,20 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.controller.TemplateController;
+import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.utilGui.ComponentDialogBox;
 import brain.brainstormer.utils.Debouncer;
+import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.TemplateData;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.bson.Document;
 
 import java.util.Date;
@@ -27,27 +34,65 @@ public class CheckBox extends CoreComponent implements Initializable {
         this.title = title;
     }
 
+
     @Override
     public Node render() {
-        HBox container = new HBox(10);  // Set spacing between checkbox and label
-        container.setAlignment(Pos.CENTER_LEFT);  // Align items to the left
-        container.getStyleClass().add("hbox-container");  // Apply container style from CSS
+        // Container for the checkbox and label
+        HBox checkBoxContainer = new HBox(10);
+        checkBoxContainer.setAlignment(Pos.CENTER_LEFT);
+        checkBoxContainer.getStyleClass().add("checkbox-container"); // CSS class for styling
 
+        // Create the checkbox
         javafx.scene.control.CheckBox checkBox = new javafx.scene.control.CheckBox();
         checkBox.setSelected(isChecked);
-        checkBox.getStyleClass().add("check-box");  // Apply checkbox style from CSS
-
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             isChecked = newValue;
-            saveToDatabase(); // Save changes to the database with debouncing
+            saveToDatabase(); // Save changes with debouncing
         });
 
+        // Label for the checkbox
         Label titleLabel = new Label(title);
-        titleLabel.getStyleClass().add("label");  // Apply label style from CSS
+        titleLabel.getStyleClass().add("checkbox-label");
 
-        container.getChildren().addAll(checkBox, titleLabel);  // Add checkbox and label side by side
+        checkBoxContainer.getChildren().addAll(checkBox, titleLabel);
+
+        // Create the Edit and Delete buttons
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER_LEFT);
+        buttonContainer.getStyleClass().add("button-container"); // CSS class for styling
+
+        // Edit button with FontAwesomeIcon
+        FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.PENCIL);
+        editIcon.getStyleClass().add("edit-icon");
+
+        Button editButton = new Button("", editIcon); // Icon-only button
+        editButton.setOnAction(event -> {
+            ComponentDialogBox editDialog = new ComponentDialogBox(this, true, ComponentService.getInstance(), TemplateData.getInstance().getCurrentTemplateId());
+            editDialog.showDialog();
+            System.out.println("Editing component with ID: " + getId());
+        });
+
+        // Delete button with FontAwesomeIcon
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
+        deleteButton.setOnAction(event -> {
+            System.out.println("Deleting component with ID: " + getId());
+            delete(); // Log the delete action
+        });
+
+        buttonContainer.getChildren().addAll(editButton, deleteButton);
+
+        // Wrap everything in a VBox
+        VBox container = new VBox(5); // Spacing between checkbox and buttons
+        container.getChildren().addAll(checkBoxContainer, buttonContainer);
+        container.getStyleClass().add("checkbox-wrapper"); // CSS class for styling
+
         return container;
     }
+
+
 
     @Override
     public List<Node> getInputFields() {
@@ -103,4 +148,24 @@ public class CheckBox extends CoreComponent implements Initializable {
             System.err.println("Failed to save component state to database: " + e.getMessage());
         }
     }
+
+    @Override
+    public void delete() {
+        try {
+            // Use ComponentService to remove the component from the template
+            ComponentService.getInstance().deleteComponentFromTemplate(TemplateData.getInstance().getCurrentTemplateId(), getId());
+            System.out.println("Component deleted with ID: " + getId());
+
+            // Refresh the template content
+            TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
+            if (controller != null) {
+                controller.refreshTemplateContent(TemplateData.getInstance().getCurrentTemplateId());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to delete component: " + e.getMessage());
+        }
+    }
+
+
+
 }

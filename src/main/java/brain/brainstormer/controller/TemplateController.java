@@ -113,7 +113,13 @@ public class TemplateController {
     private void addComponent(String templateId) {
         AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, componentService);
         addComponentDialog.init();
+        refreshTemplateContent(templateId);
+    }
+
+    public void refreshTemplateContent(String templateId) {
+        // Reload the entire template content, including Groupers
         loadTemplateContent(templateId);
     }
+
 
 }

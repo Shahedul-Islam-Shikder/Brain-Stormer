@@ -40,4 +40,9 @@ public class LineBreaker extends CoreComponent {
     public void saveToDatabase() {
 
     }
+
+    @Override
+    public void delete() {
+
+    }
 }

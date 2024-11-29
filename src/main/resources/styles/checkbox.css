@@ -1,7 +1,19 @@
-/* Container style */
+/* Wrapper around the checkbox and buttons */
+.checkbox-wrapper {
+
+    -fx-padding: 10px; /* Padding around the entire component */
+    -fx-spacing:5px; /* Spacing between items */
+
+
+
+
+}
+
+/* Container style for checkbox and label */
 .hbox-container {
-    -fx-background-color: #121212;
-    -fx-padding: 10px;
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+    -fx-alignment: center-left; /* Align items to the left */
 }
 
 /* Label style */
@@ -14,8 +26,6 @@
 /* Checkbox style */
 .check-box {
     -fx-background-color: transparent;
-    -fx-border-color: #ffffff; /* White border */
-    -fx-border-radius: 3px;
     -fx-padding: 5px;
     -fx-text-fill: #ffffff;
 }
@@ -26,4 +36,39 @@
 
 .check-box:hover {
     -fx-border-color: #2a9df4; /* Change border color on hover */
+}
+
+/* Container for Edit and Delete buttons */
+.button-container {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+    -fx-spacing: 10px; /* Spacing between the buttons */
+    -fx-alignment: center-left; /* Align buttons to the left */
+}
+
+/* Buttons (Edit/Delete) */
+.button-container .button {
+    -fx-background-color: transparent; /* Transparent background */
+    -fx-border-color: transparent; /* No border by default */
+    -fx-cursor: hand; /* Pointer cursor on hover */
+    -fx-padding: 5px;
+    -fx-font-size: 14px; /* Default font size */
+}
+
+/* Buttons hover effect */
+.button-container .button:hover {
+    -fx-background-color: #2a9df4; /* Light blue background on hover */
+    -fx-text-fill: #ffffff; /* White text on hover */
+    -fx-border-radius: 5px; /* Rounded corners */
+}
+
+/* Icon style for Edit and Delete */
+.edit-icon, .delete-icon {
+    -fx-fill: #ffffff; /* White icon color */
+    -fx-font-size: 16px; /* Default icon size */
+}
+
+/* Icon hover effects */
+.edit-icon:hover, .delete-icon:hover {
+    -fx-fill: #2a9df4; /* Blue icon color on hover */
 }

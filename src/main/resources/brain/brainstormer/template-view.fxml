@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="753.0" prefWidth="979.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.TemplateController">
-    <VBox spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <VBox prefWidth="979.0" spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
         <!-- Navigation Bar with Buttons and Template Title -->
         <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #2E2E2E;">
@@ -46,15 +46,18 @@
         </VBox>
 
         <!-- Scrollable Content Area for Template Components -->
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="924.0" style="-fx-background: #121212; -fx-border-color: #000000;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="564.0" prefWidth="764.0" style="-fx-background: #121212; -fx-border-color: #000000;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
             <content>
                 <VBox fx:id="templateContentArea" spacing="10" style="-fx-background-color: #121212;">
                     <!-- Placeholder for template content -->
                     <Label style="-fx-text-fill: #B0B0B0; -fx-font-size: 16px;" text="Content will load here." />
+               <padding>
+                  <Insets left="80.0" right="80.0" />
+               </padding>
                 </VBox>
             </content>
             <padding>
-                <Insets left="80.0" right="80.0" top="10.0" />
+                <Insets top="10.0" />
             </padding>
         </ScrollPane>
 

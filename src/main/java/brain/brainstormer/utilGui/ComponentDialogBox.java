@@ -3,7 +3,9 @@ package brain.brainstormer.utilGui;
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.service.ComponentService;
+import brain.brainstormer.utils.SceneSwitcher;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -95,7 +97,20 @@ public class ComponentDialogBox {
     }
 
     private void editComponentInDatabase(Document componentData) {
-        System.out.println("Editing component in database: " + componentData.toJson());
-        // Implement database update logic here for editing
+        try {
+            System.out.println("Editing component in database: " + componentData.toJson());
+
+            // Call the update method in ComponentService
+            componentService.updateComponentInTemplate(templateId, component.getId(), componentData);
+
+            // Refresh the template to show the updated component
+            TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
+            if (controller != null) {
+                controller.refreshTemplateContent(templateId);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to edit component in database: " + e.getMessage());
+        }
     }
+
 }

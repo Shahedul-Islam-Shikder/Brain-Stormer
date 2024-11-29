@@ -81,4 +81,9 @@ public class DatePicker extends CoreComponent implements Initializable {
             System.err.println("Failed to save DatePicker state to database: " + e.getMessage());
         }
     }
+
+    @Override
+    public void delete() {
+
+    }
 }

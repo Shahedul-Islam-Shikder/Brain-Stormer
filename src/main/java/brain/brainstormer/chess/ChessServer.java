@@ -1,5 +1,8 @@
 package brain.brainstormer.chess;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -7,6 +10,7 @@ import java.util.*;
 public class ChessServer {
     private static final int PORT = 12345;
     private static List<GameRoom> rooms = new ArrayList<>();
+    private static final Gson gson = new Gson();
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -37,126 +41,182 @@ public class ChessServer {
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
 
-                out.println("Enter room code or type 'new' to create a room:");
-                String roomCode = in.readLine();
+                // Read the JSON object from the client
+                String messageJson = in.readLine();
+                JsonObject startMessage = gson.fromJson(messageJson, JsonObject.class);
+
+                String username = startMessage.get("username").getAsString();
+                String roomCode = startMessage.get("roomCode").getAsString();
+
+                System.out.println("Received username: " + username);
                 System.out.println("Received room code from client: " + roomCode);
 
-                if ("new".equalsIgnoreCase(roomCode)) {
+                // Find or create the game room
+                currentRoom = getRoomByCode(roomCode);
+                if (currentRoom == null && "new".equalsIgnoreCase(roomCode)) {
                     currentRoom = new GameRoom();
                     rooms.add(currentRoom);
-                    System.out.println("Server: New room created with code: " + currentRoom.getRoomCode());
-                    out.println(currentRoom.getRoomCode());
-                    System.out.println("New room created with code: " + currentRoom.getRoomCode());
-                } else {
-                    currentRoom = getRoomByCode(roomCode);
-                    if (currentRoom == null) {
-                        out.println("Room not found. Closing connection.");
-                        socket.close();
-                        return;
-                    }
-                    out.println(roomCode);
-                    System.out.println("Client joined room: " + roomCode);
+                    out.println(gson.toJson(createMessage("roomCode", currentRoom.getRoomCode())));
+                } else if (currentRoom == null) {
+                    out.println(gson.toJson(createMessage("error", "Room not found. Closing connection.")));
+                    socket.close();
+                    return;
                 }
 
-                String playerRole = currentRoom.addPlayer(socket);
-                System.out.println("Server-> Player role: " + playerRole);
-                out.println(playerRole); // Send role ("White" or "Black")
+                // Add the client to the room as a player or spectator
+                String role = currentRoom.addPlayer(socket, username);
+                System.out.println("User " + username + " assigned role: " + role);
 
-                while (currentRoom.getPlayerCount() < 2) {
-                    out.println("Waiting for another player...");
-                    Thread.sleep(1000);
+                if ("Spectator".equals(role)) {
+                    currentRoom.broadcastToSpectators(createMessage("status", username + " joined as a spectator.").toString());
+                    currentRoom.sendBoardState(socket); // Send the current board state to the spectator
                 }
 
-                currentRoom.sendMessageToAll("Game start!");
-                System.out.println("Server->"+playerRole + " player connected to room: " + roomCode);
 
-                String message;
-                while ((message = in.readLine()) != null) {
-                    if (message.equalsIgnoreCase("exit")) {
-                        break;
-                    }
-
-                    System.out.println("Received move from client: " + message);
-                    currentRoom.broadcastMove(message);
+                // Listen for client messages
+                while ((messageJson = in.readLine()) != null) {
+                    System.out.println("Received message: " + messageJson);
+                    processMessage(messageJson);
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                try {
-                    if (currentRoom != null) {
-                        currentRoom.removePlayer(socket);
-                    }
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                disconnect();
             }
+        }
+
+        private void processMessage(String messageJson) {
+            try {
+                JsonObject message = gson.fromJson(messageJson, JsonObject.class);
+                String type = message.get("type").getAsString();
+                JsonObject data = message.getAsJsonObject("data");
+
+                switch (type) {
+                    case "move":
+                        handleMove(data);
+                        break;
+                    case "chat":
+                        handleChat(data);
+                        break;
+                    default:
+                        System.err.println("Unknown message type: " + type);
+                        break;
+                }
+            } catch (Exception e) {
+                System.err.println("Invalid message format: " + messageJson);
+                e.printStackTrace();
+            }
+        }
+
+
+
+        private void handleMove(JsonObject data) {
+            String from = data.get("from").getAsString();
+            String to = data.get("to").getAsString();
+            String fen = data.get("fen").getAsString(); // Client sends the updated FEN
+
+            System.out.println("Processing move from: " + from + " to: " + to);
+            currentRoom.setCurrentFen(fen); // Update the FEN in the game room
+
+            // Broadcast move + FEN to all clients
+            data.addProperty("fen", fen); // Include FEN in the message
+            currentRoom.sendGameUpdate(createMessage("move", data).toString());
+        }
+
+
+        private void handleChat(JsonObject data) {
+            String message = data.get("message").getAsString();
+            System.out.println("Broadcasting chat: " + message);
+            currentRoom.sendGameUpdate(createMessage("chat", data).toString());
+        }
+
+        private JsonObject createMessage(String type, Object data) {
+            JsonObject message = new JsonObject();
+            message.addProperty("type", type);
+            message.add("data", gson.toJsonTree(data));
+            return message;
         }
 
         private void disconnect() {
             try {
                 if (currentRoom != null) {
                     currentRoom.removePlayer(socket);
-                    System.out.println("Server: Player disconnected from room " + currentRoom.getRoomCode());
-
                     if (currentRoom.getPlayerCount() == 0) {
                         rooms.remove(currentRoom);
-                        System.out.println("Server: Room " + currentRoom.getRoomCode() + " removed (empty).");
-                    } else {
-                        currentRoom.sendMessageToAll("A player has disconnected.");
+                        System.out.println("Room " + currentRoom.getRoomCode() + " removed (empty).");
                     }
                 }
-                if (socket != null && !socket.isClosed()) {
-                    socket.close();
-                }
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-
-
     static class GameRoom {
         private List<Socket> players = new ArrayList<>();
+        private Map<Socket, User> playerMap = new HashMap<>();
+        private List<Socket> spectators = new ArrayList<>();
         private String roomCode;
+        private String currentFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; // Initial FEN
 
         public GameRoom() {
             this.roomCode = generateRoomCode();
+        }
+
+        public String getCurrentFen() {
+            return currentFen;
+        }
+
+        public void setCurrentFen(String fen) {
+            this.currentFen = fen;
         }
 
         public String getRoomCode() {
             return roomCode;
         }
 
-        public synchronized String addPlayer(Socket player) throws IOException {
-            players.add(player);
-
-            // Assign role based on the order of connection
-            String role = (players.size() == 1) ? "White" : "Black";
-            sendMessage(player, role);
-            System.out.println("Server: Setting Server->"+role + " player role");
-
-            if (players.size() == 1) {
-                sendMessage(player, "Waiting for another player...");
-            }
-
-            return role;
-        }
-
-
         public synchronized int getPlayerCount() {
             return players.size();
         }
 
-        public synchronized void broadcastMove(String move) {
-            for (Socket player : players) {
+        public synchronized void sendBoardState(Socket client) throws IOException {
+            String fen = getCurrentFen(); // Get the current FEN
+            JsonObject boardStateMessage = createMessage("boardState", fen);
+            sendMessage(client, boardStateMessage.toString());
+        }
+
+
+
+        public synchronized String addPlayer(Socket client, String username) throws IOException {
+            String role;
+
+            if (players.size() < 2) {
+                role = (players.size() == 0) ? "White" : "Black";
+                players.add(client);
+                playerMap.put(client, new User(username, role));
+            } else {
+                role = "Spectator";
+                spectators.add(client);
+            }
+
+            sendMessage(client, createMessage("role", role).toString());
+            return role;
+        }
+
+        public synchronized void broadcastToSpectators(String message) {
+            for (Socket spectator : spectators) {
                 try {
-                    sendMessage(player, move);
+                    sendMessage(spectator, message);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        }
+
+        public synchronized void sendGameUpdate(String message) {
+            sendMessageToAll(message);
+            broadcastToSpectators(message);
         }
 
         public synchronized void sendMessageToAll(String message) {
@@ -171,15 +231,13 @@ public class ChessServer {
 
         public synchronized void removePlayer(Socket player) {
             players.remove(player);
-            if (players.size() > 0) {
-                sendMessageToAll("A player has left the game.");
-            }
+            playerMap.remove(player);
+            sendMessageToAll(createMessage("status", "A player has left the game.").toString());
         }
 
-
-        private void sendMessage(Socket player, String message) throws IOException {
-            if (player != null && !player.isClosed()) {
-                PrintWriter out = new PrintWriter(player.getOutputStream(), true);
+        private void sendMessage(Socket client, String message) throws IOException {
+            if (client != null && !client.isClosed()) {
+                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 out.println(message);
             }
         }
@@ -187,9 +245,39 @@ public class ChessServer {
         private String generateRoomCode() {
             return Integer.toString((int) (Math.random() * 10000));
         }
+
+        private JsonObject createMessage(String type, Object data) {
+            JsonObject message = new JsonObject();
+            message.addProperty("type", type);
+            message.add("data", gson.toJsonTree(data));
+            return message;
+        }
     }
 
     private static GameRoom getRoomByCode(String roomCode) {
         return rooms.stream().filter(room -> room.getRoomCode().equals(roomCode)).findFirst().orElse(null);
+    }
+
+    static class User {
+        private final String username;
+        private final String role;
+
+        public User(String username, String role) {
+            this.username = username;
+            this.role = role;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        @Override
+        public String toString() {
+            return "User{" + "username='" + username + '\'' + ", role='" + role + '\'' + '}';
+        }
     }
 }

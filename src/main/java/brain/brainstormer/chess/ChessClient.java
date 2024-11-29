@@ -1,5 +1,8 @@
 package brain.brainstormer.chess;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.io.*;
 import java.net.*;
 
@@ -8,8 +11,10 @@ public class ChessClient {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private final Gson gson;
 
     public ChessClient(String serverAddress, int port) {
+        gson = new Gson();
         try {
             socket = new Socket(serverAddress, port);
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -20,21 +25,33 @@ public class ChessClient {
         }
     }
 
-    public void start(String roomCode) {
+    public void start(JsonObject startMessage) {
         try {
-            out.println(roomCode); // Send the room code or "new" to create a room
-            System.out.println("Server: " + in.readLine()); // Confirmation of room
-        } catch (IOException e) {
+            out.println(gson.toJson(startMessage));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void sendMoveToServer(String move) throws IOException {
-        out.println(move); // Send the move string directly to the server
+    public void sendMove(String moveJson) {
+        out.println(moveJson);
     }
 
-    public String receiveMoveFromServer() throws IOException {
-        return in.readLine();
+    public void sendChat(String chatMessage) {
+        JsonObject chatData = new JsonObject();
+        chatData.addProperty("message", chatMessage);
+        JsonObject message = createMessage("chat", chatData);
+        out.println(gson.toJson(message));
+    }
+
+    public JsonObject receiveMessage() {
+        try {
+            String messageJson = in.readLine();
+            return gson.fromJson(messageJson, JsonObject.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void close() {
@@ -43,5 +60,12 @@ public class ChessClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private JsonObject createMessage(String type, JsonObject data) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type", type);
+        message.add("data", data);
+        return message;
     }
 }
