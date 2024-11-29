@@ -169,7 +169,7 @@ public class ChessController {
     }
 
     private void handleSquareClick(Square square) {
-        if (!isMyTurn) return; // Ensure it's the player's turn
+        if (!isMyTurn || "Spectator".equals(playerRole)) return;
 
         Piece piece = chessGame.getBoard().getPiece(square);
 
@@ -224,18 +224,19 @@ public class ChessController {
             }
         }
     }
-    private void sendMoveToServer(Square from, Square to, Piece promotionPiece) {
-        JsonObject moveData = new JsonObject();
-        moveData.addProperty("from", from.toString());
-        moveData.addProperty("to", to.toString());
-        if (promotionPiece != null) {
-            moveData.addProperty("promotion", promotionPiece.value());
-        }
-        moveData.addProperty("username", SessionManager.getInstance().getUsername());
+        private void sendMoveToServer(Square from, Square to, Piece promotionPiece) {
+            JsonObject moveData = new JsonObject();
+            moveData.addProperty("from", from.toString());
+            moveData.addProperty("to", to.toString());
+            moveData.addProperty("fen", chessGame.getBoard().getFen());
+            if (promotionPiece != null) {
+                moveData.addProperty("promotion", promotionPiece.value());
+            }
+            moveData.addProperty("username", SessionManager.getInstance().getUsername());
 
-        JsonObject moveMessage = createMessage("move", moveData);
-        chessClient.sendMove(moveMessage.toString());
-    }
+            JsonObject moveMessage = createMessage("move", moveData);
+            chessClient.sendMove(moveMessage.toString());
+        }
 
 
 
@@ -306,11 +307,14 @@ public class ChessController {
                             break;
                         default:
                             System.err.println("Unknown message type with object data: " + type);
-                            break; // Ensure no fall-through
+                            break;
                     }
                 } else if (message.get("data").isJsonPrimitive()) {
                     String data = message.get("data").getAsString();
                     switch (type) {
+                        case "boardState": // New case for board state
+                            updateBoardFromFen(data);
+                            break;
                         case "roomCode":
                             System.out.println("Room code received: " + data);
                             break;
@@ -323,9 +327,7 @@ public class ChessController {
                             isMyTurn = "White".equals(playerRole);
                             break;
                         case "usernames":
-                            // Parse usernames and update the GUI
                             List<String> usernames = gson.fromJson(data, List.class);
-                            System.out.println("users !");
                             updatePlayerLabels(usernames);
                             break;
                         default:
@@ -342,6 +344,7 @@ public class ChessController {
         }
     }
 
+
     // New method to update player labels
     private void updatePlayerLabels(List<String> usernames) {
         Platform.runLater(() -> {
@@ -353,6 +356,19 @@ public class ChessController {
             }
         });
     }
+
+    private void updateBoardFromFen(String fen) {
+        try {
+
+            chessGame.getBoard().loadFromFen(fen); // Update the board with FEN
+            refreshBoard(); // Refresh the UI
+            System.out.println("we here");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to update board from FEN: " + fen);
+        }
+    }
+
 
 
 

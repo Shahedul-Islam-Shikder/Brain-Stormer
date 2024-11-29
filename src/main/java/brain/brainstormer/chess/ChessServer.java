@@ -69,7 +69,9 @@ public class ChessServer {
 
                 if ("Spectator".equals(role)) {
                     currentRoom.broadcastToSpectators(createMessage("status", username + " joined as a spectator.").toString());
+                    currentRoom.sendBoardState(socket); // Send the current board state to the spectator
                 }
+
 
                 // Listen for client messages
                 while ((messageJson = in.readLine()) != null) {
@@ -106,12 +108,21 @@ public class ChessServer {
             }
         }
 
+
+
         private void handleMove(JsonObject data) {
             String from = data.get("from").getAsString();
             String to = data.get("to").getAsString();
+            String fen = data.get("fen").getAsString(); // Client sends the updated FEN
+
             System.out.println("Processing move from: " + from + " to: " + to);
+            currentRoom.setCurrentFen(fen); // Update the FEN in the game room
+
+            // Broadcast move + FEN to all clients
+            data.addProperty("fen", fen); // Include FEN in the message
             currentRoom.sendGameUpdate(createMessage("move", data).toString());
         }
+
 
         private void handleChat(JsonObject data) {
             String message = data.get("message").getAsString();
@@ -147,9 +158,18 @@ public class ChessServer {
         private Map<Socket, User> playerMap = new HashMap<>();
         private List<Socket> spectators = new ArrayList<>();
         private String roomCode;
+        private String currentFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; // Initial FEN
 
         public GameRoom() {
             this.roomCode = generateRoomCode();
+        }
+
+        public String getCurrentFen() {
+            return currentFen;
+        }
+
+        public void setCurrentFen(String fen) {
+            this.currentFen = fen;
         }
 
         public String getRoomCode() {
@@ -159,6 +179,14 @@ public class ChessServer {
         public synchronized int getPlayerCount() {
             return players.size();
         }
+
+        public synchronized void sendBoardState(Socket client) throws IOException {
+            String fen = getCurrentFen(); // Get the current FEN
+            JsonObject boardStateMessage = createMessage("boardState", fen);
+            sendMessage(client, boardStateMessage.toString());
+        }
+
+
 
         public synchronized String addPlayer(Socket client, String username) throws IOException {
             String role;
