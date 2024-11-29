@@ -44,6 +44,8 @@ public class ChessController {
 
     private final Gson gson = new Gson(); // For JSON message handling
 
+
+
     public ChessController() {
         chessGame = new ChessLogic();
         squareMap = new HashMap<>();

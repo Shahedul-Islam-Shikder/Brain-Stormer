@@ -241,20 +241,35 @@ public class ChessServer {
     }
 
     static class User {
-        private String username;
-        private String role;
+        public  String username; // Immutable field
+        public String role;     // Immutable field
 
+        // Constructor for creating User objects
         public User(String username, String role) {
+            //! TODO: Make the fields private
             this.username = username;
             this.role = role;
         }
 
+        // Public getter for 'username'
         public String getUsername() {
             return username;
         }
 
+        // Public getter for 'role'
         public String getRole() {
             return role;
         }
+
+        // Override 'toString' for better debugging
+        @Override
+        public String toString() {
+            return "User{" +
+                    "username='" + username + '\'' +
+                    ", role='" + role + '\'' +
+                    '}';
+        }
     }
+
+
 }

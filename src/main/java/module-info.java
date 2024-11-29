@@ -20,9 +20,10 @@ module brain.brainstormer {
     requires de.jensd.fx.glyphs.fontawesome;
     requires com.google.gson;
 
-    opens brain.brainstormer to javafx.fxml;
-    exports brain.brainstormer;
+    // Open the specific packages to Gson for reflection
+    opens brain.brainstormer.chess to com.google.gson;
+    opens brain.brainstormer.controller to javafx.fxml;
 
-    exports brain.brainstormer.controller;           // Export the controller package
-    opens brain.brainstormer.controller to javafx.fxml; // Open the controller package for JavaFX reflection
+    exports brain.brainstormer;
+    exports brain.brainstormer.controller;
 }
