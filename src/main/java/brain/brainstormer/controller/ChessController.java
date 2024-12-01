@@ -169,7 +169,13 @@ public class ChessController {
     }
 
     private void handleSquareClick(Square square) {
-        if (!isMyTurn || "Spectator".equals(playerRole)) return;
+        // Spectators should not be able to make moves
+        if ("Spectator".equals(playerRole)) {
+            System.out.println("Spectator interaction ignored.");
+            return;
+        }
+
+        if (!isMyTurn) return; // Block move if it's not the player's turn
 
         Piece piece = chessGame.getBoard().getPiece(square);
 
@@ -247,6 +253,8 @@ public class ChessController {
                 JsonObject serverMessage = chessClient.receiveMessage();
                 if (serverMessage == null) break; // Stop if no message is received
 
+
+
                 Platform.runLater(() -> processServerMessage(serverMessage));
             }
         } catch (Exception e) {
@@ -302,19 +310,34 @@ public class ChessController {
                         case "move":
                             processMove(data);
                             break;
+                        case "boardState":
+                            System.out.println("Controller:::: player role: " + playerRole);
+                            updateBoardFromFen(data.get("fen").getAsString());
+                            break;
                         case "chat":
                             displayChatMessage(data);
                             break;
                         default:
-                            System.err.println("Unknown message type with object data: " + type);
+                            System.err.println("Unknown message type (object data): " + type + ", Message: " + message);
+                            break;
+                    }
+                } else if (message.get("data").isJsonArray()) {
+                    // Handle "usernames" if it's an array
+                    switch (type) {
+                        case "usernames":
+                            System.out.println("Received usernames array---------------: " + message.get("data").getAsJsonArray());
+                            List<String> usernames = gson.fromJson(message.get("data").getAsJsonArray(), List.class);
+
+                            System.out.println("Deserialized usernames: " + usernames);
+                            updatePlayerLabels(usernames);
+                            break;
+                        default:
+                            System.err.println("Unknown message type (array data): " + type + ", Message: " + message);
                             break;
                     }
                 } else if (message.get("data").isJsonPrimitive()) {
                     String data = message.get("data").getAsString();
                     switch (type) {
-                        case "boardState": // New case for board state
-                            updateBoardFromFen(data);
-                            break;
                         case "roomCode":
                             System.out.println("Room code received: " + data);
                             break;
@@ -322,21 +345,21 @@ public class ChessController {
                             System.out.println("Status message: " + data);
                             break;
                         case "role":
-                            System.out.println("Player role received: " + data);
+                            System.out.println("Player role888 received: " + data);
                             playerRole = data;
                             isMyTurn = "White".equals(playerRole);
                             break;
-                        case "usernames":
-                            List<String> usernames = gson.fromJson(data, List.class);
-                            updatePlayerLabels(usernames);
+                        case "boardState":
+                            System.out.println("Received board statecxfvdfgdfg: " + data);
+                            updateBoardFromFen(data);
                             break;
                         default:
-                            System.err.println("Unknown message type with primitive data: " + type);
+                            System.err.println("Unknown message type (primitive data): " + type + ", Message: " + message);
                             break;
                     }
                 }
             } else {
-                System.err.println("Invalid message: Missing 'data' field.");
+                System.err.println("Invalid message: Missing 'data' field. Message: " + message);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -345,29 +368,50 @@ public class ChessController {
     }
 
 
-    // New method to update player labels
+
+
     private void updatePlayerLabels(List<String> usernames) {
         Platform.runLater(() -> {
-            if (usernames.size() > 0) {
-                whitePlayerName.setText("White: " + usernames.get(0));
-            }
-            if (usernames.size() > 1) {
-                blackPlayerName.setText("Black: " + usernames.get(1));
+            System.out.println("Updating player labels with usernames: " + usernames);
+            if (usernames != null && !usernames.isEmpty()) {
+                if (usernames.size() > 0) {
+                    System.out.println("White Player: " + usernames.get(0));
+                    whitePlayerName.setText("White: " + usernames.get(0));
+                }
+                if (usernames.size() > 1) {
+                    System.out.println("Black Player: " + usernames.get(1));
+                    blackPlayerName.setText("Black: " + usernames.get(1));
+                }
+            } else {
+                System.err.println("Error: Usernames list is empty or null.");
+                whitePlayerName.setText("White: ");
+                blackPlayerName.setText("Black: ");
             }
         });
     }
 
+
     private void updateBoardFromFen(String fen) {
         try {
-
             chessGame.getBoard().loadFromFen(fen); // Update the board with FEN
             refreshBoard(); // Refresh the UI
-            System.out.println("we here");
+
+            // Extract the active player's turn from the FEN
+            String[] fenParts = fen.split(" ");
+            String activePlayer = fenParts[1]; // 'w' for White, 'b' for Black
+
+            // Update turn based on the active player and the player's role
+            isMyTurn = (activePlayer.equals("w") && "White".equals(playerRole)) ||
+                    (activePlayer.equals("b") && "Black".equals(playerRole));
+
+            System.out.println("Board updated from FEN: " + fen);
+            System.out.println("Active player: " + activePlayer + ", isMyTurn: " + isMyTurn);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to update board from FEN: " + fen);
         }
     }
+
 
 
 

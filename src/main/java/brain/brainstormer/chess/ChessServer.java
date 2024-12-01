@@ -113,13 +113,13 @@ public class ChessServer {
         private void handleMove(JsonObject data) {
             String from = data.get("from").getAsString();
             String to = data.get("to").getAsString();
-            String fen = data.get("fen").getAsString(); // Client sends the updated FEN
+            String fen = data.get("fen").getAsString();
 
             System.out.println("Processing move from: " + from + " to: " + to);
-            currentRoom.setCurrentFen(fen); // Update the FEN in the game room
+            currentRoom.setCurrentFen(fen);
 
             // Broadcast move + FEN to all clients
-            data.addProperty("fen", fen); // Include FEN in the message
+            data.addProperty("fen", fen);
             currentRoom.sendGameUpdate(createMessage("move", data).toString());
         }
 
@@ -189,8 +189,26 @@ public class ChessServer {
 
 
         public synchronized String addPlayer(Socket client, String username) throws IOException {
-            String role;
+            User existingUser = playerMap.values().stream()
+                    .filter(user -> user.getUsername().equals(username))
+                    .findFirst()
+                    .orElse(null);
 
+            if (existingUser != null) {
+                // Reassign the player to their existing role
+                playerMap.keySet().removeIf(s -> playerMap.get(s).getUsername().equals(username));
+                playerMap.put(client, existingUser);
+                players.add(client);
+                sendMessage(client, createMessage("role", existingUser.getRole()).toString());
+                sendUsernames(); // Broadcast updated usernames
+
+                // Send the current FEN to the player
+                sendBoardState(client);
+                return existingUser.getRole();
+            }
+
+            // Logic for new players or spectators
+            String role;
             if (players.size() < 2) {
                 role = (players.size() == 0) ? "White" : "Black";
                 players.add(client);
@@ -201,8 +219,28 @@ public class ChessServer {
             }
 
             sendMessage(client, createMessage("role", role).toString());
+
+            sendUsernames(); // Broadcast updated usernames
+
+            // Send the current FEN to the player
+            sendBoardState(client);
             return role;
         }
+
+
+        public synchronized void sendUsernames() {
+            List<String> usernames = new ArrayList<>();
+            for (User user : playerMap.values()) {
+                usernames.add(user.getUsername());
+            }
+
+            System.out.println("Server-> Sending usernames: " + usernames);
+            sendGameUpdate(createMessage("usernames", usernames).toString());
+        }
+
+
+
+
 
         public synchronized void broadcastToSpectators(String message) {
             for (Socket spectator : spectators) {
@@ -215,6 +253,7 @@ public class ChessServer {
         }
 
         public synchronized void sendGameUpdate(String message) {
+
             sendMessageToAll(message);
             broadcastToSpectators(message);
         }
@@ -223,11 +262,14 @@ public class ChessServer {
             for (Socket player : players) {
                 try {
                     sendMessage(player, message);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+
+
 
         public synchronized void removePlayer(Socket player) {
             players.remove(player);
