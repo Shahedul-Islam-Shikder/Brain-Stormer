@@ -21,6 +21,7 @@ module brain.brainstormer {
     requires com.google.gson;
     requires dotenv.java;
     requires cloudinary.core;
+    requires org.java_websocket;
 
     // Open the specific packages to Gson for reflection
     opens brain.brainstormer.chess to com.google.gson;
