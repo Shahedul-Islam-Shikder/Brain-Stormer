@@ -109,6 +109,15 @@ public class ComponentSeeder {
                         .append("children", Arrays.asList())
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
+                new Document()
+                        .append("type", "image")
+                        .append("config", new Document()
+                                .append("imageUrl", null) // Placeholder image URL
+                                .append("altText", "Default Image Alt Text")
+                                .append("description", "An image component for displaying pictures"))
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
+
 
         new Document()
                 .append("type", "table")
@@ -123,6 +132,7 @@ public class ComponentSeeder {
                 .append("lastUpdated", new Date())
 
         );
+
 
 
         // Insert each component metadata into the database

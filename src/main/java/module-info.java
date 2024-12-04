@@ -19,6 +19,8 @@ module brain.brainstormer {
     requires org.fxmisc.richtext;
     requires de.jensd.fx.glyphs.fontawesome;
     requires com.google.gson;
+    requires dotenv.java;
+    requires cloudinary.core;
 
     // Open the specific packages to Gson for reflection
     opens brain.brainstormer.chess to com.google.gson;

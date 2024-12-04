@@ -1,6 +1,7 @@
 package brain.brainstormer.components.core;
 
 import brain.brainstormer.components.elements.*;
+import javafx.scene.image.Image;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -119,6 +120,22 @@ public class ComponentFactory {
                     }
                 }
                 return grouper;
+            case "image":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for image component.");
+                    return null;
+                }
+                String imageUrl = config.getString("imageUrl");
+                String altText = config.getString("altText");
+                return new ImageComponent(
+                        id,
+                        description != null ? description : "No description",
+                        imageUrl, // Use the actual imageUrl or leave it null
+                        altText != null ? altText : "Image Component" // Default alt text
+                );
+
+
+
 
             case "table":
                 if (config == null) {

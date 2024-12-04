@@ -65,6 +65,8 @@ public class ComponentDialogBox {
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             saveComponentData();
+
+
         }
     }
 
