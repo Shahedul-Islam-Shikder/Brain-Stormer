@@ -8,6 +8,7 @@ import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 
 public class DatabaseConnection {
@@ -16,9 +17,10 @@ public class DatabaseConnection {
     private MongoClient mongoClient;
     private MongoDatabase database;
 
-
     private DatabaseConnection() {
-        String connectionString = "mongodb+srv://kmosabbir:1234@mew.vr8iv.mongodb.net/?retryWrites=true&w=majority&appName=mew"; // Replace with your URI
+        // Load environment variables
+        Dotenv dotenv = Dotenv.load();
+        String connectionString = dotenv.get("MONGO_CONNECTION_STRING");
 
         // Configure MongoDB settings with ServerApi
         ServerApi serverApi = ServerApi.builder()
@@ -29,7 +31,6 @@ public class DatabaseConnection {
                 .applyConnectionString(new ConnectionString(connectionString))
                 .serverApi(serverApi)
                 .build();
-
 
         mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("BrainStormer");
@@ -51,11 +52,9 @@ public class DatabaseConnection {
         return instance;
     }
 
-
     public MongoDatabase getDatabase() {
         return database;
     }
-
 
     public void close() {
         if (mongoClient != null) {
