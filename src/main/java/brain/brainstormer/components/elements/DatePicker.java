@@ -2,11 +2,21 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.controller.TemplateController;
+import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.utilGui.ComponentDialogBox;
 import brain.brainstormer.utils.Debouncer;
+import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.TemplateData;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.bson.Document;
 
 import java.time.LocalDate;
@@ -22,18 +32,52 @@ public class DatePicker extends CoreComponent implements Initializable {
         this.selectedDate = initialDate != null ? initialDate : LocalDate.now();
     }
 
-    public Control render() {
+    @Override
+    public Node render() {
+        // Create the DatePicker
         javafx.scene.control.DatePicker datePicker = new javafx.scene.control.DatePicker(selectedDate);
         datePicker.getStyleClass().add("date-picker"); // Apply custom style from CSS
 
-        // Update selectedDate whenever the value changes and save to database
         datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             selectedDate = newValue;
-            saveToDatabase();
+            saveToDatabase(); // Save changes with debouncing
         });
 
-        return datePicker;
+        // Create the Edit and Delete buttons
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER_LEFT);
+        buttonContainer.getStyleClass().add("button-container"); // CSS class for styling
+
+        FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.PENCIL);
+        editIcon.getStyleClass().add("edit-icon");
+
+        Button editButton = new Button("", editIcon); // Icon-only button
+        editButton.setOnAction(event -> {
+            ComponentDialogBox editDialog = new ComponentDialogBox(this, true, ComponentService.getInstance(), TemplateData.getInstance().getCurrentTemplateId());
+            editDialog.showDialog();
+            System.out.println("Editing component with ID: " + getId());
+        });
+
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
+        deleteButton.setOnAction(event -> {
+            System.out.println("Deleting DatePicker component with ID: " + getId());
+            delete(); // Call the delete method
+        });
+
+        buttonContainer.getChildren().addAll(editButton, deleteButton);
+
+        // Wrap everything in a VBox
+        VBox container = new VBox(10); // Spacing between DatePicker and buttons
+        container.getChildren().addAll(datePicker, buttonContainer);
+        container.getStyleClass().add("date-picker-wrapper"); // CSS class for styling
+
+        return container;
     }
+
+
 
     @Override
     public List<Node> getInputFields() {
@@ -82,8 +126,5 @@ public class DatePicker extends CoreComponent implements Initializable {
         }
     }
 
-    @Override
-    public void delete() {
 
-    }
 }

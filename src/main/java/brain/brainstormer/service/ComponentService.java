@@ -5,12 +5,14 @@ import brain.brainstormer.utils.DatabaseConnection;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,14 +28,6 @@ public class ComponentService {
         componentsCollection = database.getCollection("components");
     }
 
-//    // Fetch all templates from the database
-//    public List<String> getTemplateNames() {
-//        List<String> templateNames = new ArrayList<>();
-//        for (Document doc : templatesCollection.find()) {
-//            templateNames.add(doc.getString("name")); // Assuming the template has a "name" field
-//        }
-//        return templateNames;
-//    }
 
     public static ComponentService getInstance() {
         if (instance == null) {
@@ -147,6 +141,33 @@ public class ComponentService {
             System.err.println("Failed to update component in template: " + e.getMessage());
         }
     }
+
+    public void updateGrouperInTemplate(String templateId, String grouperId, Document updatedGrouperData) {
+        try {
+            UpdateResult result = templatesCollection.updateOne(
+                    Filters.and(
+                            Filters.eq("_id", new ObjectId(templateId)), // Match the template
+                            Filters.eq("components._id", grouperId) // Match the specific Grouper by ID
+                    ),
+                    Updates.combine(
+                            Updates.set("components.$.config", updatedGrouperData.get("config")), // Update config only
+                            Updates.set("components.$.lastUpdated", new Date()) // Update timestamp
+                    )
+            );
+
+            if (result.getModifiedCount() > 0) {
+                System.out.println("Grouper updated successfully in MongoDB.");
+            } else {
+                System.err.println("No matching Grouper found or no updates made.");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to update Grouper in MongoDB: " + e.getMessage());
+        }
+    }
+
+
+
+
 
 
 

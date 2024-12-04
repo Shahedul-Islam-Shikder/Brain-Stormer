@@ -4,7 +4,10 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utils.Debouncer;
 import brain.brainstormer.utils.TemplateData;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import org.bson.Document;
@@ -24,9 +27,11 @@ public class RichTextEditor extends CoreComponent {
 
     @Override
     public Node render() {
-        VBox container = new VBox(5);
+        // Create the container for the RichTextEditor
+        VBox container = new VBox(10); // Add spacing between components
         container.getStyleClass().add("vbox-container"); // Style for the container
 
+        // Create the HTMLEditor
         HTMLEditor htmlEditor = new HTMLEditor();
         htmlEditor.setHtmlText(htmlContent); // Set initial content
         htmlEditor.setPrefHeight(400); // Set a default height
@@ -41,7 +46,19 @@ public class RichTextEditor extends CoreComponent {
             saveToDatabase(); // Save changes to the database with debouncing
         });
 
-        container.getChildren().add(htmlEditor);
+        // Create the Delete button
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
+        deleteButton.setOnAction(event -> {
+            System.out.println("Deleting RichTextEditor component with ID: " + getId());
+            delete(); // Call the inherited delete method
+        });
+
+        // Add HTMLEditor and Delete button to the container
+        container.getChildren().addAll(htmlEditor, deleteButton);
+
         return container;
     }
 
@@ -83,10 +100,7 @@ public class RichTextEditor extends CoreComponent {
         }
     }
 
-    @Override
-    public void delete() {
 
-    }
 
     // Getter for the current HTML content
     public String getHtmlContent() {

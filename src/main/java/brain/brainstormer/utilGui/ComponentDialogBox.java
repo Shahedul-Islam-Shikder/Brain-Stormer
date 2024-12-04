@@ -98,19 +98,23 @@ public class ComponentDialogBox {
 
     private void editComponentInDatabase(Document componentData) {
         try {
-            System.out.println("Editing component in database: " + componentData.toJson());
+            if (grouperComponent == null) {
+                componentService.updateComponentInTemplate(templateId, component.getId(), componentData);
+            } else {
+                // Edit specific child in the Grouper
+                componentService.updateGrouperInTemplate(templateId, component.getId(), componentData);
+            }
 
-            // Call the update method in ComponentService
-            componentService.updateComponentInTemplate(templateId, component.getId(), componentData);
-
-            // Refresh the template to show the updated component
+            // Refresh the template
             TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
             if (controller != null) {
                 controller.refreshTemplateContent(templateId);
             }
         } catch (Exception e) {
-            System.err.println("Failed to edit component in database: " + e.getMessage());
+            System.err.println("Failed to edit component in Grouper: " + e.getMessage());
         }
     }
+
+
 
 }

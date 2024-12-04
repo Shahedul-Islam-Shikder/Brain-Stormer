@@ -149,22 +149,7 @@ public class CheckBox extends CoreComponent implements Initializable {
         }
     }
 
-    @Override
-    public void delete() {
-        try {
-            // Use ComponentService to remove the component from the template
-            ComponentService.getInstance().deleteComponentFromTemplate(TemplateData.getInstance().getCurrentTemplateId(), getId());
-            System.out.println("Component deleted with ID: " + getId());
 
-            // Refresh the template content
-            TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
-            if (controller != null) {
-                controller.refreshTemplateContent(TemplateData.getInstance().getCurrentTemplateId());
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to delete component: " + e.getMessage());
-        }
-    }
 
 
 

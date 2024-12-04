@@ -1,5 +1,9 @@
 package brain.brainstormer.components.core;
 
+import brain.brainstormer.controller.TemplateController;
+import brain.brainstormer.service.ComponentService;
+import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.utils.TemplateData;
 import javafx.scene.Node;
 import org.bson.Document;
 
@@ -39,6 +43,22 @@ public abstract class CoreComponent {
     public abstract Document toDocument();
 
     public abstract void saveToDatabase();
-    public abstract void delete();
+    public void delete() {
+
+        try {
+
+            ComponentService.getInstance().deleteComponentFromTemplate(TemplateData.getInstance().getCurrentTemplateId(), getId());
+            System.out.println("Component deleted with ID: " + getId());
+
+            TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
+            if (controller != null) {
+                controller.refreshTemplateContent(TemplateData.getInstance().getCurrentTemplateId());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to delete component: " + e.getMessage());
+        }
+
+
+    }
 
 }

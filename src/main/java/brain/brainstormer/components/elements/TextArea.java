@@ -4,7 +4,10 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utils.TemplateData;
 import brain.brainstormer.utils.Debouncer;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
 
@@ -24,25 +27,39 @@ public class TextArea extends CoreComponent {
     }
 
     @Override
-    public Node render() {
-        VBox container = new VBox(5);
-        container.getStyleClass().add("vbox-container");  // Apply container style
 
+    public Node render() {
+        VBox container = new VBox(10); // Add spacing between components
+        container.getStyleClass().add("vbox-container"); // Apply container style
+
+        // Create the TextArea
         javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea(text);
         textArea.setPrefRowCount(rows);
         textArea.setWrapText(true);
-        textArea.getStyleClass().add("text-area");  // Apply TextArea style
-        // Add padding top 10 px
-        textArea.setPadding(new javafx.geometry.Insets(10, 0, 0, 0));
+        textArea.getStyleClass().add("text-area"); // Apply TextArea style
+        textArea.setPadding(new javafx.geometry.Insets(10, 0, 0, 0)); // Add padding (10px top)
 
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             text = newValue;
             saveToDatabase(); // Save changes to the database with debouncing
         });
 
-        container.getChildren().add(textArea);
+        // Create the Delete button
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
+        deleteButton.setOnAction(event -> {
+            System.out.println("Deleting TextArea component with ID: " + getId());
+            delete(); // Call the inherited delete method
+        });
+
+        // Add TextArea and Delete button to the container
+        container.getChildren().addAll(textArea, deleteButton);
+
         return container;
     }
+
 
     @Override
     public Document toDocument() {
@@ -83,8 +100,5 @@ public class TextArea extends CoreComponent {
         }
     }
 
-    @Override
-    public void delete() {
 
-    }
 }

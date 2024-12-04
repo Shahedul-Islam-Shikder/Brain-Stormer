@@ -4,7 +4,10 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utils.Debouncer;
 import brain.brainstormer.utils.TemplateData;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -116,18 +119,33 @@ public class CodeSnippet extends CoreComponent {
 
     @Override
     public Node render() {
+        // Create the ScrollPane for the CodeArea
         ScrollPane scrollPane = new ScrollPane(codeArea);
         scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;");
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
-        VBox container = new VBox(scrollPane);
+        // Create the Delete button
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
+        deleteButton.setOnAction(event -> {
+            System.out.println("Deleting CodeSnippet component with ID: " + getId());
+            delete(); // Call the inherited delete method
+        });
+
+        // Arrange components in a VBox
+        VBox container = new VBox(10); // Spacing between components
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         container.setStyle("-fx-background-color: #000000; -fx-background-radius: 10; -fx-padding: 10;");
         container.setPrefHeight(350);
 
+        container.getChildren().addAll(scrollPane, deleteButton);
+
         return container;
     }
+
 
     @Override
     public Document toDocument() {
@@ -162,10 +180,6 @@ public class CodeSnippet extends CoreComponent {
         }
     }
 
-    @Override
-    public void delete() {
-
-    }
 
     public String getCode() {
         return codeArea.getText();

@@ -2,12 +2,21 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.controller.TemplateController;
+import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.utilGui.ComponentDialogBox;
 import brain.brainstormer.utils.Debouncer;
+import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.TemplateData;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
 
@@ -28,12 +37,45 @@ public class Heading extends CoreComponent implements Initializable {
 
     @Override
     public Node render() {
+        // Create the heading label
         Label headingLabel = new Label(title);
-
         setFontSize(headingLabel, headingLevel);
-        VBox container = new VBox(headingLabel);
+
+        // Create the Edit and Delete buttons
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER_LEFT);
+        buttonContainer.getStyleClass().add("button-container"); // CSS class for styling
+
+        FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.PENCIL);
+        editIcon.getStyleClass().add("edit-icon");
+
+        Button editButton = new Button("", editIcon); // Icon-only button
+        editButton.setOnAction(event -> {
+            ComponentDialogBox editDialog = new ComponentDialogBox(this, true, ComponentService.getInstance(), TemplateData.getInstance().getCurrentTemplateId());
+            editDialog.showDialog();
+            System.out.println("Editing component with ID: " + getId());
+        });
+
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
+        deleteButton.setOnAction(event -> {
+            System.out.println("Deleting Heading component with ID: " + getId());
+            delete(); // Call the delete method
+        });
+
+        buttonContainer.getChildren().addAll(editButton, deleteButton);
+
+        // Wrap everything in a VBox
+        VBox container = new VBox(10); // Spacing between Heading and buttons
+        container.getChildren().addAll(headingLabel, buttonContainer);
+        container.getStyleClass().add("heading-wrapper"); // CSS class for styling
+
         return container;
     }
+
+
 
     private void setFontSize(Label label, int level) {
         switch (level) {
@@ -114,8 +156,5 @@ public class Heading extends CoreComponent implements Initializable {
         }
     }
 
-    @Override
-    public void delete() {
 
-    }
 }
