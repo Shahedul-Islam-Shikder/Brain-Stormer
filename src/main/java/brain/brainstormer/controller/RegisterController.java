@@ -40,6 +40,14 @@ public class RegisterController {
     private void initialize() {
         registerButton.setOnAction(event -> registerUser());
         loginButton.setOnAction(event -> goToLogin());
+
+       registerButton.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) { // Button gained focus
+                registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #3A3A7A; -fx-text-fill: white; -fx-background-radius: 10;");
+            } else { // Button lost focus
+                registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
+            }
+        });
     }
 
     private void registerUser() {
@@ -68,5 +76,14 @@ public class RegisterController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void handleMouseEnter() {
+        registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #2A2A6A; -fx-text-fill: white; -fx-background-radius: 10;");
+    }
+    @FXML
+    private void handleMouseExit() {
+        registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
     }
 }

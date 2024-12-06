@@ -77,3 +77,52 @@
     -fx-pref-height: 20px;
     -fx-pref-width: 50px;
 }
+
+.combo-box {
+    -fx-background-color: #333333;
+    -fx-background-radius: 10;
+    -fx-border-color: #444444;
+    -fx-border-radius: 10;
+    -fx-padding: 5;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #777777;
+}
+
+.combo-box:hover {
+    -fx-background-color: #3A3A3A;
+    -fx-border-color: #555555;
+}
+
+.combo-box:focused {
+    -fx-background-color: #3A3A6A;
+    -fx-border-color: #6666FF;
+    -fx-text-fill: #FFFFFF;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-border-radius: 10;
+}
+
+.combo-box .arrow-button:hover {
+    -fx-background-color: #444444;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #121212;
+    -fx-text-fill: #E0E0E0;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #1A1A1A;
+    -fx-text-fill: #FFFFFF;
+}
+
+.combo-box .list-view {
+    -fx-background-color: #121212;
+    -fx-border-color: #444444;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
