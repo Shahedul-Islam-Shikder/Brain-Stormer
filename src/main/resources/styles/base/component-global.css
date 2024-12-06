@@ -1,0 +1,74 @@
+/* --- Generic Styles for All Components --- */
+
+/* General Wrapper */
+.component-wrapper {
+    -fx-padding: 10px;
+    -fx-background-color: #1E1E1E; /* Generic dark background */
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #333333; /* Subtle border color */
+    -fx-border-width: 1px;
+}
+
+/* Button Container */
+.button-container {
+
+    -fx-spacing: 10px; /* Space between buttons */
+    -fx-alignment: center-left; /* Align buttons to the left */
+    -fx-opacity: 0; /* Initially hidden */
+    -fx-background-color: transparent;
+    -fx-transition: opacity 0.3s ease-in-out; /* Smooth transition for hover */
+}
+
+/* Show Buttons on Hover */
+ .button-container:hover {
+    -fx-opacity: 1; /* Fully visible on hover */
+
+
+}
+
+/* Generic Button Styles */
+.button-container .button {
+    -fx-background-color: transparent; /* Transparent default */
+    -fx-border-color: transparent;
+    -fx-cursor: hand; /* Pointer cursor on hover */
+    -fx-padding: 5px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px; /* Rounded corners */
+}
+
+/* Generic Button Hover */
+.button-container .button:hover {
+    -fx-background-color: #444444; /* Subtle highlight on hover */
+    -fx-text-fill: #ffffff; /* White text */
+}
+
+/* Icon Styles */
+.edit-icon, .delete-icon {
+    -fx-fill: #888888; /* Neutral gray icons */
+    -fx-font-size: 16px;
+}
+
+/* Icon Hover Effects */
+.edit-icon:hover {
+    -fx-fill: #5A5AFF; /* Blue for Edit */
+}
+
+.delete-icon:hover {
+    -fx-fill: #FF4444; /* Red for Delete */
+}
+
+/* Common Input Field */
+.component-input-field {
+    -fx-pref-width: 300px;
+    -fx-background-color: #333333; /* Generic input background */
+    -fx-text-fill: #E0E0E0; /* Light text */
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-prompt-text-fill: #777777; /* Subtle placeholder text */
+    -fx-border-color: transparent;
+    -fx-focus-color: #5A5AFF;
+    -fx-faint-focus-color: #5A5AFF22;
+}
+
+

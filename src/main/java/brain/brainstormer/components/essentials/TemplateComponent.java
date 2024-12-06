@@ -4,7 +4,6 @@ import brain.brainstormer.controller.LoginController;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
-import brain.brainstormer.utils.StyleUtil;
 import brain.brainstormer.utils.TemplateData;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -92,13 +91,15 @@ public class TemplateComponent {
         typeLabel.getStyleClass().add("label-type");
 
         textContainer.getChildren().addAll(nameLabel, descriptionLabel, typeLabel);
-        StyleUtil.applyStylesheet(textContainer);
+//        StyleUtil.applyStylesheet(textContainer);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button deleteButton = createDeleteButton(template, parentContainer);
-        Button editButton = createEditButton(template, parentContainer);
+        Button editButton = createEditDialog(template, parentContainer);
+        deleteButton.getStyleClass().add("button-danger");
+        editButton.getStyleClass().add("button-secondary");
 
         templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
 
@@ -113,7 +114,7 @@ public class TemplateComponent {
         return templateBox;
     }
 
-    private Button createEditButton(Document template, VBox parentContainer) {
+    private Button createEditDialog(Document template, VBox parentContainer) {
         Button editButton = new Button("Edit");
         editButton.getStyleClass().add("button-secondary");
         editButton.setOnAction(event -> {
@@ -154,7 +155,7 @@ public class TemplateComponent {
             layout.getStyleClass().add("container");
 
             Scene scene = new Scene(layout);
-            StyleUtil.applyStylesheet(scene);
+//            StyleUtil.applyStylesheet(scene);
 
             dialog.setScene(scene);
             dialog.show();

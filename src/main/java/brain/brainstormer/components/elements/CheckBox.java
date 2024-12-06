@@ -89,6 +89,10 @@ public class CheckBox extends CoreComponent implements Initializable {
         container.getChildren().addAll(checkBoxContainer, buttonContainer);
         container.getStyleClass().add("checkbox-wrapper"); // CSS class for styling
 
+        // Apply global and component-specific styles
+        applyGlobalComponentStyles(container);
+        applyStyles(container, "/styles/checkbox.css"); // Apply specific styles for this component
+
         return container;
     }
 

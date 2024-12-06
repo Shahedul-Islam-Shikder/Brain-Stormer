@@ -1,6 +1,5 @@
 /* Style for the container of the TextArea */
 .vbox-container {
-    -fx-padding: 10px;
     -fx-background-color: transparent;
 }
 

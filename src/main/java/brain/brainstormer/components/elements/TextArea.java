@@ -8,6 +8,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
 
@@ -44,6 +45,10 @@ public class TextArea extends CoreComponent {
             saveToDatabase(); // Save changes to the database with debouncing
         });
 
+        // Create the button container
+        HBox buttonContainer = new HBox(10); // Add spacing between buttons
+        buttonContainer.getStyleClass().add("button-container"); // Apply button container style
+
         // Create the Delete button
         FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
         deleteIcon.getStyleClass().add("delete-icon");
@@ -54,11 +59,19 @@ public class TextArea extends CoreComponent {
             delete(); // Call the inherited delete method
         });
 
-        // Add TextArea and Delete button to the container
-        container.getChildren().addAll(textArea, deleteButton);
+        // Add Delete button to the button container
+        buttonContainer.getChildren().add(deleteButton);
+
+        // Add TextArea and button container to the main container
+        container.getChildren().addAll(textArea, buttonContainer);
+
+        // Apply global and component-specific styles
+        applyGlobalComponentStyles(container);// Apply global component styles
+        applyStyles(container, "/styles/textarea.css"); // Apply specific styles for this component
 
         return container;
     }
+
 
 
     @Override

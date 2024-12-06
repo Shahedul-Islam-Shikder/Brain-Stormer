@@ -1,0 +1,117 @@
+/* --- General Styles --- */
+.container {
+    -fx-padding: 10;
+    -fx-background-color: #121212;
+}
+
+/* Label Styles */
+.label-text {
+    -fx-text-fill: #f7f5f5;
+}
+
+.label-description {
+    -fx-text-fill: #B0B0B0;
+    -fx-font-size: 12px;
+}
+
+.label-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E0E0E0;
+}
+
+/* --- Input Styles --- */
+.input-field, .text-area {
+    -fx-pref-width: 380px;
+    -fx-background-color: #333333;
+    -fx-text-fill: #E0E0E0;
+    -fx-prompt-text-fill: #777777;
+    -fx-border-color: transparent;  
+}
+
+/* TextArea-specific tweaks */
+.text-area {
+    -fx-pref-height: 180px;
+    -fx-max-height: 180px;
+}
+
+/* --- Button Styles --- */
+/* Generic Button Styles */
+.button {
+    -fx-font-size: 14px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+/* Primary Button */
+.button-primary {
+    -fx-background-color: #1A1A5A;
+}
+
+.button-primary:hover {
+    -fx-background-color: #2A2A7A;
+}
+
+.button-primary:focused {
+    -fx-border-color: #ffffff;
+    -fx-border-width: 1;
+    
+}
+
+/* Secondary Button */
+.button-secondary {
+    -fx-background-color: #3A3A3A;
+    -fx-font-size: 12px;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #4A4A4A;
+}
+
+.button:focused {
+    -fx-border-color: white;
+    -fx-border-width: 1;
+    
+}
+
+
+/* Danger Button */
+.button-danger {
+    -fx-background-color: #B22222;
+    -fx-font-size: 14px;
+}
+
+.button-danger:hover {
+    -fx-background-color: #FF4444;
+}
+
+.button-danger:focused {
+    -fx-border-color: #b222227c;
+    -fx-border-width: 1;
+}
+
+/* --- Hover, Focus, and Accessibility --- */
+/* .button:hover {
+    -fx-effect: dropshadow(gaussian, #5A5AFF, 3, 0.3, 0, 0);
+} */
+
+.button:focused {
+    -fx-border-color: #ffffff;    
+    -fx-border-width: 1;
+}
+
+.input-field:hover, .text-area:hover {
+    -fx-background-color: #444444;
+}
+
+/* --- Specialized Styles (Optional Tweaks for Customization) --- */
+/* Example for Add, Edit, Delete Buttons */
+.button-add {
+    -fx-background-color: #1A5A1A;
+}
+
+.button-add:hover {
+    -fx-background-color: #2A7A2A;
+}

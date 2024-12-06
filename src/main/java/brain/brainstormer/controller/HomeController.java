@@ -134,7 +134,7 @@ public class HomeController {
         layout.getStyleClass().add("container");
 
         Scene scene = new Scene(layout);
-        StyleUtil.applyStylesheet(scene);
+//        StyleUtil.applyStylesheet(scene);
 
         dialog.setScene(scene);
         dialog.show();

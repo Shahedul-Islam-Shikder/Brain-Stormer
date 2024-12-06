@@ -19,11 +19,8 @@ public class SceneSwitcher {
 
             // Create a new scene and add stylesheets
             Scene newScene = new Scene(root);
-            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/checkbox.css").toExternalForm());
-            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/textarea.css").toExternalForm());
-            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/datepicker.css").toExternalForm());
-            newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/code.css").toExternalForm());
-            // newScene.getStylesheets().add(SceneSwitcher.class.getResource("/styles/style.css").toExternalForm());
+            // Apply global styles
+            StyleUtil.applyGlobalStylesheet(newScene);
 
             // Associate the FXMLLoader with the scene
             newScene.setUserData(loader);
