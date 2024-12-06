@@ -21,7 +21,6 @@ public class ComponentSeeder {
         // Clean the existing components collection
         componentCollection.drop();
 
-
         // Define components with updated structure
         List<Document> components = Arrays.asList(
                 new Document()
@@ -81,6 +80,7 @@ public class ComponentSeeder {
                                 .append("description", "A simple Java HelloWorld program"))
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
+
                 new Document()
                         .append("type", "rich_text_editor")
                         .append("config", new Document()
@@ -98,17 +98,21 @@ public class ComponentSeeder {
                                 .append("description", "A fancy rich text editor for stylish content"))
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
-                new Document().append("type", "h-group")
+
+                new Document()
+                        .append("type", "h-group")
                         .append("config", new Document("alignment", "CENTER_LEFT"))
                         .append("children", Arrays.asList())
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
+
                 new Document()
                         .append("type", "v-group")
                         .append("config", new Document("alignment", "TOP_CENTER"))
                         .append("children", Arrays.asList())
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
+
                 new Document()
                         .append("type", "image")
                         .append("config", new Document()
@@ -118,25 +122,32 @@ public class ComponentSeeder {
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
 
+                new Document()
+                        .append("type", "table")
+                        .append("config", new Document()
+                                .append("rowData", Arrays.asList(
+                                        Arrays.asList("Header 1", "Header 2", "Header 3"), // Header row
+                                        Arrays.asList("Row 1 Col 1", "Row 1 Col 2", "Row 1 Col 3"), // Data row
+                                        Arrays.asList("Row 2 Col 1", "Row 2 Col 2", "Row 2 Col 3")  // Data row
+                                ))
+                                .append("description", "A table component with rows and columns"))
+                        .append("createdAt", new Date())
+                        .append("lastUpdated", new Date()),
 
-        new Document()
-                .append("type", "table")
-                .append("config", new Document()
-                        .append("rowData", Arrays.asList(
-                                Arrays.asList("Header 1", "Header 2", "Header 3"), // Header row
-                                Arrays.asList("Row 1 Col 1", "Row 1 Col 2", "Row 1 Col 3"), // Data row
-                                Arrays.asList("Row 2 Col 1", "Row 2 Col 2", "Row 2 Col 3")  // Data row
-                        ))
-                        .append("description", "A table component with rows and columns"))
-                .append("createdAt", new Date())
-                .append("lastUpdated", new Date())
-
+                // Adding File Component
+                new Document()
+                        .append("type", "file")
+                        .append("config", new Document()
+                                .append("fileUrl", null) // Placeholder for file URL
+                                .append("fileName", "Sample File Name")
+                                .append("description", "A file component for uploading, downloading, and managing files"))
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date())
         );
-
-
 
         // Insert each component metadata into the database
         componentCollection.insertMany(components);
         System.out.println("Component metadata seeded successfully.");
     }
+
 }

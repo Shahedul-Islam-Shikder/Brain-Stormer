@@ -120,6 +120,21 @@ public class ComponentFactory {
                     }
                 }
                 return grouper;
+            case "file":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for file component.");
+                    return null;
+                }
+                String fileUrl = config.getString("fileUrl");
+                String fileName = config.getString("fileName");
+                return new FileComponent(
+                        id,
+                        description != null ? description : "No description",
+                        fileUrl,
+                        fileName != null ? fileName : "Unnamed File"
+                );
+
+
             case "image":
                 if (config == null) {
                     System.out.println("Error: Config document is missing for image component.");

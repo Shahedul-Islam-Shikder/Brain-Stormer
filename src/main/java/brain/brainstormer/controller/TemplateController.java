@@ -5,7 +5,9 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utilGui.AddComponentDialog;
+import brain.brainstormer.utils.RoleUtils;
 import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.utils.SessionManager;
 import brain.brainstormer.utils.TemplateData;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,13 +31,28 @@ public class TemplateController {
     @FXML
     private Button addComponentButton;
 
-    private final TemplateService templateService = new TemplateService();
+    private final TemplateService templateService = TemplateService.getInstance();
     private final ComponentService componentService = ComponentService.getInstance();
 
     @FXML
     private void initialize() {
+        String userId = SessionManager.getInstance().getUserId();
         String templateId = TemplateData.getInstance().getCurrentTemplateId();
+
         loadTemplateContent(templateId);
+
+        // Check if template is private
+        boolean isPrivate = "private".equals(TemplateData.getInstance().getCurrentTemplateType());
+
+        // Role-based button visibility
+        if (isPrivate) {
+            // Private templates: full access
+            addComponentButton.setVisible(true);
+        } else {
+            // Public templates: roles dictate visibility
+            addComponentButton.setVisible(RoleUtils.canEdit(userId));
+        }
+
         homeButton.setOnAction(event -> switchToHome());
         addComponentButton.setOnAction(event -> addComponent(templateId));
     }
@@ -58,6 +75,11 @@ public class TemplateController {
     }
 
     private void setTemplateDetails(Document templateData) {
+        TemplateData.getInstance().setAuthor(templateData.getString("userId"));
+        TemplateData.getInstance().setEditors(templateData.getList("editors", String.class));
+        TemplateData.getInstance().setViewers(templateData.getList("viewers", String.class));
+        TemplateData.getInstance().setCurrentTemplateType(templateData.getString("type")); // Set type (public/private)
+
         templateTitle.setText(templateData.getString("name"));
         templateDescription.setText(templateData.getString("description"));
         templateContentArea.getChildren().clear();
@@ -98,28 +120,23 @@ public class TemplateController {
         templateContentArea.getChildren().add(notFoundLabel);
     }
 
-
-
-
-
-
-
-
     private void switchToHome() {
         Stage stage = (Stage) homeButton.getScene().getWindow();
         SceneSwitcher.switchScene(stage, "/brain/brainstormer/home.fxml", true);
     }
 
     private void addComponent(String templateId) {
+        if (!RoleUtils.canEdit(SessionManager.getInstance().getUserId())) {
+            System.out.println("Permission denied: Cannot add component.");
+            return;
+        }
+
         AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, componentService);
         addComponentDialog.init();
         refreshTemplateContent(templateId);
     }
 
     public void refreshTemplateContent(String templateId) {
-        // Reload the entire template content, including Groupers
         loadTemplateContent(templateId);
     }
-
-
 }

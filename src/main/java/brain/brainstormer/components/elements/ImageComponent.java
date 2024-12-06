@@ -153,6 +153,30 @@ public class ImageComponent extends CoreComponent implements Initializable {
     }
 
     @Override
+    public void delete() {
+        // First, delete the image from Cloudinary if it exists
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            try {
+                Cloudinary cloudinary = brain.brainstormer.utils.CloudinaryUtil.getInstance();
+
+                // Extract the public ID of the image from the URL
+                String publicId = imageUrl.substring(imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf("."));
+
+                // Delete the image from Cloudinary
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+                System.out.println("Image deleted from Cloudinary: " + publicId);
+            } catch (Exception e) {
+                System.err.println("Failed to delete image from Cloudinary: " + e.getMessage());
+            }
+        }
+
+        // Then, delete the component from the database
+        super.delete();
+        System.out.println("Image Component deleted from database.");
+    }
+
+
+    @Override
     public void saveToDatabase() {
         try {
             brain.brainstormer.service.TemplateService.getInstance().updateComponentInTemplate(

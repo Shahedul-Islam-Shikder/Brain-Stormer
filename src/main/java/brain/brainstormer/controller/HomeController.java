@@ -15,8 +15,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.util.List;
-
 public class HomeController {
 
     private final TemplateComponent templateComponent = new TemplateComponent();
@@ -65,6 +63,7 @@ public class HomeController {
 
     private void loadNetwork() {
         System.out.println("Network button clicked!");
+        // Placeholder for network functionality
     }
 
     private void loadGames() {
@@ -140,5 +139,4 @@ public class HomeController {
         dialog.setScene(scene);
         dialog.show();
     }
-
 }
