@@ -133,44 +133,6 @@ public class ComponentFactory {
                         imageUrl, // Use the actual imageUrl or leave it null
                         altText != null ? altText : "Image Component" // Default alt text
                 );
-
-
-
-
-            case "table":
-                if (config == null) {
-                    System.out.println("Error: Config document is missing for table component.");
-                    return null;
-                }
-
-                Table tableComponent = new Table(
-                        id,
-                        description != null ? description : "No description"
-                );
-
-                List<List<String>> rowData = new ArrayList<>();
-                List<?> rowList = config.getList("rowData", List.class);
-
-                if (rowList != null && !rowList.isEmpty()) {
-                    for (Object row : rowList) {
-                        if (row instanceof List<?>) {
-                            List<String> rowDataList = new ArrayList<>();
-                            for (Object cell : (List<?>) row) {
-                                if (cell instanceof String) {
-                                    rowDataList.add((String) cell);
-                                } else {
-                                    rowDataList.add(cell.toString());
-                                }
-                            }
-                            rowData.add(rowDataList);
-                        }
-                    }
-                }
-
-                tableComponent.setRows(rowData); // Set the row data after creating the instance
-                return tableComponent;
-
-
             default:
                 System.out.println("Component type not recognized: " + type);
                 return null;

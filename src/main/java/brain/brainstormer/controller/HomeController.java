@@ -86,33 +86,43 @@ public class HomeController {
         dialog.setTitle("Add New Template");
         dialog.initModality(Modality.APPLICATION_MODAL);
 
+        // Template Name
         Label nameLabel = new Label("Template Name:");
         TextField nameInput = new TextField();
         nameInput.getStyleClass().add("input-field");
         nameInput.setPromptText("Enter Template name");
 
+        // Description
         Label descLabel = new Label("Description:");
-        descLabel.getStyleClass().add("label-text");
         TextArea descInput = new TextArea();
         descInput.getStyleClass().add("text-area");
         descInput.setPromptText("Enter Description");
 
+        // Template Type (Dropdown)
+        Label typeLabel = new Label("Template Type:");
+        ComboBox<String> typeDropdown = new ComboBox<>();
+        typeDropdown.getItems().addAll("private", "public");
+        typeDropdown.setValue("private"); // Default to "private"
+
+        // Save Button
         Button saveButton = new Button("Add Template");
         saveButton.getStyleClass().add("button-primary");
 
         saveButton.setOnAction(e -> {
             String name = nameInput.getText().trim();
             String description = descInput.getText().trim();
+            String type = typeDropdown.getValue(); // Get the selected type
 
-            if (!name.isEmpty() && !description.isEmpty()) {
-                templateComponent.addTemplate(name, description);
+            if (!name.isEmpty() && !description.isEmpty() && type != null) {
+                // Pass the type to the TemplateComponent's addTemplate method
+                templateComponent.addTemplate(name, description, type);
                 loadTemplatesView();
-                templateComponent.loadTemplateButtons(templateButtonRow);  // Reload template buttons after adding
+                templateComponent.loadTemplateButtons(templateButtonRow); // Reload template buttons after adding
                 dialog.close();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Field Empty");
-                alert.setContentText("Both fields must be filled!");
+                alert.setContentText("All fields must be filled!");
                 alert.show();
             }
         });
@@ -120,8 +130,8 @@ public class HomeController {
         HBox saveButtonCentre = new HBox(saveButton);
         saveButtonCentre.setAlignment(Pos.CENTER);
 
-
-        VBox layout = new VBox(10, nameLabel, nameInput, descLabel, descInput, saveButtonCentre);
+        // Layout
+        VBox layout = new VBox(10, nameLabel, nameInput, descLabel, descInput, typeLabel, typeDropdown, saveButtonCentre);
         layout.getStyleClass().add("container");
 
         Scene scene = new Scene(layout);
@@ -130,4 +140,5 @@ public class HomeController {
         dialog.setScene(scene);
         dialog.show();
     }
+
 }

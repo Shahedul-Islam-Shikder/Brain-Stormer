@@ -91,11 +91,15 @@ public class TemplateComponent {
         Label nameLabel = new Label(template.getString("name"));
         nameLabel.getStyleClass().add("label-text");
 
-
         Label descriptionLabel = new Label(template.getString("description"));
         descriptionLabel.getStyleClass().add("label-text");
 
-        textContainer.getChildren().addAll(nameLabel, descriptionLabel);
+        // Add label to show the type (public/private)
+        String templateType = template.getString("type");
+        Label typeLabel = new Label("Type: " + templateType);
+        typeLabel.getStyleClass().add("label-type");
+
+        textContainer.getChildren().addAll(nameLabel, descriptionLabel, typeLabel);
         StyleUtil.applyStylesheet(textContainer);
 
         Region spacer = new Region();
@@ -103,26 +107,16 @@ public class TemplateComponent {
 
         Button deleteButton = new Button("Delete");
         deleteButton.getStyleClass().add("button-danger");
-        deleteButton.setOnAction(e ->{
-
-            //gets template ID
+        deleteButton.setOnAction(e -> {
             String templateId = template.getObjectId("_id").toHexString();
-
-            //for testing purpose
-            System.out.println(templateId);
-
-            //deletes template from DB
             templateService.deleteTemplate(templateId);
-
-            //refreshes the main content area
             VBox parentContainer = (VBox) templateBox.getParent();
-
             loadTemplatesView(parentContainer);
         });
 
         Button editButton = new Button("Edit");
         editButton.getStyleClass().add("button-secondary");
-        editButton.setOnAction(ed ->{
+        editButton.setOnAction(ed -> {
             Stage dialog = new Stage();
             dialog.setMinHeight(400);
             dialog.setMinWidth(400);
@@ -130,51 +124,36 @@ public class TemplateComponent {
             dialog.setTitle("Edit Template");
             dialog.initModality(Modality.APPLICATION_MODAL);
 
-            Label nameFieldLabel = new Label("Template Name:");
-            nameFieldLabel.getStyleClass().add("label-text");
+            // Input fields for editing
+            TextField nameInput = new TextField(template.getString("name"));
+            nameInput.getStyleClass().add("input-field");
 
-            TextField nameInput2 = new TextField();
-            String currentName = nameLabel.getText();
-            nameInput2.setText(currentName);
-            nameInput2.getStyleClass().add("input-field");
+            TextArea descInput = new TextArea(template.getString("description"));
+            descInput.getStyleClass().add("text-area");
 
-            Label descLabel = new Label("Description:");
-            descLabel.getStyleClass().add("label-text");
-
-
-            TextArea descInput2 = new TextArea();
-            String currentDescription = descriptionLabel.getText();
-            descInput2.setText(currentDescription);
-            descInput2.getStyleClass().add("text-area");
-
-            descInput2.setWrapText(true);
-            descInput2.setPrefRowCount(6);
+            TextField typeInput = new TextField(templateType); // For editing type
+            typeInput.getStyleClass().add("input-field");
 
             Button saveButton = new Button("Save Changes");
             saveButton.getStyleClass().add("button-primary");
-
             saveButton.setOnAction(e -> {
-                String name = nameInput2.getText().trim();
-                String description = descInput2.getText().trim();
+                String name = nameInput.getText().trim();
+                String description = descInput.getText().trim();
+                String type = typeInput.getText().trim();
 
-                if (!name.isEmpty() && !description.isEmpty()) {
+                if (!name.isEmpty() && !description.isEmpty() && !type.isEmpty()) {
                     String templateId = template.getObjectId("_id").toHexString();
-                    templateService.updateTemplate(templateId, name, description); // Update instead of adding
+                    templateService.updateTemplate(templateId, name, description, type); // Update type as well
                     VBox parentContainer = (VBox) templateBox.getParent();
                     loadTemplatesView(parentContainer);
                     dialog.close();
                 } else {
-                    LoginController.showAlert("Field Empty", "Both fields must be used.");
-                    System.out.println("Both fields are required.");
+                    LoginController.showAlert("Field Empty", "All fields must be filled.");
                 }
             });
 
-            HBox saveButtonCentre = new HBox(saveButton);
-            saveButtonCentre.setAlignment(Pos.CENTER);
-
-            VBox layout = new VBox(10, nameFieldLabel, nameInput2, descLabel, descInput2, saveButtonCentre);
+            VBox layout = new VBox(10, new Label("Name:"), nameInput, new Label("Description:"), descInput, new Label("Type:"), typeInput, saveButton);
             layout.getStyleClass().add("container");
-
 
             Scene scene = new Scene(layout);
             StyleUtil.applyStylesheet(scene);
@@ -186,7 +165,6 @@ public class TemplateComponent {
         templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
         StyleUtil.applyStylesheet(templateBox);
 
-        // Set the template ID and switch scenes
         templateBox.setOnMouseClicked(event -> {
             TemplateData.getInstance().setCurrentTemplateId(template.getObjectId("_id").toHexString());
             Stage stage = (Stage) templateBox.getScene().getWindow();
@@ -197,9 +175,10 @@ public class TemplateComponent {
     }
 
 
-    public void addTemplate(String name, String description) {
+    public void addTemplate(String name, String description, String type) {
         String userId = SessionManager.getInstance().getUserId();
-        templateService.addTemplate(userId, name, description);
+        templateService.addTemplate(userId, name, description, type);
     }
+
 
 }
