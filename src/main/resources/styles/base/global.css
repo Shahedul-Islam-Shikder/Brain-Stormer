@@ -3,6 +3,10 @@
     -fx-padding: 10;
     -fx-background-color: #121212;
 }
+.container > Label {
+    -fx-text-fill: #f7f5f5;
+}
+
 
 /* Label Styles */
 .label-text {
@@ -31,8 +35,21 @@
 
 /* TextArea-specific tweaks */
 .text-area {
+    -fx-pref-width: 380px;
+    -fx-max-width: 380px;
     -fx-pref-height: 180px;
     -fx-max-height: 180px;
+    -fx-background-radius: 10;
+    -fx-border-radius: 0;
+    -fx-padding: 10;
+    -fx-background-color: #333333;
+    -fx-text-fill: #E0E0E0;
+    -fx-prompt-text-fill: #777777;
+    -fx-control-inner-background: #333333;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-effect: none;
 }
 
 /* --- Button Styles --- */

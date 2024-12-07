@@ -138,6 +138,7 @@ public class HomeController {
         layout.getStyleClass().add("container");
 
         Scene scene = new Scene(layout);
+        StyleUtil.applyCustomStylesheet(scene, "/styles/base/global.css");
 //        StyleUtil.applyStylesheet(scene);
 
         dialog.setScene(scene);

@@ -7,6 +7,7 @@ import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
 import brain.brainstormer.utils.StyleUtil;
 import brain.brainstormer.utils.TemplateData;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -150,8 +151,11 @@ public class TemplateComponent {
             typeInput.getStyleClass().add("input-field");
 
             // Save button
+
             Button saveButton = new Button("Save Changes");
             saveButton.getStyleClass().add("button-primary");
+            HBox buttonContainer = new HBox(saveButton);
+            buttonContainer.setAlignment(Pos.CENTER);
             saveButton.setOnAction(e -> {
                 String name = nameInput.getText().trim();
                 String description = descInput.getText().trim();
@@ -172,14 +176,13 @@ public class TemplateComponent {
                     new Label("Name:"), nameInput,
                     new Label("Description:"), descInput,
                     new Label("Type:"), typeInput,
-                    saveButton
+                    buttonContainer
             );
             layout.getStyleClass().add("container");
 
             // Create scene and apply styles
             Scene scene = new Scene(layout);
-            StyleUtil.applyGlobalStylesheet(scene);
-//            StyleUtil.applyCustomStylesheet(scene, "/styles/dialog.css"); // Example of applying custom dialog styles
+            StyleUtil.applyCustomStylesheet(scene, "/styles/base/global.css"); // Example of applying custom dialog styles
 
             // Set scene and show dialog
             dialog.setScene(scene);
