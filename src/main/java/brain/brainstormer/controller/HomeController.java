@@ -29,8 +29,7 @@ public class HomeController {
     @FXML
     private Button templatesButton;
 
-    @FXML
-    private Button networkButton;
+
 
     @FXML
     private Button gamesButton;
@@ -40,31 +39,49 @@ public class HomeController {
 
     @FXML
     private void initialize() {
+
+        gamesButton.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                // Scene is now available
+                StyleUtil.applyCustomStylesheet(gamesButton.getScene(), "/styles/home-styles.css");
+
+            }
+        });
+
         String username = SessionManager.getInstance().getUsername();
         welcomeLabel.setText("Hello, " + username + "!");
 
-        // Load the template buttons into the HBox
         templateComponent.loadTemplateButtons(templateButtonRow);
-
         loadTemplatesView();
 
-        templatesButton.setOnAction(e -> loadTemplatesView());
-        networkButton.setOnAction(e -> loadNetwork());
-        gamesButton.setOnAction(e -> loadGames());
+        templatesButton.getStyleClass().add("sidebar-button-active");
+        templatesButton.setOnAction(e -> {
+            clearSidebarActiveState();
+            templatesButton.getStyleClass().add("sidebar-button-active");
+            loadTemplatesView();
+        });
+
+        gamesButton.setOnAction(e -> {
+            clearSidebarActiveState();
+            gamesButton.getStyleClass().add("sidebar-button-active");
+            loadGames();
+        });
 
         addButton.setOnAction(e -> addTemplateDialog());
         logoutButton.setOnAction(event -> logout());
     }
+
+    private void clearSidebarActiveState() {
+        templatesButton.getStyleClass().remove("sidebar-button-active");
+        gamesButton.getStyleClass().remove("sidebar-button-active");
+    }
+
 
     private void loadTemplatesView() {
         mainContentArea.getChildren().clear();
         templateComponent.loadTemplatesView(mainContentArea);
     }
 
-    private void loadNetwork() {
-        System.out.println("Network button clicked!");
-        // Placeholder for network functionality
-    }
 
     private void loadGames() {
         mainContentArea.getChildren().clear();

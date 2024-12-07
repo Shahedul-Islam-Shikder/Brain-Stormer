@@ -1,12 +1,13 @@
 package brain.brainstormer.components.essentials;
 
-import brain.brainstormer.controller.LoginController;
+
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
 import brain.brainstormer.utils.StyleUtil;
 import brain.brainstormer.utils.TemplateData;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -66,6 +67,7 @@ public class TemplateComponent {
 
     public void addTemplate(String name, String description, String type) {
         String userId = SessionManager.getInstance().getUserId();
+        System.out.println("SM: userId: " + userId);
         templateService.addTemplate(userId, name, description, type);
     }
 
@@ -95,40 +97,36 @@ public class TemplateComponent {
         typeLabel.getStyleClass().add("label-type");
 
         textContainer.getChildren().addAll(nameLabel, descriptionLabel, typeLabel);
-//        StyleUtil.applyStylesheet(textContainer);
+
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button deleteButton = createDeleteButton(template, parentContainer);
-        Button editButton = createEditDialog(template, parentContainer);
+        Button editButton = createEditButton(template, parentContainer);
         deleteButton.getStyleClass().add("button-danger");
         editButton.getStyleClass().add("button-secondary");
 
         templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
 
         templateBox.setOnMouseClicked(event -> {
+
             TemplateData.getInstance().setCurrentTemplateId(template.getObjectId("_id").toHexString());
             TemplateData.getInstance().setCurrentTemplateType(templateType);
-
-            // Check if "userId" exists and is not null
-            String userId = template.getString("userId");
-            if (userId != null && userId.equals(SessionManager.getInstance().getUserId())) {
-                // Author is the userId
-                TemplateData.getInstance().setAuthor(SessionManager.getInstance().getUserId());
-                System.out.println("userId: " + userId);
-                System.out.println("24"+TemplateData.getInstance().getAuthor());
-            }
+            System.out.println("templateType: " + TemplateData.getInstance().getCurrentTemplateType());
+            System.out.println("templateId: " + TemplateData.getInstance().getCurrentTemplateId());
 
             Stage stage = (Stage) templateBox.getScene().getWindow();
             SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
         });
 
+        VBox.setMargin(templateBox, new Insets(10, 0, 10, 0));
+
 
         return templateBox;
     }
 
-    private Button createEditDialog(Document template, VBox parentContainer) {
+    private Button createEditButton(Document template, VBox parentContainer) {
         Button editButton = new Button("Edit");
         editButton.getStyleClass().add("button-secondary");
         editButton.setOnAction(event -> {

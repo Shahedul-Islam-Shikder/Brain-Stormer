@@ -1,0 +1,97 @@
+/* Sidebar Styles */
+.sidebar {
+    -fx-background-color: #000000;
+    -fx-padding: 20;
+}
+
+.sidebar-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E0E0E0;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #B0B0B0;
+    -fx-font-size: 16px;
+    -fx-padding: 10 0;
+    -fx-border-color: #B0B0B0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-style: solid;
+    -fx-pref-width: 280px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+}
+
+.sidebar-button:hover {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #1A1A5A;
+}
+
+.sidebar-button:focused, .sidebar-button:active {
+    -fx-background-color: #2A2A7A;
+    -fx-text-fill: white;
+}
+
+/* Active Button Style */
+.sidebar-button-active {
+    -fx-text-fill: white;
+    -fx-background-color: #2A2A7A;
+}
+
+/* Logout Button */
+.logout-button {
+    -fx-background-color: #333333;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-background-radius: 15;
+}
+
+/* Main Content Area */
+.main-content {
+    -fx-padding: 20;
+    -fx-background-color: #121212;
+}
+
+.header-box {
+    -fx-background-color: #333333;
+    -fx-padding: 10;
+    -fx-background-radius: 10;
+}
+
+.header-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E0E0E0;
+}
+
+.search-field {
+    -fx-pref-width: 200px;
+    -fx-background-color: #444444;
+    -fx-text-fill: #E0E0E0;
+    -fx-background-radius: 10;
+    -fx-prompt-text-fill: #777777;
+}
+
+.search-button {
+    -fx-background-color: #1A1A5A;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+}
+
+.add-button {
+    -fx-font-size: 20px;
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+    -fx-background-radius: 100000px; /* Round button */
+    -fx-pref-width: 60px;
+    -fx-pref-height: 50px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0; /* Removed border for thinner look */
+    -fx-padding: 0; /* Ensures no extra spacing */
+}
+
+.add-button:hover {
+    -fx-background-color: #444444;
+    -fx-border-color: #555555; /* Hover effect remains */
+}
