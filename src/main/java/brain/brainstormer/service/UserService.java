@@ -1,14 +1,20 @@
 package brain.brainstormer.service;
 
 import brain.brainstormer.utils.DatabaseConnection;
+import brain.brainstormer.utils.SessionManager;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import com.mongodb.client.model.Filters;
+
+import java.util.List;
 
 public class UserService {
 
     private final MongoCollection<Document> usersCollection;
+    private final SessionManager sessionManager = SessionManager.getInstance();
 
     public UserService() {
         // Retrieve the "users" collection from the MongoDB database
@@ -46,7 +52,20 @@ public class UserService {
         // If user is found, compare the password provided with the stored hashed password
         if (user != null) {
             String storedHash = user.getString("password");
-            return BCrypt.checkpw(password, storedHash);  // Returns true if passwords match
+            if( BCrypt.checkpw(password, storedHash)){
+
+                // Set the User ID and everythin else in the session manager
+                sessionManager.setUserId(user.getObjectId("_id").toString());
+                sessionManager.setUsername(user.getString("username"));
+                sessionManager.setEmail(user.getString("email"));
+
+
+
+
+
+                return true;  // Returns true if password matches
+
+            }
         }
         return false;  // Returns false if user is not found or password doesn't match
     }
@@ -62,7 +81,30 @@ public class UserService {
         return existingUser != null;
     }
 
-    public Document getUser(String username) {
-        return usersCollection.find(Filters.eq("username", username)).first();
+
+    // Add a template reference to a user's roles
+    public void addTemplateToUser(String userId, String templateId, String role) {
+        if (!List.of("author", "editor", "viewer").contains(role)) {
+            throw new IllegalArgumentException("Invalid role: " + role);
+        }
+        usersCollection.updateOne(
+                Filters.eq("_id", new ObjectId(userId)),
+                Updates.addToSet("roles." + role, new ObjectId(templateId))
+        );
+        System.out.println("Template added to user under role: " + role);
+    }
+
+    // Remove a template reference from a user's roles
+    public void removeTemplateFromUser(String userId, String templateId, String role) {
+        usersCollection.updateOne(
+                Filters.eq("_id", new ObjectId(userId)),
+                Updates.pull("roles." + role, new ObjectId(templateId))
+        );
+        System.out.println("Template removed from user under role: " + role);
+    }
+
+    // Retrieve user details with roles
+    public Document getUser(String userId) {
+        return usersCollection.find(Filters.eq("_id", new ObjectId(userId))).first();
     }
 }

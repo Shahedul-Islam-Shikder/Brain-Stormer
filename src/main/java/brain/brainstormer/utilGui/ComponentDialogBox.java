@@ -111,6 +111,11 @@ public class ComponentDialogBox {
             TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
             if (controller != null) {
                 controller.refreshTemplateContent(templateId);
+
+                // Send WebSocket update
+                if (controller.getSocket() != null) {
+                    controller.getSocket().sendMessage("{\"type\": \"update\", \"roomId\": \"" + templateId + "\"}");
+                }
             }
         } catch (Exception e) {
             System.err.println("Failed to edit component in Grouper: " + e.getMessage());

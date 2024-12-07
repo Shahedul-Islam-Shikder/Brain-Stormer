@@ -29,14 +29,32 @@ public class TemplateService {
         return instance;
     }
 
-    // Fetch templates for a user
     public List<Document> getUserTemplates(String userId) {
-        return templatesCollection.find(Filters.eq("userId", userId)).into(new ArrayList<>());
+        ObjectId userObjectId = new ObjectId(userId); // Convert userId to ObjectId
+
+        // Combine queries for user-owned templates and shared public templates
+        return templatesCollection.find(Filters.or(
+                Filters.eq("userId", userObjectId), // User-owned templates (public and private)
+                Filters.and(
+                        Filters.eq("type", "public"), // Public templates
+                        Filters.or(
+                                Filters.eq("editors", userObjectId), // User is an editor
+                                Filters.eq("viewers", userObjectId)  // User is a viewer
+                        )
+                )
+        )).into(new ArrayList<>());
     }
+
+
+
+
+
 
     // Add a new template
     public void addTemplate(String userId, String name, String description, String type) {
-        Document template = new Document("userId", userId) // Author is the userId
+        ObjectId userObjectId = new ObjectId(userId); // Convert userId to ObjectId
+
+        Document template = new Document("userId", userObjectId) // Store as ObjectId
                 .append("name", name)
                 .append("description", description)
                 .append("type", type) // public or private
@@ -46,6 +64,7 @@ public class TemplateService {
                 .append("components", new ArrayList<>());
         templatesCollection.insertOne(template);
     }
+
 
     // Fetch a template by its ID
     public Document getTemplateById(String templateId) {

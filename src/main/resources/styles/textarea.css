@@ -4,16 +4,18 @@
 }
 
 /* Style for the TextArea */
+/* Style for the TextArea */
 .text-area {
     -fx-font-size: 14px;
     -fx-control-inner-background: #000000; /* Dark background */
     -fx-text-fill: #eeeeee; /* White text */
     -fx-background-color: transparent;
     -fx-focus-color: #000000;
-
-
-
+    -fx-pref-width: 100%; /* Take up the full width of the container */
+    -fx-max-width: Infinity; /* No maximum width restriction */
+    -fx-min-width: 0; /* Allow shrinking to fit smaller containers */
 }
+
 
 /* Style for TextArea hover */
 .text-area:hover {

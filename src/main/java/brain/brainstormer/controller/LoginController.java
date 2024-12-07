@@ -92,8 +92,8 @@ public class LoginController {
 
         // Step 4: Attempt login with the backend
         if (userService.loginUser(username, password)) {
-            // Login successful
-            SessionManager.getInstance().setUsername(username);
+
+
             goToHome(); // Redirect to home screen
         } else {
             // Backend login failed

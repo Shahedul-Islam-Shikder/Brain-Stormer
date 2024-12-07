@@ -37,19 +37,28 @@ public abstract class CoreComponent {
 
     public abstract void saveToDatabase();
 
+
     public void delete() {
         try {
-            ComponentService.getInstance().deleteComponentFromTemplate(TemplateData.getInstance().getCurrentTemplateId(), getId());
+            String templateId = TemplateData.getInstance().getCurrentTemplateId();
+            ComponentService.getInstance().deleteComponentFromTemplate(templateId, getId());
             System.out.println("Component deleted with ID: " + getId());
 
+            // Notify via WebSocket
             TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
+            if (controller != null && controller.getSocket() != null) {
+                controller.getSocket().sendMessage("{\"type\": \"update\", \"roomId\": \"" + templateId + "\"}");
+            }
+
+            // Refresh the UI
             if (controller != null) {
-                controller.refreshTemplateContent(TemplateData.getInstance().getCurrentTemplateId());
+                controller.refreshTemplateContent(templateId);
             }
         } catch (Exception e) {
             System.err.println("Failed to delete component: " + e.getMessage());
         }
     }
+
 
     // Apply component-global.css by default to all components
     public void applyGlobalComponentStyles(Node node) {

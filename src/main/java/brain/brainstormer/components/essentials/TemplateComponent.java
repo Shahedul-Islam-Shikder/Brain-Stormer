@@ -1,13 +1,13 @@
 package brain.brainstormer.components.essentials;
 
-import brain.brainstormer.controller.LoginController;
+
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
 import brain.brainstormer.utils.StyleUtil;
 import brain.brainstormer.utils.TemplateData;
-import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
@@ -67,6 +68,7 @@ public class TemplateComponent {
 
     public void addTemplate(String name, String description, String type) {
         String userId = SessionManager.getInstance().getUserId();
+        System.out.println("SM: userId: " + userId);
         templateService.addTemplate(userId, name, description, type);
     }
 
@@ -96,40 +98,66 @@ public class TemplateComponent {
         typeLabel.getStyleClass().add("label-type");
 
         textContainer.getChildren().addAll(nameLabel, descriptionLabel, typeLabel);
-//        StyleUtil.applyStylesheet(textContainer);
+
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button deleteButton = createDeleteButton(template, parentContainer);
-        Button editButton = createEditDialog(template, parentContainer);
-        deleteButton.getStyleClass().add("button-danger");
-        editButton.getStyleClass().add("button-secondary");
+        // Only add edit and delete buttons if the template is private or for public eh is the author to the current user
+        // so like: if the template is private or the author is the current user
 
-        templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
+        if (templateType.equals("private") || template.getObjectId("userId").toHexString().equals(SessionManager.getInstance().getUserId())) {
+            Button deleteButton = createDeleteButton(template, parentContainer);
+            Button editButton = createEditButton(template, parentContainer);
+            deleteButton.getStyleClass().add("button-danger");
+            editButton.getStyleClass().add("button-secondary");
+
+            templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
+        } else {
+            templateBox.getChildren().addAll(textContainer, spacer);
+        }
+
+
+
+
 
         templateBox.setOnMouseClicked(event -> {
+            // Set all necessary fields in TemplateData
             TemplateData.getInstance().setCurrentTemplateId(template.getObjectId("_id").toHexString());
             TemplateData.getInstance().setCurrentTemplateType(templateType);
+            TemplateData.getInstance().setAuthor(template.getObjectId("userId").toHexString()); // Author's userId
+            TemplateData.getInstance().setEditors(
+                    template.getList("editors", ObjectId.class).stream()
+                            .map(ObjectId::toHexString)
+                            .toList()
+            );
 
-            // Check if "userId" exists and is not null
-            String userId = template.getString("userId");
-            if (userId != null && userId.equals(SessionManager.getInstance().getUserId())) {
-                // Author is the userId
-                TemplateData.getInstance().setAuthor(SessionManager.getInstance().getUserId());
-                System.out.println("userId: " + userId);
-                System.out.println("24"+TemplateData.getInstance().getAuthor());
-            }
+            TemplateData.getInstance().setViewers(
+                    template.getList("viewers", ObjectId.class).stream()
+                            .map(ObjectId::toHexString)
+                            .toList()
+            );
+
+
+
+            System.out.println("TemplateType: " + TemplateData.getInstance().getCurrentTemplateType());
+            System.out.println("TemplateId: " + TemplateData.getInstance().getCurrentTemplateId());
+            System.out.println("Author: " + TemplateData.getInstance().getAuthor());
+            System.out.println("Editors: " + TemplateData.getInstance().getEditors());
+            System.out.println("Viewers: " + TemplateData.getInstance().getViewers());
 
             Stage stage = (Stage) templateBox.getScene().getWindow();
             SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
         });
 
 
+        VBox.setMargin(templateBox, new Insets(10, 0, 10, 0));
+
+
         return templateBox;
     }
 
-    private Button createEditDialog(Document template, VBox parentContainer) {
+    private Button createEditButton(Document template, VBox parentContainer) {
         Button editButton = new Button("Edit");
         editButton.getStyleClass().add("button-secondary");
         editButton.setOnAction(event -> {
@@ -151,11 +179,8 @@ public class TemplateComponent {
             typeInput.getStyleClass().add("input-field");
 
             // Save button
-
             Button saveButton = new Button("Save Changes");
             saveButton.getStyleClass().add("button-primary");
-            HBox buttonContainer = new HBox(saveButton);
-            buttonContainer.setAlignment(Pos.CENTER);
             saveButton.setOnAction(e -> {
                 String name = nameInput.getText().trim();
                 String description = descInput.getText().trim();
@@ -176,13 +201,14 @@ public class TemplateComponent {
                     new Label("Name:"), nameInput,
                     new Label("Description:"), descInput,
                     new Label("Type:"), typeInput,
-                    buttonContainer
+                    saveButton
             );
             layout.getStyleClass().add("container");
 
             // Create scene and apply styles
             Scene scene = new Scene(layout);
-            StyleUtil.applyCustomStylesheet(scene, "/styles/base/global.css"); // Example of applying custom dialog styles
+            StyleUtil.applyGlobalStylesheet(scene);
+//            StyleUtil.applyCustomStylesheet(scene, "/styles/dialog.css"); // Example of applying custom dialog styles
 
             // Set scene and show dialog
             dialog.setScene(scene);
