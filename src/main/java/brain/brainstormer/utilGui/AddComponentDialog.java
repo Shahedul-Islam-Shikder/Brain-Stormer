@@ -97,7 +97,7 @@ public class AddComponentDialog {
         //dialog.getDialogPane().setContent(dialogContent);
 
         Scene scene = new Scene(dialogContent);
-//        StyleUtil.applyStylesheet(scene);
+        StyleUtil.applyCustomStylesheet(scene, "/styles/base/global.css");
         loadComponents();
 
 
