@@ -4,11 +4,13 @@ import brain.brainstormer.components.core.ComponentFactory;
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.socket.Socket;
 import brain.brainstormer.utilGui.AddComponentDialog;
 import brain.brainstormer.utils.RoleUtils;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
 import brain.brainstormer.utils.TemplateData;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -36,13 +38,14 @@ public class TemplateController {
 
     private final TemplateService templateService = TemplateService.getInstance();
     private final ComponentService componentService = ComponentService.getInstance();
+    private Socket socket; // WebSocket client
 
     @FXML
     private void initialize() {
         String userId = SessionManager.getInstance().getUserId();
         String templateId = TemplateData.getInstance().getCurrentTemplateId();
 
-        loadTemplateContent(templateId);
+        refreshTemplateContent(templateId);
 
         // Check if template is private
         boolean isPrivate = "private".equals(TemplateData.getInstance().getCurrentTemplateType());
@@ -53,29 +56,48 @@ public class TemplateController {
             addComponentButton.setVisible(true);
         } else {
             // Public templates: roles dictate visibility
+            connectToWebSocket(templateId);
+
             addComponentButton.setVisible(RoleUtils.canEdit(userId));
         }
+        // Connect to WebSocket if the template is public
+
 
         homeButton.setOnAction(event -> switchToHome());
         addComponentButton.setOnAction(event -> addComponent(templateId));
     }
 
-    public void loadTemplateContent(String templateId) {
-        Document templateData = templateService.getTemplateById(templateId);
+    private void connectToWebSocket(String templateId) {
+        String serverUrl = "ws://localhost:8000"; // Replace with your WebSocket server URL
+        socket = new Socket(serverUrl);
 
-        if (templateData == null) {
-            displayTemplateNotFound();
-            return;
-        }
+        socket.connect(
+                message -> handleWebSocketMessage(message),
+                () -> System.out.println("Connected to WebSocket for template: " + templateId),
+                () -> System.out.println("Disconnected from WebSocket"),
+                ex -> ex.printStackTrace()
+        );
 
-        setTemplateDetails(templateData);
-        List<Document> components = templateData.getList("components", Document.class);
-        if (components == null || components.isEmpty()) {
-            displayEmptyTemplateMessage();
-        } else {
-            addComponentsToTemplate(components);
+        // Join the room for this template
+        socket.sendMessage("{\"type\": \"join\", \"roomId\": \"" + templateId + "\"}");
+    }
+    private void handleWebSocketMessage(String message) {
+        if (message.contains("refresh")) {
+            System.out.println("Received refresh message from server.");
+
+
+            // Use Platform.runLater to execute UI updates on the JavaFX Application Thread
+            Platform.runLater(() -> {
+                System.out.println("Refreshing template content... BOOM chaaay chaay chaay boom chaaah");
+                refreshTemplateContent(TemplateData.getInstance().getCurrentTemplateId());
+
+            });
         }
     }
+
+
+
+
 
     private void setTemplateDetails(Document templateData) {
         // Extract the ObjectId and convert it to a hexadecimal string
@@ -142,6 +164,10 @@ public class TemplateController {
     }
 
     private void switchToHome() {
+        // Disconnect from WebSocket before switching scenes
+        if (socket != null) {
+            socket.disconnect();
+        }
         Stage stage = (Stage) homeButton.getScene().getWindow();
         SceneSwitcher.switchScene(stage, "/brain/brainstormer/home.fxml", true);
     }
@@ -149,14 +175,16 @@ public class TemplateController {
     private void addComponent(String templateId) {
         TemplateData templateData = TemplateData.getInstance();
 
+
         // Check if the template is private
-        if (templateData.isPrivate()) {
-            // Private templates require no role checks
-            AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, componentService);
-            addComponentDialog.init();
-            refreshTemplateContent(templateId);
-            return;
-        }
+//        if (templateData.isPrivate()) {
+//            // Private templates require no role checks
+//            AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, templateData.getCurrentTemplateType() , componentService, socket);
+//            addComponentDialog.init();
+//
+//
+//            return;
+//        }
 
         // For public templates, check roles (Author or Editor)
         String userId = SessionManager.getInstance().getUserId();
@@ -165,13 +193,47 @@ public class TemplateController {
             return;
         }
 
-        AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, componentService);
+        AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, componentService, socket);
         addComponentDialog.init();
-        refreshTemplateContent(templateId);
+
+        // not here
+
+
+
+
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 
 
+
+
     public void refreshTemplateContent(String templateId) {
-        loadTemplateContent(templateId);
+
+
+        Document templateData = templateService.getTemplateById(templateId);
+        if (templateData == null) {
+            System.out.println("Template not found: " + templateId);
+            displayTemplateNotFound();
+            return;
+        }
+
+        setTemplateDetails(templateData);
+
+        List<Document> components = templateData.getList("components", Document.class);
+
+        if (components == null || components.isEmpty()) {
+
+            displayEmptyTemplateMessage();
+        } else {
+
+            templateContentArea.getChildren().clear();
+
+
+            addComponentsToTemplate(components);
+
+        }
     }
 }

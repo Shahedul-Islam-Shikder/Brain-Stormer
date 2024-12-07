@@ -6,6 +6,7 @@ import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.service.ComponentService;
+import brain.brainstormer.socket.Socket;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.StyleUtil;
 import javafx.geometry.Insets;
@@ -31,15 +32,20 @@ import java.util.Optional;
 public class AddComponentDialog {
 
     private String templateId; // For template-related components
+
     private final Grouper grouperComponent; // For Grouper-related components
     private final ComponentService componentService;
     private final ListView<HBox> componentList = new ListView<>();
+    private Socket socket;
+
 
     // Constructor for adding to a template
-    public AddComponentDialog(String templateId, ComponentService componentService ) {
+    public AddComponentDialog(String templateId, ComponentService componentService, Socket socket) {
         this.templateId = templateId;
+
         this.grouperComponent = null; // Not used in this context
         this.componentService = componentService;
+        this.socket = socket;
     }
 
     // Constructor for adding to a Grouper
@@ -115,9 +121,19 @@ public class AddComponentDialog {
 
             // Add the component to the appropriate target
             if (grouperComponent == null) {
+
                 addComponentToTemplate(componentName);
+
+
+                // we need teh socket thing here
             } else {
                 addComponentToGrouper(componentName);
+            }
+
+            if (socket != null) {
+
+                socket.sendMessage("{\"type\": \"update\", \"roomId\": \"" + templateId + "\"}");
+
             }
 
             // Close the dialog after the component is added
@@ -156,6 +172,7 @@ public class AddComponentDialog {
     }
 
     private void addComponentToTemplate(String componentName) {
+
         Document componentData = componentService.getComponentsCollection().find(new Document("type", componentName)).first();
         CoreComponent component = ComponentFactory.createComponent(componentData);
         if (component == null) {
@@ -170,10 +187,11 @@ public class AddComponentDialog {
             componentService.addComponentToTemplate(templateId, component);
         }
 
-        // Refresh the template content
+//        // Refresh the template content
         TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
         if (controller != null) {
             controller.refreshTemplateContent(templateId);
+
         }
     }
 
