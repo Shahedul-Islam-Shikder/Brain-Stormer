@@ -126,7 +126,20 @@ public class TemplateController {
     }
 
     private void addComponent(String templateId) {
-        if (!RoleUtils.canEdit(SessionManager.getInstance().getUserId())) {
+        TemplateData templateData = TemplateData.getInstance();
+
+        // Check if the template is private
+        if (templateData.isPrivate()) {
+            // Private templates require no role checks
+            AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, componentService);
+            addComponentDialog.init();
+            refreshTemplateContent(templateId);
+            return;
+        }
+
+        // For public templates, check roles (Author or Editor)
+        String userId = SessionManager.getInstance().getUserId();
+        if (!RoleUtils.canEdit(userId)) {
             System.out.println("Permission denied: Cannot add component.");
             return;
         }
@@ -135,6 +148,7 @@ public class TemplateController {
         addComponentDialog.init();
         refreshTemplateContent(templateId);
     }
+
 
     public void refreshTemplateContent(String templateId) {
         loadTemplateContent(templateId);

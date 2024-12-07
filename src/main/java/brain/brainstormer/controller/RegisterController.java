@@ -1,13 +1,13 @@
 package brain.brainstormer.controller;
 
 import brain.brainstormer.service.UserService;
+import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.utils.StyleUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class RegisterController {
@@ -30,24 +30,39 @@ public class RegisterController {
     @FXML
     private Hyperlink loginButton;
 
+    @FXML
+    private Label usernameErrorLabel;
+
+    @FXML
+    private Label emailErrorLabel;
+
+    @FXML
+    private Label nameErrorLabel;
+
+    @FXML
+    private Label passwordErrorLabel;
+
     private final UserService userService;
 
     public RegisterController() {
-        userService = new UserService();
+        this.userService = new UserService();
     }
 
     @FXML
     private void initialize() {
-        registerButton.setOnAction(event -> registerUser());
-        loginButton.setOnAction(event -> goToLogin());
+        // Apply global and custom styles
 
-       registerButton.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) { // Button gained focus
-                registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #3A3A7A; -fx-text-fill: white; -fx-background-radius: 10;");
-            } else { // Button lost focus
-                registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
+        registerButton.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                // Scene is now available
+                StyleUtil.applyCustomStylesheet(registerButton.getScene(), "/styles/auth/login-register.css");
+
             }
         });
+
+        // Set up button actions
+        registerButton.setOnAction(event -> registerUser());
+        loginButton.setOnAction(event -> goToLogin());
     }
 
     private void registerUser() {
@@ -56,18 +71,71 @@ public class RegisterController {
         String name = nameField.getText();
         String password = passwordField.getText();
 
-        if (userService.registerUser(name, username, email, password)) {
-            showAlert("Registration Successful", "Welcome, " + username + "! You can now log in.");
-            goToLogin();
+        boolean isValid = true;
+
+        // Step 1: Validate username
+        if (!username.matches("^[a-z0-9._]+$")) {
+            usernameErrorLabel.setText("Username must contain only lowercase letters, dots, or underscores.");
+
+            isValid = false;
         } else {
-            showAlert("Registration Failed", "Username or email already taken.");
+            usernameErrorLabel.setText("");
+            usernameField.setStyle("");
+        }
+
+        // Step 2: Validate email
+        if (!email.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            emailErrorLabel.setText("Enter a valid email address.");
+
+            isValid = false;
+        } else {
+            emailErrorLabel.setText("");
+            emailField.setStyle("");
+        }
+
+        // Check Name too only A-z
+
+        if (!name.matches("^[a-zA-Z]+$")) {
+            nameErrorLabel.setText("Name must contain only letters.");
+
+            isValid = false;
+        } else {
+            nameErrorLabel.setText("");
+            nameField.setStyle("");
+        }
+
+
+        // Step 3: Validate password
+        if (password.length() < 8) {
+            passwordErrorLabel.setText("Password must be at least 8 characters.");
+
+            isValid = false;
+        } else {
+            passwordErrorLabel.setText("");
+            passwordField.setStyle("");
+        }
+
+        // Step 4: Show validation error popup if validation fails
+        if (!isValid) {
+
+            return; // Exit early if validation fails
+        }
+
+        // Step 5: Attempt registration with the backend
+        if (userService.registerUser(name, username, email, password)) {
+            // Registration successful
+            AlertUtil.showAlert("Registration Successful", "Welcome, " + username + "! You can now log in.");
+            goToLogin(); // Redirect to login screen
+        } else {
+            // Backend registration failed
+            AlertUtil.showError("Registration Failed", "Username or email already taken.");
         }
     }
+
 
     private void goToLogin() {
         Stage stage = (Stage) registerButton.getScene().getWindow();
         SceneSwitcher.switchScene(stage, "/brain/brainstormer/hello-view.fxml", true);
-
     }
 
     private void showAlert(String title, String message) {
@@ -76,14 +144,5 @@ public class RegisterController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    @FXML
-    private void handleMouseEnter() {
-        registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #2A2A6A; -fx-text-fill: white; -fx-background-radius: 10;");
-    }
-    @FXML
-    private void handleMouseExit() {
-        registerButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
     }
 }

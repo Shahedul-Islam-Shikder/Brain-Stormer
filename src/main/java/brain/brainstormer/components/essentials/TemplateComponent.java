@@ -2,8 +2,10 @@ package brain.brainstormer.components.essentials;
 
 import brain.brainstormer.controller.LoginController;
 import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.utils.StyleUtil;
 import brain.brainstormer.utils.TemplateData;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -71,6 +73,8 @@ public class TemplateComponent {
         String templateId = template.getObjectId("_id").toHexString();
         TemplateData.getInstance().setCurrentTemplateId(templateId);
 
+
+
         Stage stage = (Stage) templateButton.getScene().getWindow();
         SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
     }
@@ -107,9 +111,19 @@ public class TemplateComponent {
             TemplateData.getInstance().setCurrentTemplateId(template.getObjectId("_id").toHexString());
             TemplateData.getInstance().setCurrentTemplateType(templateType);
 
+            // Check if "userId" exists and is not null
+            String userId = template.getString("userId");
+            if (userId != null && userId.equals(SessionManager.getInstance().getUserId())) {
+                // Author is the userId
+                TemplateData.getInstance().setAuthor(SessionManager.getInstance().getUserId());
+                System.out.println("userId: " + userId);
+                System.out.println("24"+TemplateData.getInstance().getAuthor());
+            }
+
             Stage stage = (Stage) templateBox.getScene().getWindow();
             SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
         });
+
 
         return templateBox;
     }
@@ -125,6 +139,7 @@ public class TemplateComponent {
             dialog.setTitle("Edit Template");
             dialog.initModality(Modality.APPLICATION_MODAL);
 
+            // Input fields
             TextField nameInput = new TextField(template.getString("name"));
             nameInput.getStyleClass().add("input-field");
 
@@ -134,6 +149,7 @@ public class TemplateComponent {
             TextField typeInput = new TextField(template.getString("type"));
             typeInput.getStyleClass().add("input-field");
 
+            // Save button
             Button saveButton = new Button("Save Changes");
             saveButton.getStyleClass().add("button-primary");
             saveButton.setOnAction(e -> {
@@ -147,21 +163,31 @@ public class TemplateComponent {
                     loadTemplatesView(parentContainer);
                     dialog.close();
                 } else {
-                    LoginController.showAlert("Field Empty", "All fields must be filled.");
+                    AlertUtil.showAlert("Field Empty", "All fields must be filled."); // Fixed the alert call
                 }
             });
 
-            VBox layout = new VBox(10, new Label("Name:"), nameInput, new Label("Description:"), descInput, new Label("Type:"), typeInput, saveButton);
+            // Layout for dialog
+            VBox layout = new VBox(10,
+                    new Label("Name:"), nameInput,
+                    new Label("Description:"), descInput,
+                    new Label("Type:"), typeInput,
+                    saveButton
+            );
             layout.getStyleClass().add("container");
 
+            // Create scene and apply styles
             Scene scene = new Scene(layout);
-//            StyleUtil.applyStylesheet(scene);
+            StyleUtil.applyGlobalStylesheet(scene);
+//            StyleUtil.applyCustomStylesheet(scene, "/styles/dialog.css"); // Example of applying custom dialog styles
 
+            // Set scene and show dialog
             dialog.setScene(scene);
             dialog.show();
         });
         return editButton;
     }
+
 
     private Button createDeleteButton(Document template, VBox parentContainer) {
         Button deleteButton = new Button("Delete");

@@ -1,5 +1,6 @@
 package brain.brainstormer;
 
+import brain.brainstormer.utils.StyleUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,7 +19,10 @@ public class HelloApplication extends Application {
     // Utility method to load scenes with specific dimensions and window settings
     private void loadScene(Stage stage, String fxmlFile, String title, int width, int height, boolean maximize) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fxmlFile));
+
+
         Scene scene = new Scene(fxmlLoader.load(), width, height);
+        StyleUtil.applyGlobalStylesheet(scene);
         stage.setTitle(title);
 
 

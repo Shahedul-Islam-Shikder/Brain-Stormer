@@ -1,0 +1,44 @@
+/* styles/auth/login-register.css */
+
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+.label-error {
+    -fx-text-fill: #ff4d4d;
+    -fx-font-size: 12px;
+
+}
+
+.text-field-error {
+    -fx-border-color: #ff4d4d;
+    -fx-border-width: 2px;
+}
+
+
+
+.text-field {
+    -fx-background-color: #333333;
+    -fx-border-color: transparent;
+    -fx-text-fill: #E0E0E0;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.button {
+    -fx-font-size: 18px;
+    -fx-background-color: #1A1A5A;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.button:focused {
+    -fx-background-color: #3A3A7A;
+}
+
+.hyperlink {
+    -fx-text-fill: #4A90E2;
+    -fx-cursor: hand;
+}

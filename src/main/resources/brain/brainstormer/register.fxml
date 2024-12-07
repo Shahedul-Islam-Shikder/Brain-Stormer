@@ -6,41 +6,38 @@
 <StackPane xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: #121212;" fx:controller="brain.brainstormer.controller.RegisterController">
     <VBox alignment="CENTER" spacing="20" style="-fx-padding: 50;">
         <Label text="Register" style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #E0E0E0;"/>
-        <Label text="Join us and start your journey with Brain-Stormer!" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
+        <Label text="Join us and start your journey with BrainStormer!" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
 
         <VBox alignment="CENTER_LEFT" spacing="15" style="-fx-max-width: 300px;">
-            <VBox spacing="5" alignment="CENTER_LEFT">
+            <VBox spacing="5">
                 <Label text="Username" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
-                <TextField fx:id="usernameField" promptText="UniqueUsername123"
-                           style="-fx-pref-width: 300px; -fx-max-width: 300px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;"/>
+                <TextField fx:id="usernameField" promptText="UniqueUsername123" styleClass="text-field"/>
+                <Label fx:id="usernameErrorLabel" styleClass="label-error"/>
             </VBox>
 
-            <VBox spacing="5" alignment="CENTER_LEFT">
+            <VBox spacing="5">
                 <Label text="Email" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
-                <TextField fx:id="emailField" promptText="example@gmail.com"
-                           style="-fx-pref-width: 300px; -fx-max-width: 300px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;"/>
+                <TextField fx:id="emailField" promptText="example@gmail.com" styleClass="text-field"/>
+                <Label fx:id="emailErrorLabel" styleClass="label-error"/>
             </VBox>
 
-            <VBox spacing="5" alignment="CENTER_LEFT">
+            <VBox spacing="5">
                 <Label text="Name" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
-                <TextField fx:id="nameField" promptText="John Doe"
-                           style="-fx-pref-width: 300px; -fx-max-width: 300px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;"/>
+                <TextField fx:id="nameField" promptText="John Doe" styleClass="text-field"/>
+                <Label fx:id="nameErrorLabel" styleClass="label-error"/>
             </VBox>
 
-            <VBox spacing="5" alignment="CENTER_LEFT">
+            <VBox spacing="5">
                 <Label text="Password" style="-fx-font-size: 14px; -fx-text-fill: #B0B0B0;"/>
-                <PasswordField fx:id="passwordField" promptText="Create a strong password"
-                               style="-fx-pref-width: 300px; -fx-max-width: 300px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-padding: 10; -fx-background-color: #333333; -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #777777;"/>
+                <PasswordField fx:id="passwordField" promptText="Create a strong password" styleClass="text-field"/>
+                <Label fx:id="passwordErrorLabel" styleClass="label-error"/>
             </VBox>
         </VBox>
 
-        <Button fx:id="registerButton" text="Register" style="-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;"
-                onMouseEntered="#handleMouseEnter"
-                onMouseExited="#handleMouseExit"/>
-
+        <Button fx:id="registerButton" text="Register" styleClass="button"/>
         <HBox spacing="5" alignment="CENTER">
             <Label text="Already have an account?" style="-fx-font-size: 12px; -fx-text-fill: #B0B0B0;"/>
-            <Hyperlink fx:id="loginButton" text="Login" style="-fx-font-size: 12px; -fx-text-fill: #4A90E2;"/>
+            <Hyperlink fx:id="loginButton" text="Login" styleClass="hyperlink"/>
         </HBox>
     </VBox>
 </StackPane>
