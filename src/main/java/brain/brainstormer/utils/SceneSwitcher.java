@@ -28,6 +28,9 @@ public class SceneSwitcher {
             // Set the new scene on the provided stage
             stage.setScene(newScene);
             stage.setResizable(true);
+            if(maximize == false){
+                stage.setMinHeight(600);
+            }
 
             // Set the stage to maximized if specified
             stage.setMaximized(maximize);

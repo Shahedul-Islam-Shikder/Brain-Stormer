@@ -9,8 +9,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.bson.Document;
+import javafx.scene.control.Button;
 
 public class LoginController {
 
@@ -31,9 +34,20 @@ public class LoginController {
 
     @FXML
     private void initialize() {
+        // Set onAction handlers for login and register
         loginButton.setOnAction(event -> loginUser());
         registerButton.setOnAction(event -> goToRegister());
+
+        // Set focus listener for the login button
+        loginButton.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) { // Button gained focus
+                loginButton.setStyle("-fx-font-size: 18px; -fx-background-color: #3A3A7A; -fx-text-fill: white; -fx-background-radius: 10;");
+            } else { // Button lost focus
+                loginButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
+            }
+        });
     }
+
 
     private void loginUser() {
         String username = usernameField.getText();
@@ -57,7 +71,7 @@ public class LoginController {
 
     private void goToRegister() {
         Stage stage = (Stage) loginButton.getScene().getWindow();
-        SceneSwitcher.switchScene(stage, "/brain/brainstormer/register.fxml", true);
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/register.fxml", false);
     }
 
     private void goToHome() {
@@ -72,4 +86,15 @@ public class LoginController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
+    @FXML
+    private void handleMouseEnter() {
+        loginButton.setStyle("-fx-font-size: 18px; -fx-background-color: #2A2A6A; -fx-text-fill: white; -fx-background-radius: 10;");
+    }
+    @FXML
+    private void handleMouseExit() {
+        loginButton.setStyle("-fx-font-size: 18px; -fx-background-color: #1A1A5A; -fx-text-fill: white; -fx-background-radius: 10;");
+    }
+
 }

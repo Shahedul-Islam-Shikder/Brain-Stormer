@@ -87,21 +87,25 @@ public class HomeController {
 
         // Template Name
         Label nameLabel = new Label("Template Name:");
+        nameLabel.getStyleClass().add("label-text");
         TextField nameInput = new TextField();
         nameInput.getStyleClass().add("input-field");
         nameInput.setPromptText("Enter Template name");
 
         // Description
         Label descLabel = new Label("Description:");
+        descLabel.getStyleClass().add("label-text");
         TextArea descInput = new TextArea();
         descInput.getStyleClass().add("text-area");
         descInput.setPromptText("Enter Description");
 
         // Template Type (Dropdown)
         Label typeLabel = new Label("Template Type:");
+        typeLabel.getStyleClass().add("label-text");
         ComboBox<String> typeDropdown = new ComboBox<>();
         typeDropdown.getItems().addAll("private", "public");
         typeDropdown.setValue("private"); // Default to "private"
+        typeDropdown.getStyleClass().add("combo-box");
 
         // Save Button
         Button saveButton = new Button("Add Template");
