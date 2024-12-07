@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
@@ -102,23 +103,53 @@ public class TemplateComponent {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button deleteButton = createDeleteButton(template, parentContainer);
-        Button editButton = createEditButton(template, parentContainer);
-        deleteButton.getStyleClass().add("button-danger");
-        editButton.getStyleClass().add("button-secondary");
+        // Only add edit and delete buttons if the template is private or for public eh is the author to the current user
+        // so like: if the template is private or the author is the current user
 
-        templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
+        if (templateType.equals("private") || template.getObjectId("userId").toHexString().equals(SessionManager.getInstance().getUserId())) {
+            Button deleteButton = createDeleteButton(template, parentContainer);
+            Button editButton = createEditButton(template, parentContainer);
+            deleteButton.getStyleClass().add("button-danger");
+            editButton.getStyleClass().add("button-secondary");
+
+            templateBox.getChildren().addAll(textContainer, spacer, editButton, deleteButton);
+        } else {
+            templateBox.getChildren().addAll(textContainer, spacer);
+        }
+
+
+
+
 
         templateBox.setOnMouseClicked(event -> {
-
+            // Set all necessary fields in TemplateData
             TemplateData.getInstance().setCurrentTemplateId(template.getObjectId("_id").toHexString());
             TemplateData.getInstance().setCurrentTemplateType(templateType);
-            System.out.println("templateType: " + TemplateData.getInstance().getCurrentTemplateType());
-            System.out.println("templateId: " + TemplateData.getInstance().getCurrentTemplateId());
+            TemplateData.getInstance().setAuthor(template.getObjectId("userId").toHexString()); // Author's userId
+            TemplateData.getInstance().setEditors(
+                    template.getList("editors", ObjectId.class).stream()
+                            .map(ObjectId::toHexString)
+                            .toList()
+            );
+
+            TemplateData.getInstance().setViewers(
+                    template.getList("viewers", ObjectId.class).stream()
+                            .map(ObjectId::toHexString)
+                            .toList()
+            );
+
+
+
+            System.out.println("TemplateType: " + TemplateData.getInstance().getCurrentTemplateType());
+            System.out.println("TemplateId: " + TemplateData.getInstance().getCurrentTemplateId());
+            System.out.println("Author: " + TemplateData.getInstance().getAuthor());
+            System.out.println("Editors: " + TemplateData.getInstance().getEditors());
+            System.out.println("Viewers: " + TemplateData.getInstance().getViewers());
 
             Stage stage = (Stage) templateBox.getScene().getWindow();
             SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
         });
+
 
         VBox.setMargin(templateBox, new Insets(10, 0, 10, 0));
 

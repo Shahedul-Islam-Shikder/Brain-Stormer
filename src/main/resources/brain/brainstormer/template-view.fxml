@@ -23,8 +23,7 @@
         <HBox alignment="CENTER_LEFT" spacing="20.0">
             <Button fx:id="homeButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Home" />
             <Button fx:id="addComponentButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Add Component" />
-            <Button fx:id="editComponentButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Edit Component" />
-            <Button fx:id="customizeComponentButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Customize Component" />
+
             <padding>
                 <Insets left="80.0" right="80.0" />
             </padding>

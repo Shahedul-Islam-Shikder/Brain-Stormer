@@ -15,8 +15,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TemplateController {
 
@@ -75,15 +78,33 @@ public class TemplateController {
     }
 
     private void setTemplateDetails(Document templateData) {
-        TemplateData.getInstance().setAuthor(templateData.getString("userId"));
-        TemplateData.getInstance().setEditors(templateData.getList("editors", String.class));
-        TemplateData.getInstance().setViewers(templateData.getList("viewers", String.class));
-        TemplateData.getInstance().setCurrentTemplateType(templateData.getString("type")); // Set type (public/private)
+        // Extract the ObjectId and convert it to a hexadecimal string
+        ObjectId userIdObj = templateData.getObjectId("userId");
+        String userId = userIdObj != null ? userIdObj.toHexString() : null;
+        TemplateData.getInstance().setAuthor(userId);
 
+        // Similarly, handle the "editors" and "viewers" fields
+        List<ObjectId> editorIds = templateData.getList("editors", ObjectId.class);
+        List<String> editors = editorIds != null ? editorIds.stream()
+                .map(ObjectId::toHexString)
+                .collect(Collectors.toList()) : Collections.emptyList();
+        TemplateData.getInstance().setEditors(editors);
+
+        List<ObjectId> viewerIds = templateData.getList("viewers", ObjectId.class);
+        List<String> viewers = viewerIds != null ? viewerIds.stream()
+                .map(ObjectId::toHexString)
+                .collect(Collectors.toList()) : Collections.emptyList();
+        TemplateData.getInstance().setViewers(viewers);
+
+        // Set the template type
+        TemplateData.getInstance().setCurrentTemplateType(templateData.getString("type"));
+
+        // Set the template title and description
         templateTitle.setText(templateData.getString("name"));
         templateDescription.setText(templateData.getString("description"));
         templateContentArea.getChildren().clear();
     }
+
 
     private void addComponentsToTemplate(List<Document> components) {
         for (Document componentDoc : components) {
