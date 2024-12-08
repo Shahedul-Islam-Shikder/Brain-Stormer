@@ -51,6 +51,7 @@ public class TemplateService {
 
 
     // Add a new template
+// Add a new template
     public void addTemplate(String userId, String name, String description, String type) {
         ObjectId userObjectId = new ObjectId(userId); // Convert userId to ObjectId
 
@@ -60,10 +61,13 @@ public class TemplateService {
                 .append("type", type) // public or private
                 .append("editors", new ArrayList<>()) // Initially no editors
                 .append("viewers", new ArrayList<>()) // Initially no viewers
+                .append("chatMessages", new ArrayList<>()) // Initialize chat messages as an empty list
                 .append("dateCreated", new Date())
-                .append("components", new ArrayList<>());
+                .append("components", new ArrayList<>()); // Initialize components as an empty list
+
         templatesCollection.insertOne(template);
     }
+
 
 
     // Fetch a template by its ID
@@ -151,5 +155,35 @@ public class TemplateService {
                 Updates.pull("viewers", new ObjectId(viewerId))
         );
         System.out.println("Removed user from Viewers: " + viewerId);
+    }
+
+    // Fetch chat messages for a template
+    public List<Document> getChatMessages(String templateId) {
+        try {
+            Document template = templatesCollection.find(Filters.eq("_id", new ObjectId(templateId))).first();
+            if (template != null) {
+                return template.getList("chatMessages", Document.class);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to fetch chat messages: " + e.getMessage());
+        }
+        return new ArrayList<>(); // Return empty list if no messages found or error occurs
+    }
+
+    // Add a new chat message to a template
+    public void addChatMessage(String templateId, String username, String message) {
+        try {
+            Document chatMessage = new Document("user", username)
+                    .append("text", message)
+                    .append("timestamp", new Date());
+
+            templatesCollection.updateOne(
+                    Filters.eq("_id", new ObjectId(templateId)),
+                    Updates.push("chatMessages", chatMessage)
+            );
+            System.out.println("Chat message added for template: " + templateId);
+        } catch (Exception e) {
+            System.err.println("Failed to add chat message: " + e.getMessage());
+        }
     }
 }

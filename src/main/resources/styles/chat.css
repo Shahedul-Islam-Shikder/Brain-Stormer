@@ -1,0 +1,125 @@
+/* --- Chat View Styles --- */
+
+/* Chat Layout */
+.chat-layout {
+    -fx-padding: 20;
+    -fx-background-color: #121212; /* Matches the dark Notion-like theme */
+}
+
+/* Back Button */
+.chat-back-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+    -fx-cursor: hand;
+}
+
+.chat-back-button:hover {
+    -fx-text-fill: #E0E0E0;
+    -fx-underline: true;
+}
+
+/* ScrollPane for Messages */
+.chat-scroll-pane {
+    -fx-background-color: #121212;
+    -fx-padding: 0;
+    -fx-border-color: transparent;
+
+    /* Hide the scrollbar */
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+
+}
+
+/* Message Box */
+.message-box {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-background-color: #00000;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Input Area */
+.chat-input-area {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #333333;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Input Field */
+.chat-input-field {
+    -fx-pref-width: 350px;
+    -fx-background-color: #333333;
+    -fx-text-fill: #E0E0E0;
+    -fx-prompt-text-fill: #777777;
+    -fx-border-color: transparent;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+/* Send Button */
+.chat-send-button {
+    -fx-background-color: #1A1A5A; /* Primary button color */
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 5 10;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+
+}
+
+.chat-send-button:hover {
+    -fx-background-color: #2A2A7A;
+}
+
+
+.message-bubble-user {
+    -fx-background-color: #1A5A5A; /* Brand color for user messages */
+    -fx-alignment: center-right;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 10;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+}
+
+.message-bubble-other {
+    -fx-background-color: #3A3A3A; /* Complementary color for others' messages */
+    -fx-alignment: center-left;
+    -fx-text-fill: #E0E0E0;
+    -fx-padding: 10;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+}
+
+/* Username Label */
+.message-username {
+    -fx-font-size: 15px;
+    -fx-text-fill: gray;
+
+    -fx-underline: true;
+    -fx-padding: 2 5 2 10;
+    -fx-font-family: Arial, sans-serif;
+}
+
+/* --- Scroll Behavior --- */
+.chat-scroll-pane .viewport {
+    -fx-padding: 10;
+}
+
+/* --- Accessibility and Hover Effects --- */
+.chat-input-field:hover {
+    -fx-background-color: #444444;
+}
+
+.chat-send-button:focused {
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1;
+}
+
+.chat-back-button:focused {
+    -fx-text-fill: #FFFFFF;
+}

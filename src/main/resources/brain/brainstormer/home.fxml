@@ -35,9 +35,9 @@
             <VBox fx:id="mainContentArea" VBox.vgrow="ALWAYS" />
             <AnchorPane VBox.vgrow="NEVER">
                 <!-- Floating Add Button -->
-                <Button fx:id="addButton" styleClass="add-button" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="12.0">
+                <Button fx:id="addButton" maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" prefHeight="60.0" prefWidth="60.0" style="-fx-background-radius: 100000;" styleClass="add-button" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="12.0">
                     <graphic>
-                        <FontAwesomeIconView glyphName="PLUS" style="-fx-fill: white; -fx-font-size: 44px; -fx-stroke: #333333; -fx-stroke-width: 2;" />
+                        <FontAwesomeIconView glyphName="PLUS" style="-fx-fill: white; -fx-font-size: 40px; -fx-stroke: #333333; -fx-stroke-width: 2;" text="" />
                     </graphic>
                 </Button>
             </AnchorPane>

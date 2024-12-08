@@ -83,9 +83,8 @@
     -fx-font-size: 20px;
     -fx-background-color: #333333;
     -fx-text-fill: white;
-    -fx-background-radius: 100000px; /* Round button */
-    -fx-pref-width: 60px;
-    -fx-pref-height: 50px;
+
+
     -fx-border-color: transparent;
     -fx-border-width: 0; /* Removed border for thinner look */
     -fx-padding: 0; /* Ensures no extra spacing */

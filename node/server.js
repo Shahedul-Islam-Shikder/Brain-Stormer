@@ -9,6 +9,7 @@ const server = new WebSocketServer({ port: PORT });
 console.log(`Collaborative WebSocket server running on ws://localhost:${PORT}`);
 
 const rooms = {}; // Store clients by roomId
+const chatHistory = {}; // Store chat messages for each room
 
 // Handle new connections
 server.on('connection', (ws) => {
@@ -25,16 +26,27 @@ server.on('connection', (ws) => {
     if (type === 'join') {
       if (!rooms[roomId]) {
         rooms[roomId] = new Set();
+        chatHistory[roomId] = []; // Initialize chat history for the room
       }
       rooms[roomId].add(ws);
       currentRoom = roomId;
       console.log(`Client joined room: ${roomId}`);
+
+      // Send existing chat history to the new client
+      ws.send(JSON.stringify({ type: 'chat-history', payload: chatHistory[roomId] }));
     }
 
-    // Notify all clients in the room to refresh
+    // Handle updates (for collaborative workspace)
     if (type === 'update' && currentRoom) {
       console.log(`Update received for room: ${currentRoom}`);
       broadcastToRoom(currentRoom, { type: 'refresh', payload });
+    }
+
+    // Handle chat messages
+    if (type === 'chat' && currentRoom) {
+      const chatMessage = { user: payload.user, text: payload.text, timestamp: new Date() };
+      chatHistory[currentRoom].push(chatMessage); // Save to room's chat history
+      broadcastToRoom(currentRoom, { type: 'chat', payload: chatMessage }); // Broadcast to room
     }
   });
 
@@ -44,6 +56,7 @@ server.on('connection', (ws) => {
       rooms[currentRoom].delete(ws);
       if (rooms[currentRoom].size === 0) {
         delete rooms[currentRoom];
+        delete chatHistory[currentRoom]; // Cleanup chat history for the room
       }
       console.log(`Client disconnected from room: ${currentRoom}`);
     }

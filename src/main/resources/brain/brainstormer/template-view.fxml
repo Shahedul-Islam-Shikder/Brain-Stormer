@@ -24,6 +24,7 @@
             <Button fx:id="homeButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Home" />
             <Button fx:id="addComponentButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Add Component" />
             <Button fx:id="manageUsersButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Manage Users" />
+            <Button fx:id="chatButton" style="-fx-background-color: #1A1A5A; -fx-text-fill: white;" text="Chat" />
             <padding>
                 <Insets left="80.0" right="80.0" />
             </padding>
@@ -45,7 +46,7 @@
         </VBox>
 
         <!-- Scrollable Content Area for Template Components -->
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="564.0" prefWidth="764.0" style="-fx-background: #121212; -fx-border-color: #000000;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+        <ScrollPane fx:id="templateScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="564.0" prefWidth="764.0" style="-fx-background: #121212; -fx-border-color: #000000;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
             <content>
                 <VBox fx:id="templateContentArea" spacing="10" style="-fx-background-color: #121212;">
                     <!-- Placeholder for template content -->
