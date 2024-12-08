@@ -23,8 +23,6 @@
 /* Show Buttons on Hover */
  .button-container:hover {
     -fx-opacity: 1; /* Fully visible on hover */
-
-
 }
 
 /* Generic Button Styles */

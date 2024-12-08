@@ -6,9 +6,11 @@ import brain.brainstormer.utils.Debouncer;
 import brain.brainstormer.utils.TemplateData;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
@@ -125,6 +127,11 @@ public class CodeSnippet extends CoreComponent {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
+        // Create Delete button
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER_LEFT);
+        buttonContainer.getStyleClass().add("button-container");
+
         // Create the Delete button
         FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
         deleteIcon.getStyleClass().add("delete-icon");
@@ -134,6 +141,7 @@ public class CodeSnippet extends CoreComponent {
             System.out.println("Deleting CodeSnippet component with ID: " + getId());
             delete(); // Call the inherited delete method
         });
+        buttonContainer.getChildren().addAll(deleteButton);
 
         // Arrange components in a VBox
         VBox container = new VBox(10); // Spacing between components
@@ -141,7 +149,11 @@ public class CodeSnippet extends CoreComponent {
         container.setStyle("-fx-background-color: #000000; -fx-background-radius: 10; -fx-padding: 10;");
         container.setPrefHeight(350);
 
-        container.getChildren().addAll(scrollPane, deleteButton);
+        container.getChildren().addAll(scrollPane, buttonContainer);
+
+        applyGlobalComponentStyles(container);
+        applyStyles(container, "/styles/code.css"); // Apply specific styles for this component
+
 
         return container;
     }
