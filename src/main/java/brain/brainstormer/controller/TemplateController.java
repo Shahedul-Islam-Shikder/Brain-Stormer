@@ -6,6 +6,7 @@ import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.socket.Socket;
 import brain.brainstormer.utilGui.AddComponentDialog;
+import brain.brainstormer.utilGui.ManageUsersDialog;
 import brain.brainstormer.utils.RoleUtils;
 import brain.brainstormer.utils.SceneSwitcher;
 import brain.brainstormer.utils.SessionManager;
@@ -35,6 +36,8 @@ public class TemplateController {
     private Label templateDescription;
     @FXML
     private Button addComponentButton;
+    @FXML
+    private Button manageUsersButton;
 
     private final TemplateService templateService = TemplateService.getInstance();
     private final ComponentService componentService = ComponentService.getInstance();
@@ -54,10 +57,11 @@ public class TemplateController {
         if (isPrivate) {
             // Private templates: full access
             addComponentButton.setVisible(true);
+            manageUsersButton.setVisible(false);
         } else {
             // Public templates: roles dictate visibility
             connectToWebSocket(templateId);
-
+            manageUsersButton.setVisible(TemplateData.getInstance().isAuthor(userId));
             addComponentButton.setVisible(RoleUtils.canEdit(userId));
         }
         // Connect to WebSocket if the template is public
@@ -65,6 +69,11 @@ public class TemplateController {
 
         homeButton.setOnAction(event -> switchToHome());
         addComponentButton.setOnAction(event -> addComponent(templateId));
+
+        manageUsersButton.setOnAction(event -> {
+            ManageUsersDialog dialog = new ManageUsersDialog(TemplateData.getInstance().getCurrentTemplateId());
+            dialog.init();
+        });
     }
 
     private void connectToWebSocket(String templateId) {
@@ -176,15 +185,7 @@ public class TemplateController {
         TemplateData templateData = TemplateData.getInstance();
 
 
-        // Check if the template is private
-//        if (templateData.isPrivate()) {
-//            // Private templates require no role checks
-//            AddComponentDialog addComponentDialog = new AddComponentDialog(templateId, templateData.getCurrentTemplateType() , componentService, socket);
-//            addComponentDialog.init();
-//
-//
-//            return;
-//        }
+
 
         // For public templates, check roles (Author or Editor)
         String userId = SessionManager.getInstance().getUserId();

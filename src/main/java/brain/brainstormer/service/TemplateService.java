@@ -95,23 +95,6 @@ public class TemplateService {
         );
     }
 
-    // Add an editor to a template
-    public void addEditor(String templateId, String editorId) {
-        templatesCollection.updateOne(
-                Filters.eq("_id", new ObjectId(templateId)),
-                Updates.addToSet("editors", editorId)
-        );
-        System.out.println("Editor added successfully.");
-    }
-
-    // Add a viewer to a template
-    public void addViewer(String templateId, String viewerId) {
-        templatesCollection.updateOne(
-                Filters.eq("_id", new ObjectId(templateId)),
-                Updates.addToSet("viewers", viewerId)
-        );
-        System.out.println("Viewer added successfully.");
-    }
 
     // Update a specific component in a template
     public void updateComponentInTemplate(String templateId, String componentId, Document updatedComponent) {
@@ -130,5 +113,43 @@ public class TemplateService {
         } catch (Exception e) {
             System.err.println("Failed to update component in template: " + e.getMessage());
         }
+    }
+
+
+
+    // Add a user as an Editor
+    public void addEditor(String templateId, String editorId) {
+        templatesCollection.updateOne(
+                Filters.eq("_id", new ObjectId(templateId)),
+                Updates.addToSet("editors", new ObjectId(editorId))
+        );
+        System.out.println("Added user as Editor: " + editorId);
+    }
+
+    // Remove a user from Editors
+    public void removeEditor(String templateId, String editorId) {
+        templatesCollection.updateOne(
+                Filters.eq("_id", new ObjectId(templateId)),
+                Updates.pull("editors", new ObjectId(editorId))
+        );
+        System.out.println("Removed user from Editors: " + editorId);
+    }
+
+    // Add a user as a Viewer
+    public void addViewer(String templateId, String viewerId) {
+        templatesCollection.updateOne(
+                Filters.eq("_id", new ObjectId(templateId)),
+                Updates.addToSet("viewers", new ObjectId(viewerId))
+        );
+        System.out.println("Added user as Viewer: " + viewerId);
+    }
+
+    // Remove a user from Viewers
+    public void removeViewer(String templateId, String viewerId) {
+        templatesCollection.updateOne(
+                Filters.eq("_id", new ObjectId(templateId)),
+                Updates.pull("viewers", new ObjectId(viewerId))
+        );
+        System.out.println("Removed user from Viewers: " + viewerId);
     }
 }

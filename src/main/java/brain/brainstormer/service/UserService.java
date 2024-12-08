@@ -9,6 +9,8 @@ import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import com.mongodb.client.model.Filters;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserService {
@@ -107,4 +109,13 @@ public class UserService {
     public Document getUser(String userId) {
         return usersCollection.find(Filters.eq("_id", new ObjectId(userId))).first();
     }
+    public List<Document> getAllUsers() {
+        try {
+            return usersCollection.find().into(new ArrayList<>());
+        } catch (Exception e) {
+            System.err.println("Failed to fetch users: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
 }
