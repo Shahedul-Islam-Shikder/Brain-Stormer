@@ -92,7 +92,7 @@ public class GameComponent {
             Platform.runLater(() -> {
 
                 Stage stage = (Stage) hostButton.getScene().getWindow();
-                SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
+                SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true, "Chess");
 
 
             });
@@ -111,7 +111,7 @@ public class GameComponent {
             Platform.runLater(() -> {
 
                 Stage stage = (Stage) hostButton.getScene().getWindow();
-                SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true);
+                SceneSwitcher.switchScene(stage, "/brain/brainstormer/chess-game.fxml", true, "Chess");
 
 
             });

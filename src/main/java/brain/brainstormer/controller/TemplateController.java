@@ -363,7 +363,7 @@ public class TemplateController {
             socket.disconnect();
         }
         Stage stage = (Stage) homeButton.getScene().getWindow();
-        SceneSwitcher.switchScene(stage, "/brain/brainstormer/home.fxml", true);
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/home.fxml", true,"Home");
     }
 
     private void addComponent(String templateId) {

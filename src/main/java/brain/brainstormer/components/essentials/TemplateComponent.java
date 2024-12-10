@@ -79,7 +79,7 @@ public class TemplateComponent {
 
 
         Stage stage = (Stage) templateButton.getScene().getWindow();
-        SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true,"Template");
     }
 
     private HBox createTemplateBox(Document template, VBox parentContainer) {
@@ -147,7 +147,7 @@ public class TemplateComponent {
             System.out.println("Viewers: " + TemplateData.getInstance().getViewers());
 
             Stage stage = (Stage) templateBox.getScene().getWindow();
-            SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true);
+            SceneSwitcher.switchScene(stage, "/brain/brainstormer/template-view.fxml", true,"Template");
         });
 
 

@@ -91,7 +91,7 @@ public class HomeController {
     private void logout() {
         Stage stage = (Stage) logoutButton.getScene().getWindow();
         SessionManager.getInstance().clearSession();
-        SceneSwitcher.switchScene(stage, "/brain/brainstormer/hello-view.fxml", true);
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/hello-view.fxml", true, "Login");
     }
 
     private void addTemplateDialog() {

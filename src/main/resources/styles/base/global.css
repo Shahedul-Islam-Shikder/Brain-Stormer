@@ -132,3 +132,14 @@
 .button-add:hover {
     -fx-background-color: #2A7A2A;
 }
+.stopwatch-container {
+    -fx-padding: 10px;
+    -fx-background-color: #2a2a2a;
+    -fx-border-color: #4a4a4a;
+    -fx-border-radius: 5px;
+}
+
+.stopwatch-container .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}

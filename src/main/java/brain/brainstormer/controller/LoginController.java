@@ -104,12 +104,12 @@ public class LoginController {
 
     private void goToRegister() {
         Stage stage = (Stage) loginButton.getScene().getWindow();
-        SceneSwitcher.switchScene(stage, "/brain/brainstormer/register.fxml", true);
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/register.fxml", true, "Login");
     }
 
     private void goToHome() {
         Stage stage = (Stage) loginButton.getScene().getWindow();
-        SceneSwitcher.switchScene(stage, "/brain/brainstormer/home.fxml", true);
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/home.fxml", true, "Home");
     }
 
     public void showAlert(String title, String message) {
