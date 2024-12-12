@@ -211,7 +211,10 @@ public class TemplateController {
 
 
     private void connectToWebSocket(String templateId) {
-        String serverUrl = "ws://localhost:8000"; // Replace with your WebSocket server URL
+//        String serverUrl = "ws://localhost:8000"; // Replace with your WebSocket server URL
+        // add url from env
+        String serverUrl = EnvUtil.getEnv("SERVER_URL");
+        System.out.println("Server URL: " + serverUrl);
         socket = new Socket(serverUrl);
 
         socket.connect(
