@@ -72,6 +72,15 @@ public class ComponentFactory {
                 int level = config.getInteger("level", 1);
                 return new Heading(id, description, headingTitle != null ? headingTitle : "Untitled", level);
 
+            case "stopwatch":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for stopwatch component.");
+                    return null;
+                }
+                long elapsedTime = config.getLong("elapsedTime"); // Default to 0 if not present
+                boolean isRunning = config.getBoolean("isRunning", false); // Default to false
+                return new Stopwatch(id, description != null ? description : "Stopwatch", elapsedTime, isRunning);
+
             case "line_breaker":
                 return new LineBreaker(id, description != null ? description : "No description");
 

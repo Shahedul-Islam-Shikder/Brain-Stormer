@@ -10,14 +10,14 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="600.0" prefWidth="1200.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.HomeController">
+<StackPane prefHeight="600.0" prefWidth="1200.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.HomeController">
     <HBox spacing="0" style="-fx-pref-height: 100%; -fx-pref-width: 100%;">
         <!-- Sidebar -->
         <VBox fx:id="sidebar" prefHeight="698.0" prefWidth="300.0" styleClass="sidebar">
             <Label styleClass="sidebar-title" text="Brain-Stormer" />
             <VBox fx:id="sidebarArea" spacing="10" style="-fx-padding: 40 0;">
                 <Button fx:id="templatesButton" styleClass="sidebar-button" text="Templates" />
-                <Button fx:id="gamesButton" styleClass="sidebar-button" text="Games" />
+                <Button fx:id="gamesButton" styleClass="sidebar-button" text="Chess" />
             </VBox>
             <Region VBox.vgrow="ALWAYS" />
             <Button fx:id="logoutButton" maxWidth="Infinity" styleClass="logout-button" text="Logout" />

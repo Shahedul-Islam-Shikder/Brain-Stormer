@@ -55,6 +55,7 @@ public class Link extends CoreComponent implements Initializable {
         // Create the Edit and Delete buttons
         HBox buttonContainer = new HBox(10);
         buttonContainer.setStyle("-fx-alignment: center-left;");
+        buttonContainer.getStyleClass().add("button-container"); // CSS class for styling
 
         FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.PENCIL);
         editIcon.getStyleClass().add("edit-icon");
@@ -84,6 +85,8 @@ public class Link extends CoreComponent implements Initializable {
         container.setPadding(new Insets(10));
         container.setSpacing(10);
         container.getChildren().addAll(link, buttonContainer);
+
+        applyGlobalComponentStyles(container);
 
         return container;
     }

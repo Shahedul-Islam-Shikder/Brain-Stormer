@@ -166,17 +166,6 @@ public class ComponentService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
     public MongoCollection<Document> getComponentsCollection() {
         return componentsCollection;
     }

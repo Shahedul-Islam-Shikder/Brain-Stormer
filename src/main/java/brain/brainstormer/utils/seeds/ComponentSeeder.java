@@ -31,6 +31,14 @@ public class ComponentSeeder {
                                 .append("description", "A simple checkbox for true/false states"))
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
+                new Document()
+                        .append("type", "stopwatch")
+                        .append("config", new Document()
+                                .append("elapsedTime", 0) // Initial elapsed time in milliseconds
+                                .append("isRunning", false) // Stopwatch starts in a paused state
+                                .append("description", "A stopwatch to track elapsed time"))
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
 
                 new Document()
                         .append("type", "textarea")

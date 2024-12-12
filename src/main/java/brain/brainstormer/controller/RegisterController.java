@@ -135,7 +135,7 @@ public class RegisterController {
 
     private void goToLogin() {
         Stage stage = (Stage) registerButton.getScene().getWindow();
-        SceneSwitcher.switchScene(stage, "/brain/brainstormer/hello-view.fxml", true);
+        SceneSwitcher.switchScene(stage, "/brain/brainstormer/hello-view.fxml", true,"Login");
     }
 
     private void showAlert(String title, String message) {

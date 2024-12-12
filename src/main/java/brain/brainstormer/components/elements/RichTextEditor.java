@@ -6,8 +6,10 @@ import brain.brainstormer.utils.Debouncer;
 import brain.brainstormer.utils.TemplateData;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import org.bson.Document;
@@ -46,6 +48,11 @@ public class RichTextEditor extends CoreComponent {
             saveToDatabase(); // Save changes to the database with debouncing
         });
 
+        // Create Delete button
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER_LEFT);
+        buttonContainer.getStyleClass().add("button-container");
+
         // Create the Delete button
         FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
         deleteIcon.getStyleClass().add("delete-icon");
@@ -56,8 +63,12 @@ public class RichTextEditor extends CoreComponent {
             delete(); // Call the inherited delete method
         });
 
+        buttonContainer.getChildren().addAll(deleteButton);
+
         // Add HTMLEditor and Delete button to the container
-        container.getChildren().addAll(htmlEditor, deleteButton);
+        container.getChildren().addAll(htmlEditor, buttonContainer);
+
+        applyGlobalComponentStyles(container);
 
         return container;
     }

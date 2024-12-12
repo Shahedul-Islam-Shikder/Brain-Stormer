@@ -72,6 +72,8 @@ public class Heading extends CoreComponent implements Initializable {
         container.getChildren().addAll(headingLabel, buttonContainer);
         container.getStyleClass().add("heading-wrapper"); // CSS class for styling
 
+        applyGlobalComponentStyles(container);
+
         return container;
     }
 

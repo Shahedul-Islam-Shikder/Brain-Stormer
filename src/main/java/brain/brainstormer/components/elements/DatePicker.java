@@ -74,6 +74,10 @@ public class DatePicker extends CoreComponent implements Initializable {
         container.getChildren().addAll(datePicker, buttonContainer);
         container.getStyleClass().add("date-picker-wrapper"); // CSS class for styling
 
+        applyGlobalComponentStyles(container);
+        applyStyles(container, "/styles/datepicker.css"); // Apply specific styles for this component
+
+
         return container;
     }
 

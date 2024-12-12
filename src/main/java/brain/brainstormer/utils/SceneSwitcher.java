@@ -11,7 +11,7 @@ import java.io.IOException;
 public class SceneSwitcher {
 
     // Method to switch scenes with an option to maximize
-    public static void switchScene(Stage stage, String fxmlPath, boolean maximize) {
+    public static void switchScene(Stage stage, String fxmlPath, boolean maximize, String title) {
         try {
             // Load the FXML file
             FXMLLoader loader = new FXMLLoader(SceneSwitcher.class.getResource(fxmlPath));
@@ -25,12 +25,14 @@ public class SceneSwitcher {
             // Associate the FXMLLoader with the scene
             newScene.setUserData(loader);
 
+
             // Set the new scene on the provided stage
             stage.setScene(newScene);
             stage.setResizable(true);
             if(maximize == false){
                 stage.setMinHeight(600);
             }
+            stage.setTitle("Brain-Stormer- "+title);
 
             // Set the stage to maximized if specified
             stage.setMaximized(maximize);
