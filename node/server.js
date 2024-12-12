@@ -24,10 +24,13 @@ server.on("connection", (ws) => {
   ws.on("message", (message) => {
     const data = JSON.parse(message);
     const { type, roomId, payload } = data;
+    console.log(`Server:-> Message received. Type: ${type}, RoomID: ${roomId}`);
 
     console.log(`Server:-> Message received. Type: ${type}, RoomID: ${roomId}`);
 
     if (type === "join") {
+    console.log(`Server:-> Joining room: ${roomId}`);
+    }
       if (!rooms[roomId]) {
         rooms[roomId] = new Set();
         chatHistory[roomId] = [];
