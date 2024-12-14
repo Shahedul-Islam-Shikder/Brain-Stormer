@@ -23,6 +23,7 @@ module brain.brainstormer {
     requires cloudinary.core;
     requires org.java_websocket;
     requires okhttp3;
+    requires javafx.media;
 
     // Open the specific packages to Gson for reflection
     opens brain.brainstormer.chess to com.google.gson;

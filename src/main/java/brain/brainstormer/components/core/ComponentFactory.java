@@ -77,7 +77,9 @@ public class ComponentFactory {
                     System.out.println("Error: Config document is missing for stopwatch component.");
                     return null;
                 }
-                long elapsedTime = config.getLong("elapsedTime"); // Default to 0 if not present
+                long elapsedTime = config.get("elapsedTime") instanceof Number
+                        ? ((Number) config.get("elapsedTime")).longValue()
+                        : 0L; // Default to 0 if not present or not numeric
                 boolean isRunning = config.getBoolean("isRunning", false); // Default to false
                 return new Stopwatch(id, description != null ? description : "Stopwatch", elapsedTime, isRunning);
 

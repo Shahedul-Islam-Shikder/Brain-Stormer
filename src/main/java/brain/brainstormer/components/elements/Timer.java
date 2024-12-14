@@ -12,24 +12,26 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.util.Duration;
 import org.bson.Document;
 
-public class Stopwatch extends CoreComponent {
-    private long elapsedTime; // in milliseconds
+public class Timer extends CoreComponent {
+    private long remainingTime; // in milliseconds
     private boolean isRunning;
     private transient Timeline timeline; // Non-serializable timeline for animation
 
-    public Stopwatch(String id, String description, long elapsedTime, boolean isRunning) {
-        super(id, "stopwatch", description != null ? description : "Stopwatch");
-        this.elapsedTime = elapsedTime;
+    // Constructor
+    public Timer(String id, String description, long remainingTime, boolean isRunning) {
+        super(id, "timer", description != null ? description : "Timer");
+        this.remainingTime = remainingTime;
         this.isRunning = isRunning;
     }
 
     @Override
     public Node render() {
-        // Create label to display elapsed time
-        Label timeLabel = new Label(formatTime(elapsedTime));
+        // Create label to display remaining time
+        Label timeLabel = new Label(formatTime(remainingTime));
         timeLabel.setStyle("-fx-font-size: 24px;");
 
         // Create control buttons
@@ -46,44 +48,37 @@ public class Stopwatch extends CoreComponent {
         resetButton.setOnAction(e -> reset(timeLabel));
 
         // Arrange buttons and label
-        HBox buttonContainer = new HBox(10);
+        HBox buttonContainer = new HBox(10, startButton, stopButton, resetButton);
         buttonContainer.setAlignment(Pos.CENTER);
-
-        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
-        deleteIcon.getStyleClass().add("delete-icon");
-
-        Button deleteButton = new Button("", deleteIcon); // Icon-only button
-        deleteButton.setOnAction(event -> {
-            System.out.println("Deleting Heading component with ID: " + getId());
-            delete(); // Call the delete method
-        });
-
-        buttonContainer.getChildren().addAll(startButton, stopButton, resetButton);
 
         VBox secondaryContainer = new VBox(10, timeLabel, buttonContainer);
         secondaryContainer.setAlignment(Pos.CENTER);
 
-        VBox deleteContainer = new VBox(deleteButton);
-        deleteContainer.setAlignment(Pos.BOTTOM_LEFT);
-        deleteContainer.getStyleClass().add("button-container");
-
-        VBox mainContainer = new VBox(10,secondaryContainer,deleteContainer);
+        VBox mainContainer = new VBox(10, secondaryContainer);
         applyGlobalComponentStyles(mainContainer);
 
         return mainContainer;
     }
+
 
     private void start(Label timeLabel) {
         if (isRunning) return;
 
         isRunning = true;
         timeline = new Timeline(
-                new KeyFrame(Duration.millis(100), e -> {
-                    elapsedTime += 100;
-                    timeLabel.setText(formatTime(elapsedTime));
+                new KeyFrame(Duration.millis(1000), e -> {
+                    remainingTime -= 1000;
+                    timeLabel.setText(formatTime(remainingTime));
+
+                    // Check if time is up and play sound (if needed)
+                    if (remainingTime <= 0) {
+                        stop();
+                        // You can add sound here
+                        playSound();
+                    }
                 })
         );
-        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
 
@@ -94,24 +89,32 @@ public class Stopwatch extends CoreComponent {
         }
     }
 
+    private long initialDuration = remainingTime; // Store initial duration
+
     private void reset(Label timeLabel) {
-        elapsedTime = 0;
-        timeLabel.setText(formatTime(elapsedTime));
+        remainingTime = initialDuration; // Reset to initial duration
+        timeLabel.setText(formatTime(remainingTime));
+        stop(); // Ensure the timer stops when reset
     }
 
     private String formatTime(long milliseconds) {
         long totalSeconds = milliseconds / 1000;
-        long hours = totalSeconds / 3600;
-        long minutes = (totalSeconds % 3600) / 60;
+        long minutes = totalSeconds / 60;
         long seconds = totalSeconds % 60;
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    private void playSound() {
+        // Placeholder for the sound effect
+        // Use something like Java's AudioClip or any library to play a sound
+        System.out.println("Time's up! Play sound here.");
     }
 
     @Override
     public Document toDocument() {
         return new Document("_id", getId())
-                .append("type", "stopwatch")
-                .append("config", new Document("elapsedTime", elapsedTime)
+                .append("type", "timer")
+                .append("config", new Document("remainingTime", remainingTime)
                         .append("isRunning", isRunning)
                         .append("description", getDescription()));
     }
