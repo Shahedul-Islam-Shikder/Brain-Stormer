@@ -1,8 +1,10 @@
 package brain.brainstormer.chess;
 
+import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utils.SessionManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import javafx.application.Platform;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -25,7 +27,7 @@ public class ChessClient {
             client = new WebSocketClient(new URI(serverUrl)) {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
-                    System.out.println("Connected to WebSocket server.");
+
 
                     // Send the join-chess message immediately upon connection
                     JsonObject joinMessage = new JsonObject();
@@ -38,14 +40,14 @@ public class ChessClient {
                     joinMessage.add("payload", payload);
 
                     sendMessage(joinMessage); // Send the join message
-                    System.out.println("ChessClient:-> Sent join-chess message for roomId: " + roomId);
+
 
                     if (onOpen != null) onOpen.run();
                 }
 
                 @Override
                 public void onMessage(String message) {
-                    System.out.println("Message received: " + message);
+
                     if (onMessage != null) {
                         JsonObject jsonMessage = gson.fromJson(message, JsonObject.class);
                         onMessage.accept(jsonMessage);
@@ -54,20 +56,30 @@ public class ChessClient {
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    System.out.println("Disconnected from WebSocket server. Reason: " + reason);
-                    if (onClose != null) onClose.run();
+                    if (onClose != null) {
+                        Platform.runLater(() -> {
+                            // Execute UI updates on the JavaFX application thread
+                            onClose.run(); // Callback if needed
+                        });
+                    }
+                    // Handle additional cleanup if necessary
                 }
 
                 @Override
                 public void onError(Exception ex) {
-                    System.err.println("WebSocket error: " + ex.getMessage());
-                    if (onError != null) onError.accept(ex);
+
+                    if (onError != null) {
+                        Platform.runLater(() -> {
+                            onError.accept(ex); // This ensures that the error is handled on the FX thread
+                        });
+                    }
                 }
+
             };
             client.connectBlocking(); // Wait until the connection is established
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Failed to connect to WebSocket server.");
+            AlertUtil.showError("WebSocket Error", "Failed to connect to the WebSocket server.");
         }
     }
 
@@ -76,7 +88,7 @@ public class ChessClient {
         if (client != null && client.isOpen()) {
             client.send(gson.toJson(message));
         } else {
-            System.err.println("WebSocket is not connected.");
+            AlertUtil.showError("WebSocket Error", "WebSocket connection is not open.");
         }
     }
 
@@ -98,20 +110,22 @@ public class ChessClient {
 
     // Send a chat message
     public void sendChat(String roomId, String chatMessage) {
-        JsonObject chatData = new JsonObject();
-        chatData.addProperty("message", chatMessage);
-
         JsonObject message = new JsonObject();
         message.addProperty("type", "chess-game");
         message.addProperty("roomId", roomId);
 
         JsonObject payload = new JsonObject();
-        payload.addProperty("action", "chat");
-        payload.add("data", chatData);
-        message.add("payload", payload);
 
-        sendMessage(message);
+        payload.addProperty("action", "chat");
+        payload.addProperty("username", SessionManager.getInstance().getUsername()); // Add username as a string
+        payload.addProperty("text", chatMessage); // Add chat message as a string
+
+        message.add("payload", payload); // Add the payload object
+
+        sendMessage(message); // Send the message to the server
+
     }
+
 
     // Disconnect the WebSocket client
     public void close() {

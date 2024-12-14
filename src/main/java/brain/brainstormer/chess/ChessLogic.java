@@ -74,6 +74,18 @@ public class ChessLogic {
     public boolean isCheckmate() {
         return board.isMated();
     }
+    public boolean isStalemate() {
+        return board.isStaleMate();
+    }
+
+    // Get winner based on checkmate
+    public Side getWinner() {
+        if (isCheckmate()) {
+            // If the opponent's king is in checkmate, the winner is the side that is not in checkmate
+            return board.getSideToMove() == Side.WHITE ? Side.BLACK : Side.WHITE;
+        }
+        return null; // No winner if no checkmate
+    }
 
     public Square getCheckedKingSquare() {
         if (board.isKingAttacked()) {

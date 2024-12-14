@@ -3,6 +3,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 
 dotenv.config();
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3000;
 const server = new WebSocketServer({ port: PORT });
 
@@ -17,6 +18,8 @@ const generateRoomCode = () => Math.floor(100 + Math.random() * 900).toString();
 const chessRooms = {};
 const rooms = {};
 const chatHistory = {};
+// Store persistent player roles for each room
+const playerRoles = {}; // Structure: { roomId: { username: role, ... } }
 
 server.on('connection', (ws) => {
   console.log('Server:-> New client connected.');
@@ -137,6 +140,27 @@ function handleChessGame(ws, roomId, payload) {
     }
   } else if (action === 'move') {
     handleMove(ws, roomId, moveData);
+  } else if (action === 'chat') {
+  console.log(username, "fsdfsdfsdf")
+    // Handle chat messages in chess game rooms
+    const chatMessage = {
+      user: username,
+      text: payload.text,
+      timestamp: new Date(),
+    };
+    // Add chat message to history
+    if (!chatHistory[roomId]) chatHistory[roomId] = [];
+    chatHistory[roomId].push(chatMessage);
+
+    // Broadcast chat message to room
+    broadcastChess(roomId, {
+      type: 'chess-game',
+      roomId,
+      payload: {
+        action: 'chat',
+        chatMessage,
+      },
+    });
   }
 }
 
@@ -177,11 +201,26 @@ function addPlayerToRoom(ws, roomId, username) {
   const room = chessRooms[roomId];
   let role;
 
-  // Determine the player's role
-  if (room.players.length < 2) {
-    role = room.players.length === 0 ? 'White' : 'Black';
+  // Initialize roles for the room if not already done
+  if (!playerRoles[roomId]) {
+    playerRoles[roomId] = {};
+  }
+
+  // Check if the player already has a role assigned
+  if (playerRoles[roomId][username]) {
+    role = playerRoles[roomId][username];
+  } else if (room.players.length < 2) {
+    // Randomly assign black or white to the first two players
+    if (room.players.length === 0) {
+      role = Math.random() < 0.5 ? 'White' : 'Black';
+    } else {
+      role = room.players[0].role === 'White' ? 'Black' : 'White';
+    }
+
     room.players.push({ username, ws, role });
+    playerRoles[roomId][username] = role; // Persist the role
   } else {
+    // Assign spectators
     role = 'Spectator';
     room.spectators.push(ws);
   }
@@ -200,7 +239,10 @@ function addPlayerToRoom(ws, roomId, username) {
     spectators: room.spectators.map(() => 'Spectator'), // Spectators don't need usernames
   };
 
-  // Send the current room state, including the FEN, to the joining client
+  // Include chat history in the state
+  const chatHistoryForRoom = chatHistory[roomId] || [];
+
+  // Send the current room state, including the FEN and chat history, to the joining client
   ws.send(
     JSON.stringify({
       type: 'chess-game',
@@ -210,7 +252,8 @@ function addPlayerToRoom(ws, roomId, username) {
         username,
         role,
         roomId,
-        state: roomState, // Pass the room state with the FEN
+        state: roomState,
+        chatHistory: chatHistoryForRoom,
       },
     })
   );

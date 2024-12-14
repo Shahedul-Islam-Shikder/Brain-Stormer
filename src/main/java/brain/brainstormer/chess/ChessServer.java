@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
+@Deprecated
 public class ChessServer {
     private static final int PORT = 12345;
     private static List<GameRoom> rooms = new ArrayList<>();

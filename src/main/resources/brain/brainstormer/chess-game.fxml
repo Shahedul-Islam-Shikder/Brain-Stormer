@@ -1,25 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.ChessController">
+<BorderPane prefHeight="820.0" prefWidth="1115.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="brain.brainstormer.controller.ChessController">
 
     <!-- Title and player names at the top -->
     <top>
         <VBox alignment="CENTER" prefWidth="600">
             <Label alignment="CENTER" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Chess" textFill="WHITE" />
             <HBox alignment="CENTER" spacing="20">
-                <Label fx:id="whitePlayerName" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="White Player" textFill="WHITE" />
-                <Label style="-fx-font-size: 16px;" text="vs" textFill="WHITE" />
-                <Label fx:id="blackPlayerName" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Black Player" textFill="WHITE" />
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="180.0" style="-fx-background-color: #EEEEEE; -fx-background-radius: 25;">
+               <children>
+                  <Circle fx:id="activeWhite" fill="#ff001a" radius="10.0" stroke="#eeeeee" strokeType="INSIDE">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </Circle>
+                      <Label fx:id="whitePlayerName" prefHeight="22.0" prefWidth="108.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Waiting" textFill="#0d0d0d" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+                <Label alignment="CENTER" prefHeight="22.0" prefWidth="158.0" style="-fx-font-size: 25px; -fx-font-weight: bold;" text="VS" textAlignment="CENTER" textFill="WHITE" />
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="180.0" style="-fx-background-color: #EEEEEE; -fx-background-radius: 25;">
+               <children>
+                  <Circle fx:id="activeBlack" fill="RED" radius="10.0" stroke="#eeeeee" strokeType="INSIDE" visible="false" >
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </Circle>
+                      <Label fx:id="blackPlayerName" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Waiting" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
             </HBox>
 
-            <Label fx:id="roomCodeLabel" alignment="CENTER" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: green;" />
-            <Label fx:id="waitingLabel" alignment="CENTER" style="-fx-font-size: 14px; -fx-text-fill: white;" />
 
 
         </VBox>
@@ -27,13 +56,48 @@
 
     <!-- Centered chessboard -->
     <center>
-        <VBox alignment="CENTER" prefHeight="600" prefWidth="600">
+        <VBox alignment="CENTER" prefHeight="673.0" prefWidth="997.0" style="-fx-background-color: red;">
             <GridPane fx:id="chessBoard" alignment="CENTER" hgap="0" vgap="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                 <!-- Cells will be added dynamically in the controller -->
             </GridPane>
         </VBox>
     </center>
    <bottom>
-      <VBox alignment="CENTER" prefHeight="121.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+      <VBox alignment="CENTER" prefHeight="76.0" prefWidth="997.0" BorderPane.alignment="CENTER" />
    </bottom>
+   <right>
+      <VBox alignment="TOP_CENTER" prefHeight="607.0" prefWidth="269.0" spacing="10.0" style="-fx-background-color: #1a1a1d; -fx-background-radius: 25;" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="15.0" right="15.0" />
+         </BorderPane.margin>
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="244.0" style="-fx-background-color: black; -fx-background-radius: 15;">
+               <children>
+                  <Label style="-fx-font-weight: bold;" text="Room code: " textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+
+                     <Label fx:id="roomCodeLabel" alignment="CENTER" prefHeight="22.0" prefWidth="47.0" style="-fx-font-size: 18px; -fx-text-fill: white;" />
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+             <ScrollPane hbarPolicy="NEVER" prefHeight="483.0" prefWidth="249.0" style="-fx-background-color: #2b2b2b; -fx-background-radius: 10;" vbarPolicy="ALWAYS">
+                 <VBox fx:id="chatVBox" prefHeight="523.0" prefWidth="249.0" style="-fx-background-color: #2b2b2b;" />
+             </ScrollPane>
+            <TextField fx:id="chatMessage" prefHeight="34.0" prefWidth="249.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white;" />
+            <Button fx:id="sendChat" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #1A1A5A;" text="Send">
+               <styleClass>
+                  <String fx:value=".button" />
+
+               </styleClass></Button>
+         </children>
+         <padding>
+            <Insets left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </right>
 </BorderPane>
