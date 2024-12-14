@@ -7,10 +7,6 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 const server = new WebSocketServer({ port: PORT });
 
-console.log(
-  `Server:-> Collaborative WebSocket server running on ws://localhost:${PORT}`
-);
-
 // Generate a random 3-digit room code for chess games
 const generateRoomCode = () => Math.floor(100 + Math.random() * 900).toString();
 
@@ -22,6 +18,7 @@ const chatHistory = {};
 const playerRoles = {}; // Structure: { roomId: { username: role, ... } }
 
 server.on('connection', (ws) => {
+  // eslint-disable-next-line no-console
   console.log('Server:-> New client connected.');
 
   let currentRoom = null;
@@ -29,8 +26,6 @@ server.on('connection', (ws) => {
   ws.on('message', (message) => {
     const data = JSON.parse(message);
     const { type, roomId, payload } = data;
-
-    console.log(`Server:-> Message received. Type: ${type}, RoomID: ${roomId}`);
 
     if (type === 'join') {
       if (!rooms[roomId]) {
@@ -40,16 +35,12 @@ server.on('connection', (ws) => {
       rooms[roomId].add(ws);
       currentRoom = roomId;
 
-      console.log(`Server:-> Client joined room: ${roomId}`);
-
       ws.send(
         JSON.stringify({ type: 'chat-history', payload: chatHistory[roomId] })
       );
     } else if (type === 'chess-game') {
-      console.log(`Server:-> Handling chess game for RoomID: ${roomId}`);
       handleChessGame(ws, roomId, payload);
     } else if (type === 'update' && currentRoom) {
-      console.log(`Server:-> Update received for room: ${currentRoom}`);
       broadcastToRoom(currentRoom, { type: 'refresh', payload });
     } else if (type === 'chat' && currentRoom) {
       const chatMessage = {
@@ -60,6 +51,7 @@ server.on('connection', (ws) => {
       chatHistory[currentRoom].push(chatMessage);
       broadcastToRoom(currentRoom, { type: 'chat', payload: chatMessage });
     } else {
+      // eslint-disable-next-line no-console
       console.log(`Server:-> Unhandled message type: ${type}`);
     }
   });
@@ -71,7 +63,6 @@ server.on('connection', (ws) => {
         delete rooms[currentRoom];
         delete chatHistory[currentRoom];
       }
-      console.log(`Server:-> Client disconnected from room: ${currentRoom}`);
     }
   });
 });
@@ -90,18 +81,17 @@ function broadcastChess(roomId, message) {
   const room = chessRooms[roomId];
 
   if (!room) {
+    // eslint-disable-next-line no-console
     console.error(`Server:-> Chess room ${roomId} does not exist.`);
     return;
   }
-
-  console.log(`Server:-> Broadcasting chess message to room: ${roomId}`);
-  console.log(`Server:-> Message: ${JSON.stringify(message)}`);
 
   // Send to all players
   room.players.forEach((player) => {
     if (player.ws.readyState === WebSocket.OPEN) {
       player.ws.send(JSON.stringify(message));
     } else {
+      // eslint-disable-next-line no-console
       console.warn(`Server:-> Player WebSocket not open: ${player.username}`);
     }
   });
@@ -111,6 +101,7 @@ function broadcastChess(roomId, message) {
     if (spectator.readyState === WebSocket.OPEN) {
       spectator.send(JSON.stringify(message));
     } else {
+      // eslint-disable-next-line no-console
       console.warn(`Server:-> Spectator WebSocket not open`);
     }
   });
@@ -127,7 +118,7 @@ function handleChessGame(ws, roomId, payload) {
         spectators: [],
         fen: initialFen(),
       };
-      console.log(`Server:-> New chess room created: ${newRoomId}`);
+
       addPlayerToRoom(ws, newRoomId, username);
     } else {
       if (!chessRooms[roomId]) {
@@ -141,7 +132,6 @@ function handleChessGame(ws, roomId, payload) {
   } else if (action === 'move') {
     handleMove(ws, roomId, moveData);
   } else if (action === 'chat') {
-  console.log(username, "fsdfsdfsdf")
     // Handle chat messages in chess game rooms
     const chatMessage = {
       user: username,
@@ -180,8 +170,6 @@ function handleMove(ws, roomId, moveData) {
   }
 
   const { from, to, fen, promotion } = moveData;
-
-  console.log(`Server:-> Move received: ${from} -> ${to}, FEN: ${fen}`);
 
   // Update the room's FEN
   room.fen = fen;
@@ -224,9 +212,6 @@ function addPlayerToRoom(ws, roomId, username) {
     role = 'Spectator';
     room.spectators.push(ws);
   }
-
-  console.log(`Server:-> User ${username} joined room ${roomId} as ${role}`);
-
   // Prepare the current state of the room
   const roomState = {
     fen: room.fen, // Include the current FEN
