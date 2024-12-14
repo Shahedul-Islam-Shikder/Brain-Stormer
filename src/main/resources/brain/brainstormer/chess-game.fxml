@@ -56,7 +56,7 @@
 
     <!-- Centered chessboard -->
     <center>
-        <VBox alignment="CENTER" prefHeight="673.0" prefWidth="997.0" style="-fx-background-color: red;">
+        <VBox alignment="CENTER" prefHeight="673.0" prefWidth="997.0">
             <GridPane fx:id="chessBoard" alignment="CENTER" hgap="0" vgap="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                 <!-- Cells will be added dynamically in the controller -->
             </GridPane>
