@@ -2,6 +2,7 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.config.TemplateData;
 import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utils.FileIOUtil;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -219,7 +220,7 @@ public class File extends CoreComponent implements Initializable {
     public void saveToDatabase() {
         try {
             brain.brainstormer.service.TemplateService.getInstance().updateComponentInTemplate(
-                    brain.brainstormer.utils.TemplateData.getInstance().getCurrentTemplateId(),
+                    TemplateData.getInstance().getCurrentTemplateId(),
                     getId(),
                     toDocument()
             );

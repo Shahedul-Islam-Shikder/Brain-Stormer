@@ -2,9 +2,9 @@ package brain.brainstormer.components.core;
 
 import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.service.ComponentService;
-import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.config.SceneSwitcher;
 import brain.brainstormer.utils.StyleUtil;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.TemplateData;
 import javafx.scene.Node;
 import org.bson.Document;
 

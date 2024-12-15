@@ -1,10 +1,7 @@
 package brain.brainstormer.service;
 
-import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.socket.Socket;
-import brain.brainstormer.utils.DatabaseConnection;
-import brain.brainstormer.utils.SceneSwitcher;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.DatabaseConnection;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;

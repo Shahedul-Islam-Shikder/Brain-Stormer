@@ -2,11 +2,9 @@ package brain.brainstormer.controller;
 
 import brain.brainstormer.service.UserService;
 import brain.brainstormer.utilGui.AlertUtil;
-import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.config.SceneSwitcher;
 import brain.brainstormer.utils.StyleUtil;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 

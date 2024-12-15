@@ -2,6 +2,9 @@ package brain.brainstormer.controller;
 
 import brain.brainstormer.components.core.ComponentFactory;
 import brain.brainstormer.components.core.CoreComponent;
+import brain.brainstormer.config.SceneSwitcher;
+import brain.brainstormer.config.SessionManager;
+import brain.brainstormer.config.TemplateData;
 import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.socket.Socket;
@@ -16,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.bson.Document;

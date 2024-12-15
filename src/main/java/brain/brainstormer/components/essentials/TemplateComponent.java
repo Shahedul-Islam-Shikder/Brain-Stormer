@@ -3,10 +3,10 @@ package brain.brainstormer.components.essentials;
 
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utilGui.AlertUtil;
-import brain.brainstormer.utils.SceneSwitcher;
-import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.config.SceneSwitcher;
+import brain.brainstormer.config.SessionManager;
 import brain.brainstormer.utils.StyleUtil;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.TemplateData;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

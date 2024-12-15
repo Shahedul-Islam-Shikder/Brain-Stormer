@@ -7,7 +7,7 @@ import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.socket.Socket;
-import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.config.SceneSwitcher;
 import brain.brainstormer.utils.StyleUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,7 +27,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AddComponentDialog {
 

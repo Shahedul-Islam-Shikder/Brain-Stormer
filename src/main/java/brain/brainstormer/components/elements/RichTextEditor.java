@@ -2,8 +2,8 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.service.TemplateService;
-import brain.brainstormer.utils.Debouncer;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.Debouncer;
+import brain.brainstormer.config.TemplateData;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Pos;

@@ -1,6 +1,6 @@
 package brain.brainstormer.utils.seeds;
 
-import brain.brainstormer.utils.DatabaseConnection;
+import brain.brainstormer.config.DatabaseConnection;
 import com.mongodb.client.MongoDatabase;
 
 public class SeedRunner {

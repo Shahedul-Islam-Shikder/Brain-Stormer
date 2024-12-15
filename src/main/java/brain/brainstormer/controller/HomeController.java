@@ -2,9 +2,8 @@ package brain.brainstormer.controller;
 
 import brain.brainstormer.components.essentials.GameComponent;
 import brain.brainstormer.components.essentials.TemplateComponent;
-import brain.brainstormer.service.ComponentService;
-import brain.brainstormer.utils.SceneSwitcher;
-import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.config.SceneSwitcher;
+import brain.brainstormer.config.SessionManager;
 import brain.brainstormer.utils.StyleUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;

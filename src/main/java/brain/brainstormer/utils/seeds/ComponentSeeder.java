@@ -129,6 +129,15 @@ public class ComponentSeeder {
                                 .append("description", "An image component for displaying pictures"))
                         .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
+                new Document()
+                        .append("type", "gif")
+                        .append("config", new Document()
+                                .append("gifUrl", null) // Placeholder for the GIF URL
+                                .append("altText", "Default GIF Alt Text")
+                                .append("description", "A GIF component for displaying GIFs"))
+                        .append("createdAt", new Date()) // Current timestamp
+                        .append("lastUpdated", new Date()),
+
 
                 new Document()
                         .append("type", "table")
@@ -140,6 +149,14 @@ public class ComponentSeeder {
                                 ))
                                 .append("description", "A table component with rows and columns"))
                         .append("createdAt", new Date())
+                        .append("lastUpdated", new Date()),
+                new Document()
+                        .append("type", "weather")
+                        .append("name", "Weather") // Adding name
+                        .append("config", new Document()
+
+                                .append("description", "A component for displaying weather information"))
+                        .append("createdAt", new Date()) // Current timestamp
                         .append("lastUpdated", new Date()),
 
                 // Adding File Component

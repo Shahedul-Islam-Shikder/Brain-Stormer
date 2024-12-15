@@ -5,7 +5,7 @@ import brain.brainstormer.components.elements.Grouper;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.controller.TemplateController;
 import brain.brainstormer.service.ComponentService;
-import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.config.SceneSwitcher;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;

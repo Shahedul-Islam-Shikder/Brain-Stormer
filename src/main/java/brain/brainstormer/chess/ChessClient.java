@@ -1,7 +1,7 @@
 package brain.brainstormer.chess;
 
 import brain.brainstormer.utilGui.AlertUtil;
-import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.config.SessionManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import javafx.application.Platform;

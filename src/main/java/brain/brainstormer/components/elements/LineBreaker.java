@@ -1,10 +1,6 @@
 package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
-import brain.brainstormer.controller.TemplateController;
-import brain.brainstormer.service.ComponentService;
-import brain.brainstormer.utils.SceneSwitcher;
-import brain.brainstormer.utils.TemplateData;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Pos;

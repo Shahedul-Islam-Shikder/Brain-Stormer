@@ -134,6 +134,7 @@ public class ComponentFactory {
                     System.out.println("Error: Config document is missing for file component.");
                     return null;
                 }
+
                 String fileUrl = config.getString("fileUrl");
                 String fileName = config.getString("fileName");
                 return new File(
@@ -157,6 +158,22 @@ public class ComponentFactory {
                         imageUrl, // Use the actual imageUrl or leave it null
                         altText != null ? altText : "Image Component" // Default alt text
                 );
+            case "gif":
+                if (config == null) {
+                    System.out.println("Error: Config document is missing for gif component.");
+                    return null;
+                }
+                String gifUrl = config.getString("gifUrl");
+                String gifAltText = config.getString("altText");
+                return new Gif(
+                        id,
+                        description != null ? description : "No description",
+                        gifUrl, // Use the actual gifUrl or leave it null
+                        gifAltText != null ? gifAltText : "GIF Component" // Default alt text
+                );
+            case "weather":
+                // Handle the weather component
+                return new Weather( id, description != null ? description : "Weather component","Dhaka" );
             default:
                 System.out.println("Component type not recognized: " + type);
                 return null;

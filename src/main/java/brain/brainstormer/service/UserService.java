@@ -1,7 +1,7 @@
 package brain.brainstormer.service;
 
-import brain.brainstormer.utils.DatabaseConnection;
-import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.config.DatabaseConnection;
+import brain.brainstormer.config.SessionManager;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;

@@ -1,5 +1,6 @@
-package brain.brainstormer.utils;
+package brain.brainstormer.config;
 
+import brain.brainstormer.utils.StyleUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

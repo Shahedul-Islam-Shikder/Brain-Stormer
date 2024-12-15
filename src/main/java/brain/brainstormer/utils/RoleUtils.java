@@ -1,5 +1,7 @@
 package brain.brainstormer.utils;
 
+import brain.brainstormer.config.TemplateData;
+
 public class RoleUtils {
 
     public static boolean canEdit(String userId) {

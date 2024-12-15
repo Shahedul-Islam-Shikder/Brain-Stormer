@@ -2,7 +2,7 @@ package brain.brainstormer.utilGui;
 
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.service.UserService;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.TemplateData;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -11,9 +11,6 @@ import javafx.stage.Stage;
 import org.bson.Document;
 
 import java.util.List;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ManageUsersDialog {
 

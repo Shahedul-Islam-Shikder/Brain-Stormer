@@ -5,7 +5,7 @@ import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.service.ComponentService;
 import brain.brainstormer.utilGui.AddComponentDialog;
 import brain.brainstormer.utilGui.ComponentDialogBox;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.TemplateData;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Insets;
@@ -15,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.bson.Document;
 
@@ -122,8 +121,12 @@ public class Grouper extends CoreComponent implements Initializable {
         // Edit Button
         FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.PENCIL);
         editIcon.getStyleClass().add("edit-icon");
+        editIcon.setSize("18px");
+
 
         Button editButton = new Button("", editIcon); // Icon-only button
+        editButton.setStyle("-fx-background-color: #333333; -fx-border-color: transparent; -fx-text-fill: #00ff00;");
+
         editButton.setOnAction(event -> {
             // Open edit dialog for Grouper
             ComponentDialogBox editDialog = new ComponentDialogBox(
@@ -139,6 +142,7 @@ public class Grouper extends CoreComponent implements Initializable {
 
         // Delete Button
         FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.setSize("18px");
         deleteIcon.getStyleClass().add("delete-icon");
 
         Button deleteButton = new Button("", deleteIcon); // Icon-only button
@@ -146,6 +150,7 @@ public class Grouper extends CoreComponent implements Initializable {
             System.out.println("Deleting Grouper with ID: " + getId());
             delete(); // Call the inherited delete method
         });
+        deleteButton.setStyle("-fx-background-color: #333333; -fx-border-color: transparent; -fx-text-fill: red;");
 
         buttonContainer.getChildren().addAll(plusButton, editButton, deleteButton);
 

@@ -6,7 +6,7 @@ import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utilGui.ChessDialogs;
 import brain.brainstormer.utils.Chessutils;
 import brain.brainstormer.utils.EnvUtil;
-import brain.brainstormer.utils.SessionManager;
+import brain.brainstormer.config.SessionManager;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;

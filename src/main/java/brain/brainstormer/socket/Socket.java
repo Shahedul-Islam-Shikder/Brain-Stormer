@@ -1,8 +1,8 @@
 package brain.brainstormer.socket;
 
 import brain.brainstormer.controller.TemplateController;
-import brain.brainstormer.utils.SceneSwitcher;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.SceneSwitcher;
+import brain.brainstormer.config.TemplateData;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 

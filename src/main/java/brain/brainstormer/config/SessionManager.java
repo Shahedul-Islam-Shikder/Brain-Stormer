@@ -1,4 +1,4 @@
-package brain.brainstormer.utils;
+package brain.brainstormer.config;
 
 
 public class SessionManager {

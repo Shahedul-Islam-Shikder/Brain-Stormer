@@ -4,7 +4,7 @@ import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
 import brain.brainstormer.service.TemplateService;
 import brain.brainstormer.utilGui.AlertUtil;
-import brain.brainstormer.utils.TemplateData;
+import brain.brainstormer.config.TemplateData;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -17,7 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.bson.Document;
-import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 
 import java.io.File;
 import java.io.IOException;
