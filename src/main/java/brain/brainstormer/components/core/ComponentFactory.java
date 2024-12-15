@@ -1,12 +1,10 @@
 package brain.brainstormer.components.core;
 
 import brain.brainstormer.components.elements.*;
-import javafx.scene.image.Image;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ComponentFactory {
@@ -138,7 +136,7 @@ public class ComponentFactory {
                 }
                 String fileUrl = config.getString("fileUrl");
                 String fileName = config.getString("fileName");
-                return new FileComponent(
+                return new File(
                         id,
                         description != null ? description : "No description",
                         fileUrl,
@@ -153,7 +151,7 @@ public class ComponentFactory {
                 }
                 String imageUrl = config.getString("imageUrl");
                 String altText = config.getString("altText");
-                return new ImageComponent(
+                return new Image(
                         id,
                         description != null ? description : "No description",
                         imageUrl, // Use the actual imageUrl or leave it null

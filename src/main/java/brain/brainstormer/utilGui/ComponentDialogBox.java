@@ -100,12 +100,7 @@ public class ComponentDialogBox {
 
     private void editComponentInDatabase(Document componentData) {
         try {
-            if (grouperComponent == null) {
-                componentService.updateComponentInTemplate(templateId, component.getId(), componentData);
-            } else {
-                // Edit specific child in the Grouper
-                componentService.updateGrouperInTemplate(templateId, component.getId(), componentData);
-            }
+            componentService.editComponents(templateId, component.getId(), componentData);
 
             // Refresh the template
             TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
@@ -113,14 +108,14 @@ public class ComponentDialogBox {
                 controller.refreshTemplateContent(templateId);
 
                 // Send WebSocket update
-                if (controller.getSocket() != null) {
-                    controller.getSocket().sendMessage("{\"type\": \"update\", \"roomId\": \"" + templateId + "\"}");
-                }
+
             }
         } catch (Exception e) {
             System.err.println("Failed to edit component in Grouper: " + e.getMessage());
         }
     }
+
+
 
 
 

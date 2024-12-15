@@ -1,5 +1,8 @@
 package brain.brainstormer.socket;
 
+import brain.brainstormer.controller.TemplateController;
+import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.utils.TemplateData;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -61,6 +64,14 @@ public class Socket {
     public void disconnect() {
         if (client != null) {
             client.close();
+        }
+    }
+
+    public static void sendWebSocketUpdate() {
+        String templateId = TemplateData.getInstance().getCurrentTemplateId();
+        TemplateController controller = SceneSwitcher.getCurrentController(TemplateController.class);
+        if (controller != null && controller.getSocket() != null) {
+            controller.getSocket().sendMessage("{\"type\": \"update\", \"roomId\": \"" + templateId + "\"}");
         }
     }
 }

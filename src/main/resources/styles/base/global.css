@@ -55,6 +55,7 @@
 /* --- Button Styles --- */
 /* Generic Button Styles */
 .button {
+    -fx-background-color: #1A1A5A;
     -fx-font-size: 14px;
     -fx-padding: 10 20;
     -fx-background-radius: 10;

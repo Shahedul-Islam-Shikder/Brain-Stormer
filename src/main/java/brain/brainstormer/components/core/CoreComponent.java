@@ -41,7 +41,7 @@ public abstract class CoreComponent {
     public void delete() {
         try {
             String templateId = TemplateData.getInstance().getCurrentTemplateId();
-            ComponentService.getInstance().deleteComponentFromTemplate(templateId, getId());
+            ComponentService.getInstance().deleteComponent(templateId, getId());
             System.out.println("Component deleted with ID: " + getId());
 
             // Notify via WebSocket

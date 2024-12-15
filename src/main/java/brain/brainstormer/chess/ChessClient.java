@@ -103,7 +103,7 @@ public class ChessClient {
         payload.add("moveData", moveData);
         moveMessage.add("payload", payload);
 
-        System.out.println("ChessClient:-> Sending move message: " + moveMessage);
+
 
         sendMessage(moveMessage);
     }

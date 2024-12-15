@@ -2,33 +2,37 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.service.TemplateService;
+import brain.brainstormer.utilGui.AlertUtil;
+import brain.brainstormer.utils.TemplateData;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.bson.Document;
+import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-public class ImageComponent extends CoreComponent implements Initializable {
+public class Image extends CoreComponent implements Initializable {
     private String imageUrl; // URL of the uploaded image
     private String altText; // Alt-text for accessibility and clarity
 
-    public ImageComponent(String id, String description, String imageUrl, String altText) {
+    public Image(String id, String description, String imageUrl, String altText) {
         super(id, "image", description);
         this.imageUrl = imageUrl != null ? imageUrl : ""; // Default to empty string
         this.altText = altText != null ? altText : "Image Component"; // Default alt text
     }
-
 
     @Override
     public Node render() {
@@ -37,6 +41,7 @@ public class ImageComponent extends CoreComponent implements Initializable {
 
         // Collapsible section for the image
         TitledPane collapsiblePane = new TitledPane();
+
         collapsiblePane.setText(altText != null ? altText : "Image Component");
         collapsiblePane.setCollapsible(true);
 
@@ -44,14 +49,14 @@ public class ImageComponent extends CoreComponent implements Initializable {
         ImageView imageView = new ImageView();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
-                imageView.setImage(new Image(imageUrl));
+                imageView.setImage(new javafx.scene.image.Image(imageUrl));
             } catch (IllegalArgumentException e) {
-                System.err.println("Invalid image URL: " + imageUrl + ". No image will be displayed.");
+                System.out.println("Invalid image URL: " + imageUrl + ". No image will be displayed.");
             }
         } else {
             System.out.println("No image URL provided. Image view will remain empty.");
         }
-        imageView.setFitWidth(300);
+        imageView.setFitWidth(600);
         imageView.setPreserveRatio(true);
 
         // Upload button
@@ -59,25 +64,29 @@ public class ImageComponent extends CoreComponent implements Initializable {
         uploadButton.setOnAction(event -> uploadImage(imageView));
 
         VBox imageContainer = new VBox(10, imageView, uploadButton);
-        imageContainer.setAlignment(Pos.CENTER);
+        imageContainer.setAlignment(Pos.CENTER_LEFT);
 
         collapsiblePane.setContent(imageContainer);
 
-        // Buttons for editing and deleting
+        // Replacing old action buttons with the unified CheckBox-style buttons
         HBox actionButtons = createActionButtons();
 
         container.getChildren().addAll(collapsiblePane, actionButtons);
+        applyGlobalComponentStyles(container);
 
         return container;
     }
 
-
     private HBox createActionButtons() {
         HBox buttonContainer = new HBox(10);
         buttonContainer.setAlignment(Pos.CENTER_LEFT);
+        buttonContainer.getStyleClass().add("button-container"); // CSS class for styling
 
-        // Edit button
-        Button editButton = new Button("Edit");
+        // Edit button with FontAwesome icon
+        FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.PENCIL);
+        editIcon.getStyleClass().add("edit-icon");
+
+        Button editButton = new Button("", editIcon); // Icon-only button
         editButton.setOnAction(event -> {
             Alert editDialog = new Alert(Alert.AlertType.CONFIRMATION);
             editDialog.setTitle("Edit Image Component");
@@ -97,14 +106,19 @@ public class ImageComponent extends CoreComponent implements Initializable {
             });
         });
 
-        // Delete button
-        Button deleteButton = new Button("Delete");
+        // Delete button with FontAwesome icon
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
         deleteButton.setOnAction(event -> {
             System.out.println("Deleting Image Component with ID: " + getId());
             delete();
         });
 
+
         buttonContainer.getChildren().addAll(editButton, deleteButton);
+        applyGlobalComponentStyles(buttonContainer);
         return buttonContainer;
     }
 
@@ -121,14 +135,14 @@ public class ImageComponent extends CoreComponent implements Initializable {
                 imageUrl = uploadResult.get("url").toString();
 
                 // Update image view and save to database
-                imageView.setImage(new Image(imageUrl));
+                imageView.setImage(new javafx.scene.image.Image(imageUrl));
                 saveToDatabase();
 
             } catch (IOException e) {
-                System.err.println("Failed to upload image: " + e.getMessage());
+                AlertUtil.showError("Error", "Failed to upload image: " + e.getMessage());
             }
         } else {
-            System.out.println("No file selected for upload.");
+            AlertUtil.showWarning("Warning", "No image selected. Image URL will remain unchanged.");
         }
     }
 
@@ -175,15 +189,24 @@ public class ImageComponent extends CoreComponent implements Initializable {
         System.out.println("Image Component deleted from database.");
     }
 
-
     @Override
     public void saveToDatabase() {
         try {
-            brain.brainstormer.service.TemplateService.getInstance().updateComponentInTemplate(
-                    brain.brainstormer.utils.TemplateData.getInstance().getCurrentTemplateId(),
-                    getId(),
-                    toDocument()
-            );
+            TemplateService templateService = TemplateService.getInstance(); // Use singleton TemplateService
+
+            String templateId = TemplateData.getInstance().getCurrentTemplateId();
+            if (templateId == null || templateId.isEmpty()) {
+                System.err.println("No current template ID set in TemplateData.");
+                return;
+            }
+
+            Document updatedComponent = new Document("config", new Document("imageUrl", imageUrl)
+                    .append("altText", altText)
+                    .append("description", getDescription()))
+                    .append("lastUpdated", new Date());
+
+            templateService.updateComponentInTemplate(templateId, getId(), updatedComponent);
+
             System.out.println("Image Component saved to database.");
         } catch (Exception e) {
             System.err.println("Failed to save Image Component: " + e.getMessage());

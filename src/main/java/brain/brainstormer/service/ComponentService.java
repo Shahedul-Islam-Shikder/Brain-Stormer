@@ -1,11 +1,11 @@
 package brain.brainstormer.service;
 
 import brain.brainstormer.components.core.CoreComponent;
+import brain.brainstormer.socket.Socket;
 import brain.brainstormer.utils.DatabaseConnection;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
@@ -106,64 +106,115 @@ public class ComponentService {
         }
     }
 
-    public void deleteComponentFromTemplate(String templateId, String componentId) {
+    public void deleteComponent(String templateId, String componentId) {
         try {
-            // Remove the component from the template's components array
-            templatesCollection.updateOne(
+            // Step 1: Attempt a surface-level delete
+            long deletedCount = templatesCollection.updateOne(
                     Filters.eq("_id", new ObjectId(templateId)),
                     Updates.pull("components", new Document("_id", componentId))
-            );
+            ).getModifiedCount();
 
-            System.out.println("Component deleted from template: " + componentId);
-        } catch (Exception e) {
-            System.err.println("Failed to delete component from template: " + e.getMessage());
-        }
-    }
-
-    public void updateComponentInTemplate(String templateId, String componentId, Document updatedComponentData) {
-        try {
-            // Perform the update in the components array
-            UpdateResult result = templatesCollection.updateOne(
-                    Filters.and(
-                            Filters.eq("_id", new ObjectId(templateId)), // Match the template
-                            Filters.eq("components._id", componentId)    // Match the specific component by ID
-                    ),
-                    Updates.set("components.$", updatedComponentData) // Update the matched component
-            );
-
-            // Log the result
-            if (result.getModifiedCount() > 0) {
-                System.out.println("Component updated in template: " + componentId);
-            } else {
-                System.err.println("No matching component found or no updates made.");
+            // Step 2: If no surface-level delete occurred, attempt a nested delete
+            if (deletedCount == 0) {
+                templatesCollection.updateOne(
+                        Filters.eq("_id", new ObjectId(templateId)), // Match the template by ID
+                        Updates.set("components", deleteNestedComponent(
+                                templatesCollection.find(Filters.eq("_id", new ObjectId(templateId)))
+                                        .first()
+                                        .getList("components", Document.class), // Retrieve the components list
+                                componentId
+                        ))
+                );
             }
+
+            System.out.println("Component deleted successfully: " + componentId);
         } catch (Exception e) {
-            System.err.println("Failed to update component in template: " + e.getMessage());
+            System.err.println("Failed to delete component: " + e.getMessage());
         }
+
+        // Notify via WebSocket
+        Socket.sendWebSocketUpdate();
     }
 
-    public void updateGrouperInTemplate(String templateId, String grouperId, Document updatedGrouperData) {
+    private List<Document> deleteNestedComponent(List<Document> components, String componentId) {
+        List<Document> updatedComponents = new ArrayList<>();
+
+        for (Document component : components) {
+            if (componentId.equals(component.getString("_id"))) {
+                // Skip this component to "delete" it
+                continue;
+            } else if (component.containsKey("children")) {
+                // Recursively delete from children
+                List<Document> updatedChildren = deleteNestedComponent(
+                        component.getList("children", Document.class),
+                        componentId
+                );
+                component.put("children", updatedChildren);
+            }
+            updatedComponents.add(component);
+        }
+
+        return updatedComponents;
+    }
+
+    public void editComponents(String templateId, String componentId, Document updatedData) {
         try {
-            UpdateResult result = templatesCollection.updateOne(
+            // Step 1: Attempt a surface-level update
+            long updatedCount = templatesCollection.updateOne(
                     Filters.and(
                             Filters.eq("_id", new ObjectId(templateId)), // Match the template
-                            Filters.eq("components._id", grouperId) // Match the specific Grouper by ID
+                            Filters.eq("components._id", componentId)    // Match the component by ID
                     ),
                     Updates.combine(
-                            Updates.set("components.$.config", updatedGrouperData.get("config")), // Update config only
-                            Updates.set("components.$.lastUpdated", new Date()) // Update timestamp
+                            Updates.set("components.$.config", updatedData.get("config")),
+                            Updates.set("components.$.lastUpdated", new Date())
                     )
-            );
+            ).getModifiedCount();
 
-            if (result.getModifiedCount() > 0) {
-                System.out.println("Grouper updated successfully in MongoDB.");
-            } else {
-                System.err.println("No matching Grouper found or no updates made.");
+            // Step 2: If no surface-level update occurred, attempt a nested update
+            if (updatedCount == 0) {
+                templatesCollection.updateOne(
+                        Filters.eq("_id", new ObjectId(templateId)), // Match the template by ID
+                        Updates.set("components", updateNestedComponent(
+                                templatesCollection.find(Filters.eq("_id", new ObjectId(templateId)))
+                                        .first()
+                                        .getList("components", Document.class), // Retrieve the components list
+                                componentId,
+                                updatedData
+                        ))
+                );
             }
+
+            System.out.println("Component updated successfully: " + componentId);
         } catch (Exception e) {
-            System.err.println("Failed to update Grouper in MongoDB: " + e.getMessage());
+            System.err.println("Failed to edit component: " + e.getMessage());
         }
+
+        // Notify via WebSocket
+        Socket.sendWebSocketUpdate();
     }
+
+    private List<Document> updateNestedComponent(List<Document> components, String componentId, Document updatedComponent) {
+        for (Document component : components) {
+            if (componentId.equals(component.getString("_id"))) {
+                // Update the component directly
+                component.put("config", updatedComponent.get("config"));
+                component.put("lastUpdated", new Date());
+                return components;
+            } else if (component.containsKey("children")) {
+                // Recursively update children
+                List<Document> updatedChildren = updateNestedComponent(
+                        component.getList("children", Document.class),
+                        componentId,
+                        updatedComponent
+                );
+                component.put("children", updatedChildren);
+            }
+        }
+        return components;
+    }
+
+
 
 
     public MongoCollection<Document> getComponentsCollection() {

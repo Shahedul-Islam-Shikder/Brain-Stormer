@@ -1,6 +1,10 @@
 package brain.brainstormer.service;
 
+import brain.brainstormer.controller.TemplateController;
+import brain.brainstormer.socket.Socket;
 import brain.brainstormer.utils.DatabaseConnection;
+import brain.brainstormer.utils.SceneSwitcher;
+import brain.brainstormer.utils.TemplateData;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -103,7 +107,8 @@ public class TemplateService {
     // Update a specific component in a template
     public void updateComponentInTemplate(String templateId, String componentId, Document updatedComponent) {
         try {
-            templatesCollection.updateOne(
+            // First attempt: Surface-level update
+            long updatedCount = templatesCollection.updateOne(
                     Filters.and(
                             Filters.eq("_id", new ObjectId(templateId)),
                             Filters.eq("components._id", componentId)
@@ -112,12 +117,46 @@ public class TemplateService {
                             Updates.set("components.$.config", updatedComponent.get("config")),
                             Updates.set("components.$.lastUpdated", updatedComponent.get("lastUpdated"))
                     )
-            );
-            System.out.println("Component updated in template successfully!");
+            ).getModifiedCount();
+
+            // If no surface-level update occurred, attempt a nested update
+            if (updatedCount == 0) {
+                templatesCollection.updateOne(
+                        Filters.eq("_id", new ObjectId(templateId)), // Match the template by ID
+                        Updates.combine(
+                                Updates.set("components", updateNestedComponent(
+                                        templatesCollection.find(Filters.eq("_id", new ObjectId(templateId))).first().getList("components", Document.class),
+                                        componentId,
+                                        updatedComponent
+                                ))
+                        )
+                );
+            }
+
+            System.out.println("Component updated in template successfully! Mew Mew Pew Pew");
         } catch (Exception e) {
             System.err.println("Failed to update component in template: " + e.getMessage());
         }
+        Socket.sendWebSocketUpdate();
     }
+
+    private List<Document> updateNestedComponent(List<Document> components, String componentId, Document updatedComponent) {
+        for (Document component : components) {
+            if (componentId.equals(component.getString("_id"))) {
+                // Update the component directly
+                component.put("config", updatedComponent.get("config"));
+                component.put("lastUpdated", updatedComponent.get("lastUpdated"));
+                return components;
+            } else if (component.containsKey("children")) {
+                // Recursively update children
+                List<Document> updatedChildren = updateNestedComponent(component.getList("children", Document.class), componentId, updatedComponent);
+                component.put("children", updatedChildren);
+            }
+        }
+        return components;
+    }
+
+
 
 
 

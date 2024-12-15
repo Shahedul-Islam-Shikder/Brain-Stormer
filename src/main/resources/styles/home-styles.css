@@ -35,8 +35,8 @@
 
 /* Active Button Style */
 .sidebar-button-active {
-    -fx-text-fill: white;
-    -fx-background-color: #2A2A7A;
+    -fx-text-fill: black;
+    -fx-background-color: white;
 }
 
 /* Logout Button */

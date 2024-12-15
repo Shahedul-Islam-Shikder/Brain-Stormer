@@ -2,11 +2,16 @@ package brain.brainstormer.components.elements;
 
 import brain.brainstormer.components.core.CoreComponent;
 import brain.brainstormer.components.interfaces.Initializable;
+import brain.brainstormer.utilGui.AlertUtil;
 import brain.brainstormer.utils.FileIOUtil;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import okhttp3.OkHttpClient;
@@ -14,40 +19,56 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.bson.Document;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-public class FileComponent extends CoreComponent implements Initializable {
+public class File extends CoreComponent implements Initializable {
     private String fileUrl; // URL of the uploaded file
     private String fileName; // Name of the file
 
-    public FileComponent(String id, String description, String fileUrl, String fileName) {
+    public File(String id, String description, String fileUrl, String fileName) {
         super(id, "file", description);
         this.fileUrl = fileUrl != null ? fileUrl : ""; // Default to empty string
         this.fileName = fileName != null ? fileName : "Unnamed File"; // Default file name
     }
 
     @Override
+
     public Node render() {
         VBox container = new VBox(10);
         container.setAlignment(Pos.CENTER_LEFT);
 
-        // File label and buttons
+        // File label (with bold text)
         Label fileLabel = new Label(fileName != null ? fileName : "No file selected");
+        fileLabel.setStyle("-fx-font-weight: bold;");
 
-        // Upload button
-        Button uploadButton = new Button("Upload File");
+        // Create a Region to push buttons to the right
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS); // Make spacer grow horizontally
+
+        // Upload button with icon
+        FontAwesomeIconView uploadIcon = new FontAwesomeIconView(FontAwesomeIcon.UPLOAD);
+
+
+        Button uploadButton = new Button("", uploadIcon); // Icon-only button
         uploadButton.setOnAction(event -> uploadFile(fileLabel));
 
-        // Download button
-        Button downloadButton = new Button("Download File");
+
+
+        // Download button with icon
+        FontAwesomeIconView downloadIcon = new FontAwesomeIconView(FontAwesomeIcon.DOWNLOAD);
+
+
+        Button downloadButton = new Button("", downloadIcon); // Icon-only button
         downloadButton.setDisable(fileUrl == null || fileUrl.isEmpty());
         downloadButton.setOnAction(event -> downloadFile());
 
-        // Delete button
-        Button deleteButton = new Button("Delete File");
+
+        // Delete button with icon
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
         deleteButton.setDisable(fileUrl == null || fileUrl.isEmpty());
         deleteButton.setOnAction(event -> {
             deleteFile();
@@ -56,20 +77,52 @@ public class FileComponent extends CoreComponent implements Initializable {
             deleteButton.setDisable(true);
         });
 
+        // Action buttons (aligned to the right) with icons
         HBox actionButtons = new HBox(10, uploadButton, downloadButton, deleteButton);
-        actionButtons.setAlignment(Pos.CENTER);
+        actionButtons.setAlignment(Pos.CENTER_RIGHT);
 
-        VBox fileContainer = new VBox(10, fileLabel, actionButtons);
-        fileContainer.setAlignment(Pos.CENTER);
+        // File container with file label and action buttons
+        HBox fileContainer = new HBox(10, fileLabel, spacer, actionButtons);
+        fileContainer.setAlignment(Pos.CENTER_LEFT);
 
+        // Apply global component styles
+        applyGlobalComponentStyles(container);
         container.getChildren().addAll(fileContainer);
+        // add     private HBox createActionButtons()
+
+        HBox buttonContainer = createActionButtons();
+
+        container.getChildren().addAll(buttonContainer);
+
+
+
 
         return container;
     }
 
+    private HBox createActionButtons() {
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER_LEFT);
+        buttonContainer.getStyleClass().add("button-container"); // CSS class for styling
+        // Delete button with FontAwesome icon
+        FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
+        deleteIcon.getStyleClass().add("delete-icon");
+
+        Button deleteButton = new Button("", deleteIcon); // Icon-only button
+        deleteButton.setOnAction(event -> {
+            System.out.println("Deleting Image Component with ID: " + getId());
+            delete();
+        });
+
+
+        buttonContainer.getChildren().addAll(deleteButton);
+        applyGlobalComponentStyles(buttonContainer);
+        return buttonContainer;
+    }
+
     private void uploadFile(Label fileLabel) {
         FileChooser fileChooser = new FileChooser();
-        File selectedFile = fileChooser.showOpenDialog(null);
+        java.io.File selectedFile = fileChooser.showOpenDialog(null);
 
         if (selectedFile != null) {
             try {
@@ -86,29 +139,29 @@ public class FileComponent extends CoreComponent implements Initializable {
                 System.err.println("Failed to upload file: " + e.getMessage());
             }
         } else {
-            System.out.println("No file selected for upload.");
+            AlertUtil.showInfo("Info","No file selected for upload.");
         }
     }
 
     private void downloadFile() {
         if (fileUrl == null || fileUrl.isEmpty()) {
-            System.out.println("No file to download.");
+            AlertUtil.showInfo("Info","No file to download.");
             return;
         }
 
         try {
             // Default download location (Downloads folder)
             String userHome = System.getProperty("user.home");
-            File downloadsDir = new File(userHome, "Downloads");
+            java.io.File downloadsDir = new java.io.File(userHome, "Downloads");
 
             // Ensure the Downloads directory exists
             if (!downloadsDir.exists() && !downloadsDir.mkdirs()) {
-                System.err.println("Failed to create Downloads directory.");
+                AlertUtil.showError("Error","Failed to create Downloads directory.");
                 return;
             }
 
             // File to save
-            File downloadedFile = new File(downloadsDir, fileName != null ? fileName : "downloaded_file");
+            java.io.File downloadedFile = new java.io.File(downloadsDir, fileName != null ? fileName : "downloaded_file");
 
             // Create a request to fetch the file
             OkHttpClient client = new OkHttpClient();
@@ -127,11 +180,11 @@ public class FileComponent extends CoreComponent implements Initializable {
                     fos.write(response.body().bytes());
                 }
 
-                System.out.println("File downloaded successfully to: " + downloadedFile.getAbsolutePath());
+                AlertUtil.showInfo("Success","File downloaded successfully.");
             }
 
         } catch (Exception e) {
-            System.err.println("Failed to download file: " + e.getMessage());
+            AlertUtil.showError("Error","Failed to download file: " + e.getMessage());
         }
     }
 
