@@ -174,6 +174,8 @@ public class ComponentFactory {
             case "weather":
                 // Handle the weather component
                 return new Weather( id, description != null ? description : "Weather component","Dhaka" );
+
+
             default:
                 System.out.println("Component type not recognized: " + type);
                 return null;
